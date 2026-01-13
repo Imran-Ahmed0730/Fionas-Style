@@ -53,9 +53,9 @@ class CategoryController extends Controller implements HasMiddleware
             'icon' => 'required|image|mimes:jpeg,png,jpg',
             'cover_photo' => 'required|image|mimes:jpeg,png,jpg',
         ]);
-        $icon = saveImagePath($request->file('icon'), 'category/icon');
+        $icon = saveImagePath($request->file('icon'), null, 'category/icon');
         if($request->file('cover_photo')){
-            $cover_photo = saveImagePath($request->file('cover_photo'), 'category/cover-photo');
+            $cover_photo = saveImagePath($request->file('cover_photo'), null,'category/cover-photo');
         }
         if($request->parent_id != 0){
             $parent_category = Category::where('id', $request->parent_id)->first();
@@ -119,7 +119,7 @@ class CategoryController extends Controller implements HasMiddleware
         }
         if ($request->hasFile('icon')) {
             $icon = $request->file('icon');
-            $icon = updateImagePath($icon, $category->icon, 'category/icon' );
+            $icon = saveImagePath($icon, $category->icon, 'category/icon' );
         }
         else{
             $icon = $category->icon;
@@ -127,7 +127,7 @@ class CategoryController extends Controller implements HasMiddleware
 
         if ($request->hasFile('cover_photo')) {
             $cover_photo = $request->file('cover_photo');
-            $cover_photo = updateImagePath($cover_photo, $category->cover_photo, 'category/cover-photo' );
+            $cover_photo = saveImagePath($cover_photo, $category->cover_photo, 'category/cover-photo' );
         }
         else{
             $cover_photo = $category->cover_photo;

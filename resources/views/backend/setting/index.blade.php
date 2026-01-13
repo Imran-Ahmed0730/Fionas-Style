@@ -75,6 +75,13 @@
                                                     </div>
                                                     @enderror
                                                 </div>
+                                                <div class="mb-3"> <label for="meta_keywords" class="form-label">Meta Keywords</label> <input type="text" name="meta_keywords" placeholder="Enter meta keywords" class="form-control @error('meta_keywords') is-invalid @enderror" value="{{getSetting('meta_keywords')}}" id="meta_keywords" aria-describedby="meta_keywords">
+                                                    @error('meta_keywords')
+                                                    <div class="invalid-feedback" role="alert">
+                                                        {{$message}}
+                                                    </div>
+                                                    @enderror
+                                                </div>
                                             </div><!--end::Quick Example-->
 
 
@@ -90,35 +97,9 @@
                             @endif
                         </div>
                     </div>
-                    @if(Auth::user()->hasRole('Super Admin'))
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-title">Developer Information</div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3"> <label for="developed_by" class="form-label">Developed by</label> <input type="text" name="developed_by" placeholder="Enter name of the developer" class="form-control @error('developed_by') is-invalid @enderror" value="{{getSetting('developed_by')}}" id="developed_by" aria-describedby="developed_by" required>
-                                        @error('developed_by')
-                                        <div class="invalid-feedback" role="alert">
-                                            {{$message}}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                    <div class="mb-3"> <label for="developed_by_url" class="form-label">Website url</label> <input type="url" placeholder="Enter developer's website's url" name="developed_by_url" value="{{getSetting('developed_by_url')}}" class="form-control @error('developed_by_url') is-invalid @enderror" id="developed_by_url"  required>
-                                        @error('developed_by_url')
-                                        <div class="invalid-feedback" role="alert">
-                                            {{$message}}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 d-flex justify-content-end">
-                            <button class="btn btn-primary ">Update</button>
-                        </div>
-                    @endif
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button class="btn btn-primary ">Update</button>
+                    </div>
                 </form>
 
             </div>

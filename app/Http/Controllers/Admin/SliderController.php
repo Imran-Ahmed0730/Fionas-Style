@@ -46,7 +46,7 @@ class SliderController extends Controller implements HasMiddleware
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg',
         ]);
-        $imagePath = saveImagePath($request->file('image'), 'slider');
+        $imagePath = saveImagePath($request->file('image'), null,'slider');
         $slider = Slider::create([
             'title' => $request->title,
             'subtitle' => $request->subtitle,
@@ -92,7 +92,7 @@ class SliderController extends Controller implements HasMiddleware
         $slider = Slider::findOrFail($request->id);
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imagePath = updateImagePath($image, $slider->image, 'slider' );
+            $imagePath = saveImagePath($image, $slider->image, 'slider' );
 
         }
         else{

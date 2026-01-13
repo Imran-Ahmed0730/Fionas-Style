@@ -47,7 +47,7 @@ class BannerController extends Controller implements HasMiddleware
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg',
         ]);
-        $imagePath = saveImagePath($request->file('image'), 'banner');
+        $imagePath = saveImagePath($request->file('image'), null,'banner');
         $banner = Banner::create([
             'title' => $request->title,
             'subtitle' => $request->subtitle,
@@ -93,7 +93,7 @@ class BannerController extends Controller implements HasMiddleware
         $banner = Banner::findOrFail($request->id);
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imagePath = updateImagePath($image, $banner->image, 'banner' );
+            $imagePath = saveImagePath($image, $banner->image, 'banner' );
 
         }
         else{

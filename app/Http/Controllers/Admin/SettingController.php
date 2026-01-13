@@ -34,76 +34,241 @@ class SettingController extends Controller implements HasMiddleware
         return view('backend.setting.list',$data);
     }
 
-    public function update(Request $request){
-//        return $request;
-        $prev_url = url()->previous();
-        if(Str::contains($prev_url, 'contact')){
-            $request->validate([
-                'email'     => 'required',
-                'phone'     => 'required',
-                'whatsapp'  => 'required',
-            ]);
+    public function update(Request $request)
+    {
+        $prevUrl = url()->previous();
+        $section = $this->getSection($prevUrl);
+
+        // Validate based on section
+        $this->validateSection($request, $section);
+
+        // Update settings
+        $this->updateSettings($request, $section);
+
+        return back()->with('success', 'Settings updated successfully');
+    }
+
+    /**
+     * Get section from previous URL
+     */
+    private function getSection($url)
+    {
+        if (Str::contains($url, 'contact')) {
+            return 'contact';
+        } elseif (Str::contains($url, 'logos-favicon')) {
+            return 'logos-favicon';
+        } elseif (Str::contains($url, 'social-media')) {
+            return 'social-media';
+        } elseif (Str::contains($url, 'activation')) {
+            return 'activation';
+        } elseif (Str::contains($url, 'store')) {
+            return 'store';
+        } elseif (Str::contains($url, 'site')) {
+            return 'site';
         }
-        elseif (Str::contains($prev_url, 'site')){
-            $request->validate([
-                'site_name'         => 'required',
-                'business_name'     => 'required',
-                'site_url'          => 'required',
-                'short_bio'         => 'required',
-                'meta_description'  => 'required',
-            ]);
+
+        return 'site'; // default
+    }
+
+    /**
+     * Validate request based on section
+     */
+    private function validateSection(Request $request, $section)
+    {
+        $rules = $this->getValidationRules($section);
+
+        if (!empty($rules)) {
+            $request->validate($rules);
         }
+    }
 
-        elseif (Str::contains($prev_url, 'user')){
-            $request->validate([
-                'user_verification' => 'required',
-            ]);
-        }
+    /**
+     * Get validation rules for each section
+     */
+    private function getValidationRules($section)
+    {
+        switch ($section) {
+            case 'site':
+                return [
+                    'site_name' => 'required|string|max:255',
+                    'business_name' => 'required|string|max:255',
+                    'site_url' => 'required|url|max:255',
+                    'short_bio' => 'required|string|max:500',
+                    'meta_description' => 'required|string|max:500',
+                    'meta_keywords' => 'required|string|max:255',
+                ];
 
+            case 'contact':
+                return [
+                    'email' => 'required|email|max:255',
+                    'phone' => 'required|string|max:20',
+                    'whatsapp' => 'required|string|max:20',
+                ];
 
-        $settings = Setting::all();
-        foreach ($settings as $setting) {
-            if($setting->key == 'site_logo' || $setting->key == 'site_footer_logo' || $setting->key == 'site_dark_logo' || $setting->key == 'site_favicon'){
-                if ($request->hasFile($setting->key)) {
-                    $request->validate([
-                        $setting->key => 'mimes:jpeg,png,jpg',
-                    ]);
-                    $image = $request->file($setting->key);
-                    $imagePath = updateImagePath($image, $setting->value, 'website-image' );
+            case 'logos-favicon':
+                $rules = [];
+                $imageFields = ['site_logo', 'site_footer_logo', 'site_dark_logo', 'site_favicon'];
 
-                }
-                else{
-                    $imagePath = $setting->value;
-                }
-                $setting->value = $imagePath;
-            }
-            elseif ($setting->key != 'developed_by' || $setting->key != 'developed_by_url'){
-
-                if ($request->input($setting->key) !== null){
-                    $setting->value = $request->input($setting->key);
-                }
-                elseif (Str::contains($prev_url, 'store')){
-                    if($setting->key == 'address' || $setting->key == 'shop_map_location' || $setting->key == 'opening_time' || $setting->key == 'closing_time' || $setting->key == 'closed_on') {
-                        $setting->value = $request->input($setting->key) ?? null;
+                foreach ($imageFields as $field) {
+                    if (request()->hasFile($field)) {
+                        $rules[$field] = 'image|mimes:jpeg,png,jpg|max:2048'; // 2MB max
                     }
                 }
 
+                return $rules;
+
+            case 'social-media':
+                return [
+                    'facebook' => 'nullable|url|max:255',
+                    'twitter' => 'nullable|url|max:255',
+                    'instagram' => 'nullable|url|max:255',
+                    'linkedin' => 'nullable|url|max:255',
+                    'youtube' => 'nullable|url|max:255',
+                    'pinterest' => 'nullable|url|max:255',
+                    'tiktok' => 'nullable|url|max:255',
+                ];
+
+            case 'activation':
+                return [
+                    'user_verification' => 'required|in:0,1',
+                    'free_delivery_above' => 'required|integer|min:0',
+                    'guest_account' => 'required|min:0,1',
+                ];
+
+            case 'store':
+                return [
+                    'address' => 'nullable|string|max:500',
+                    'shop_map_location' => 'nullable|string',
+                    'opening_time' => 'nullable|date_format:H:i',
+                    'closing_time' => 'nullable|date_format:H:i',
+                    'closed_on' => 'nullable|string|max:255',
+                    'delivery_charge' => 'nullable|numeric|min:0',
+                    'minimum_order' => 'nullable|numeric|min:0',
+                ];
+
+            default:
+                return [];
+        }
+    }
+
+    /**
+     * Update settings based on section
+     */
+    private function updateSettings(Request $request, $section)
+    {
+        $settings = Setting::all();
+
+        foreach ($settings as $setting) {
+            // Handle image uploads
+            if ($this->isImageField($setting->key)) {
+                $this->updateImageSetting($request, $setting);
             }
-            else{
-                $setting->value = $request->input($setting->key);
+            // Handle regular fields
+            else {
+                $this->updateRegularSetting($request, $setting, $section);
             }
 
             $setting->save();
         }
-
-        return back()->with('success', 'Settings updated successfully');
-
     }
 
+    /**
+     * Check if field is an image field
+     */
+    private function isImageField($key)
+    {
+        return in_array($key, [
+            'site_logo',
+            'site_footer_logo',
+            'site_dark_logo',
+            'site_favicon'
+        ]);
+    }
+
+    /**
+     * Update image setting
+     */
+    private function updateImageSetting(Request $request, Setting $setting)
+    {
+        if ($request->hasFile($setting->key)) {
+            $image = $request->file($setting->key);
+
+            // Determine dimensions and quality based on image type
+            [$width, $height, $quality] = $this->getImageSettings($setting->key);
+
+            // Use the saveImage helper function
+            $setting->value = saveImage(
+                image: $image,
+                oldImage: $setting->value,
+                folderName: 'website-images',
+                quality: $quality,
+                maxWidth: $width,
+                maxHeight: $height
+            );
+        }
+        // Keep existing value if no new image uploaded
+    }
+
+    /**
+     * Get image settings based on type
+     */
+    private function getImageSettings($key)
+    {
+        switch ($key) {
+            case 'site_logo':
+            case 'site_footer_logo':
+            case 'site_dark_logo':
+                return [400, 150, 90]; // width, height, quality
+
+            case 'site_favicon':
+                return [64, 64, 95]; // favicon should be small and high quality
+
+            default:
+                return [500, 500, 85];
+        }
+    }
+
+    /**
+     * Update regular (non-image) setting
+     */
+    private function updateRegularSetting(Request $request, Setting $setting, $section)
+    {
+
+        // Update if value is present in request
+        if ($request->has($setting->key)) {
+            $value = $request->input($setting->key);
+
+            // Handle nullable fields for store section
+            if ($section === 'store' && $this->isNullableStoreField($setting->key)) {
+                $setting->value = $value ?? null;
+            } else {
+                $setting->value = $value;
+            }
+        }
+    }
+
+    /**
+     * Check if field is nullable in store section
+     */
+    private function isNullableStoreField($key)
+    {
+        return in_array($key, [
+            'address',
+            'shop_map_location',
+            'opening_time',
+            'closing_time',
+            'closed_on'
+        ]);
+    }
+
+    /**
+     * Navigate to specific setting section
+     */
     public function goToSection($slug)
     {
-        $data[] = null;
+        $data = [];
 
+        // Define permissions for each section
         $permissions = [
             'site' => 'Settings Site',
             'activation' => 'Settings Activation',
@@ -113,32 +278,29 @@ class SettingController extends Controller implements HasMiddleware
             'store' => 'Settings Store',
         ];
 
-        // Check if the current user has the required permission
+        // Check permissions
         if (array_key_exists($slug, $permissions) && !auth()->user()->can($permissions[$slug])) {
             abort(403, 'User does not have the right permissions.');
         }
-        if($slug == 'site'){
-            $view = 'index';
-        }
-        elseif ($slug == 'contact'){
-            $view = 'contact';
-        }
-        elseif ($slug == 'logos-favicon'){
-            $view = 'logo_favicon';
-        }
-        elseif ($slug == 'social-media'){
-            $view = 'social_media';
-        }
-        elseif ($slug == 'activation'){
-            $view = 'activation';
-        }
-        elseif ($slug == 'store'){
-            $view = 'store';
-        }
-        else{
+
+        // Map slug to view
+        $viewMap = [
+            'site' => 'index',
+            'contact' => 'contact',
+            'logos-favicon' => 'logo_favicon',
+            'social-media' => 'social_media',
+            'activation' => 'activation',
+            'store' => 'store',
+        ];
+
+        // Get view or redirect to default
+        $view = $viewMap[$slug] ?? null;
+
+        if (!$view) {
             return redirect()->route('admin.setting.edit', 'site');
         }
 
-        return view('backend.setting.'.$view, $data);
+        return view('backend.setting.' . $view, $data);
     }
+
 }

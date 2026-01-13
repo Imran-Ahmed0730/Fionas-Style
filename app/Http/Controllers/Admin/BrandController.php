@@ -49,7 +49,7 @@ class BrandController extends Controller implements HasMiddleware
             'description' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg',
         ]);
-        $imagePath = saveImagePath($request->file('image'), 'brand');
+        $imagePath = saveImagePath($request->file('image'), null,'brand');
         $brand = Brand::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -98,7 +98,7 @@ class BrandController extends Controller implements HasMiddleware
         }
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imagePath = updateImagePath($image, $brand->image, 'brand' );
+            $imagePath = saveImagePath($image, $brand->image, 'brand' );
 
         }
         else{

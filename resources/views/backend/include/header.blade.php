@@ -267,12 +267,22 @@
                         <div class="quick-actions-scroll scrollbar-outer">
                             <div class="quick-actions-items">
                                 <div class="row m-0">
+                                    <a class="col-6 col-md-4 p-0" href="{{ route('home') }}" target="_blank">
+                                        <div class="quick-actions-item">
+                                            <div
+                                                class="avatar-item bg-primary rounded-circle"
+                                            >
+                                                <i class="fas fa-globe"></i>
+                                            </div>
+                                            <span class="text">{{getSetting('site_name')}}</span>
+                                        </div>
+                                    </a>
                                     <a class="col-6 col-md-4 p-0" href="#">
                                         <div class="quick-actions-item">
                                             <div class="avatar-item bg-danger rounded-circle">
-                                                <i class="far fa-calendar-alt"></i>
+                                                <i class="fa-solid fa-cart-shopping"></i>
                                             </div>
-                                            <span class="text">Calendar</span>
+                                            <span class="text">POS</span>
                                         </div>
                                     </a>
                                     <a class="col-6 col-md-4 p-0" href="#">
@@ -280,9 +290,9 @@
                                             <div
                                                 class="avatar-item bg-warning rounded-circle"
                                             >
-                                                <i class="fas fa-map"></i>
+                                                <i class="fas fa-eraser"></i>
                                             </div>
-                                            <span class="text">Maps</span>
+                                            <span class="text">Clear Cache</span>
                                         </div>
                                     </a>
                                     <a class="col-6 col-md-4 p-0" href="#">
@@ -300,19 +310,10 @@
                                             >
                                                 <i class="fas fa-envelope"></i>
                                             </div>
-                                            <span class="text">Emails</span>
+                                            <span class="text">Subscribers</span>
                                         </div>
                                     </a>
-                                    <a class="col-6 col-md-4 p-0" href="#">
-                                        <div class="quick-actions-item">
-                                            <div
-                                                class="avatar-item bg-primary rounded-circle"
-                                            >
-                                                <i class="fas fa-file-invoice-dollar"></i>
-                                            </div>
-                                            <span class="text">Invoice</span>
-                                        </div>
-                                    </a>
+
                                     <a class="col-6 col-md-4 p-0" href="#">
                                         <div class="quick-actions-item">
                                             <div
@@ -320,7 +321,7 @@
                                             >
                                                 <i class="fas fa-credit-card"></i>
                                             </div>
-                                            <span class="text">Payments</span>
+                                            <span class="text">Accounts</span>
                                         </div>
                                     </a>
                                 </div>
