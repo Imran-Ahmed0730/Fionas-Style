@@ -59,10 +59,10 @@
                                         <td>{{$key+1}}.</td>
                                         <td>{{Str::title($item->name)}}</td>
                                         <td>
-                                            @can('Brand Status Change')
+                                            @can('Permission Status Change')
                                                 <div class="form-check form-switch">
                                                     <input class="form-check-input toggle-switch" type="checkbox" role="switch"
-                                                           data-module="brand" data-id="{{ $item->id }}"
+                                                           data-module="permission" data-id="{{ $item->id }}"
                                                         {{ $item->status == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
                                                 </div>
                                             @else

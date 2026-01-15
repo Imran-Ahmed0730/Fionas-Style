@@ -56,9 +56,12 @@ class BrandController extends Controller implements HasMiddleware
             'slug' => Str::slug($request->name),
             'image' => $imagePath,
             'status' => $request->status,
-
-        ]);
-
+            'meta_title' => $request->meta_title,
+            'meta_description' => $request->meta_description,
+            'meta_keywords' => $request->meta_keywords,
+            'meta_image' => saveImagePath($request->file('meta_image'), null, 'brand/meta-image'),
+        ]); 
+        
         return redirect()->route('admin.brand.index')->with('success', 'Brand has been added successfully.');
     }
 
@@ -110,9 +113,12 @@ class BrandController extends Controller implements HasMiddleware
             'slug' => Str::slug($request->name),
             'image' => $imagePath,
             'status' => $request->status,
-
-        ]);
-
+            'meta_title' => $request->meta_title,
+            'meta_description' => $request->meta_description,
+            'meta_keywords' => $request->meta_keywords,
+            'meta_image' => saveImagePath($request->file('meta_image'), $brand->meta_image, 'brand/meta-image'),
+        ]); 
+        
         return redirect()->route('admin.brand.index')->with('success', 'Brand has been updated successfully.');
     }
 

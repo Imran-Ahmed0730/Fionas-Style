@@ -50,6 +50,35 @@
                                     </div>
                                     @enderror
                                 </div>
+                                @if(!isset($item))
+                                    <div class="mb-3 row">
+                                        <div class="col-md-6 col-6">
+                                            <div class="form-check"> <input class="form-check-input" type="checkbox" name="suffix[]" value="Add" id="gridCheck1" > <label class="form-check-label" for="gridCheck1">
+                                                    Add
+                                                </label> </div>
+                                            <div class="form-check"> <input class="form-check-input" type="checkbox" name="suffix[]" value="View" id="gridCheck2"> <label class="form-check-label" for="gridCheck2">
+                                                    View
+                                                </label> </div>
+                                            <div class="form-check"> <input class="form-check-input" type="checkbox" name="suffix[]" value="Update" id="gridCheck3" > <label class="form-check-label" for="gridCheck3">
+                                                    Update
+                                                </label> </div>
+                                            <div class="form-check"> <input class="form-check-input" type="checkbox" name="suffix[]" value="Details" id="gridCheck5"> <label class="form-check-label" for="gridCheck5">
+                                                    Details
+                                                </label> </div>
+
+                                        </div>
+                                        <div class="col-md-6 col-6">
+
+                                            <div class="form-check"> <input class="form-check-input" type="checkbox" name="suffix[]" value="Status Change" id="gridCheck6" > <label class="form-check-label" for="gridCheck6">
+                                                    Status Change
+                                                </label> </div>
+                                            <div class="form-check"> <input class="form-check-input" type="checkbox" name="suffix[]" value="Delete" id="gridCheck4"> <label class="form-check-label" for="gridCheck4">
+                                                    Delete
+                                                </label> </div>
+
+                                        </div>
+                                    </div>
+                                @endif
                                 <fieldset class="mb-3">
                                     <legend class="col-form-label ">Status</legend>
                                     <div class="">

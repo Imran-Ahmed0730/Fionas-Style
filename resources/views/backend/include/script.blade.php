@@ -42,6 +42,8 @@
 <script src="{{asset('backend')}}/assets/js/kaiadmin.min.js"></script>
 
 {{--//laravel script--}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     $(document).ready(function() {
         $('#sidebar-search').on('keyup', function() {
@@ -83,7 +85,6 @@
     @endif
 </script>
 <!-- SweetAlert2 CDN -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).on('click', '.btn-delete', function(e) {
         e.preventDefault();  // Prevent default action (form submission)

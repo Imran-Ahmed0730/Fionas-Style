@@ -22,6 +22,10 @@ return new class extends Migration
             $table->integer('included_to_home')->default(0);
             $table->text('icon')->nullable();
             $table->text('cover_photo')->nullable();
+            $table->string('meta_title')->nullable();
+            $table->string('meta_description')->nullable();
+            $table->string('meta_keywords')->nullable();
+            $table->string('meta_image')->nullable();
             $table->tinyInteger('status')->default(1)->comment('1=>Active,0=>Inactive');
             $table->timestamps();
         });

@@ -74,9 +74,12 @@ class CategoryController extends Controller implements HasMiddleware
             'cover_photo' => $cover_photo,
             'priority' => $request->priority,
             'status' => $request->status,
-
-        ]);
-
+            'meta_title' => $request->meta_title,
+            'meta_description' => $request->meta_description,
+            'meta_keywords' => $request->meta_keywords,
+            'meta_image' => saveImagePath($request->file('meta_image'), null, 'category/meta-image'),
+        ]); 
+        
         return redirect()->route('admin.category.index')->with('success', 'Category has been added successfully.');
     }
 
@@ -149,9 +152,12 @@ class CategoryController extends Controller implements HasMiddleware
             'cover_photo' => $cover_photo,
             'priority' => $request->priority,
             'status' => $request->status,
-
-        ]);
-
+            'meta_title' => $request->meta_title,
+            'meta_description' => $request->meta_description,
+            'meta_keywords' => $request->meta_keywords,
+            'meta_image' => saveImagePath($request->file('meta_image'), $category->meta_image, 'category/meta-image'),
+        ]); 
+        
         return redirect()->route('admin.category.index')->with('success', 'Category has been updated successfully.');
     }
 
