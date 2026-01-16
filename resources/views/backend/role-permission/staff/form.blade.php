@@ -43,8 +43,9 @@
                     <input type="hidden" name="id" value="@isset($item){{$item->id}}@endisset">
                     <div class="col-md-12"> <!--begin::Quick Example-->
                         <div class="card"> <!--begin::Header-->
-                            <div class="card-header">
+                            <div class="card-header d-flex align-items-center">
                                 <div class="card-title">@isset($item)Edit @else Add @endisset Staff</div>
+                                <a href="{{route('admin.staff.index')}}" data-bs-toggle="tooltip" title="View Staff" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Staff</a>
                             </div> <!--end::Header--> <!--begin::Form-->
                             <div class="card-body row">
                                 <div class="col-md-6 mb-3"> <label for="exampleInputName1" class="form-label">Name</label> <input type="text" name="name" placeholder="Enter name" class="form-control @error('name') is-invalid @enderror" value="@isset($item){{$item->name}}@else{{old('name')}}@endisset" id="exampleInputName1" aria-describedby="nameHelp" required>

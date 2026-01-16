@@ -5,11 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Attribute;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\AttributeRequest;
+use App\Services\AttributeService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 class AttributeController extends Controller implements HasMiddleware
 {
+    protected $attributeService;
+
+    public function __construct(AttributeService $attributeService)
+    {
+        $this->attributeService = $attributeService;
+    }
     public static function middleware(): array
     {
         return [
@@ -39,15 +47,9 @@ class AttributeController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AttributeRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required',
-        ]);
-
-        $attribute = Attribute::create($request->all());
-
+        $this->attributeService->createAttribute($request->validated());
         return redirect()->route('admin.attribute.index')->with('success', 'Attribute has been added successfully.');
     }
 
@@ -71,16 +73,10 @@ class AttributeController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(AttributeRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required',
-        ]);
         $attribute = Attribute::findOrFail($request->id);
-
-        $attribute->update($request->all());
-
+        $this->attributeService->updateAttribute($attribute, $request->validated());
         return redirect()->route('admin.attribute.index')->with('success', 'Attribute has been updated successfully.');
     }
 
@@ -90,20 +86,14 @@ class AttributeController extends Controller implements HasMiddleware
     public function destroy(Request $request)
     {
         $attribute = Attribute::findOrFail($request->id);
-        $attribute->delete();
+        $this->attributeService->deleteAttribute($attribute);
         return redirect()->route('admin.attribute.index')->with('success', 'Attribute has been deleted successfully.');
     }
 
     public function changeStatus($id)
     {
         $attribute = Attribute::findOrFail($id);
-        $status = 1;
-        if($attribute->status == 1){
-            $status = 0;
-        }
-        $attribute->update([
-            'status' => $status,
-        ]);
+        $this->attributeService->changeStatus($attribute);
         return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
     }
 }

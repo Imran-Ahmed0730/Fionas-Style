@@ -7,9 +7,17 @@ use App\Models\Admin\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Http\Requests\Admin\SupplierRequest;
+use App\Services\SupplierService;
 
 class SupplierController extends Controller implements HasMiddleware
 {
+    protected $supplierService;
+
+    public function __construct(SupplierService $supplierService)
+    {
+        $this->supplierService = $supplierService;
+    }
     public static function middleware(): array
     {
         return [
@@ -39,16 +47,9 @@ class SupplierController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SupplierRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'phone' => 'required',
-            'email' => 'nullable',
-            'address' => 'required',
-        ]);
-
-        Supplier::create($request->all());
+        $this->supplierService->createSupplier($request->validated());
         return redirect()->route('admin.supplier.index')->with('message', 'Supplier added successfully.');
     }
 
@@ -72,18 +73,10 @@ class SupplierController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(SupplierRequest $request, string $id)
     {
-        $request->validate([
-            'name' => 'required',
-            'phone' => 'required',
-            'email' => 'nullable',
-            'address' => 'required',
-        ]);
-
         $supplier = Supplier::findOrFail($request->id);
-
-        $supplier->update($request->all());
+        $this->supplierService->updateSupplier($supplier, $request->validated());
         return redirect()->route('admin.supplier.index')->with('message', 'Supplier updated successfully.');
     }
 
@@ -92,21 +85,13 @@ class SupplierController extends Controller implements HasMiddleware
      */
     public function destroy(Request $request)
     {
-        Supplier::destroy($request->id);
+        $this->supplierService->deleteSupplier($request->id);
         return back()->with('message', 'Supplier deleted successfully.');
     }
 
     public function changeStatus($id)
     {
-        $supplier = Supplier::findOrFail($id);
-        if ($supplier->status == 1) {
-            $supplier->status = 0;
-        }
-        else {
-            $supplier->status = 1;
-        }
-        $supplier->save();
-
+        $this->supplierService->changeStatus($id);
         return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
     }
 }

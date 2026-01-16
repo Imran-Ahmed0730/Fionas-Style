@@ -38,7 +38,7 @@
                     <div class="card"> <!--begin::Header-->
                         <div class="card-header d-flex align-items-center">
                             <div class="card-title"><span class="process-type">Add</span> Attribute Value for {{$item->name}}</div>
-                            <a href="{{route('admin.attribute.index')}}" title="View Attributes" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Attributes</a>
+                            <a href="{{route('admin.attribute.index')}}" data-bs-toggle="tooltip" title="View Attributes" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Attributes</a>
                         </div> <!--end::Header--> <!--begin::Form-->
                         <form id="attribute_form" action="{{route('admin.attribute.value.store')}}" method="post">
                             @csrf<!--begin::Body-->
@@ -80,13 +80,13 @@
                                         <td>
                                             <div class="d-flex">
                                                 @can('Attribute Value Update')
-                                                    <a href="#" data-id="{{$value->id}}" title="Edit" class="edit_attribute_value btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                    <a href="#" data-id="{{$value->id}}" data-bs-toggle="tooltip" title="Edit" class="edit_attribute_value btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
                                                 @endcan
                                                 @can('Attribute Value Delete')
                                                     <form action="{{route('admin.attribute.value.delete')}}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{$value->id}}">
-                                                        <button class="btn btn-danger btn-delete" title="Delete"><i class="fa fa-trash"></i></button>
+                                                        <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
                                                     </form>
                                                 @endcan
                                             </div>
@@ -110,14 +110,14 @@
                 let attribute_value = $(this).closest('tr').find('.attribute_value').text();
                 $('#value').val(attribute_value);
                 $('#attribute_value_id').val($(this).data('id'));
-                $('#attribute_form').attr('action', '{{route('admin.attribute.value.update')}}');
+                $('#attribute_form').attr('action', "{{route('admin.attribute.value.update')}}");
                 $('#submit_btn').text('Update');
                 $('.process-type').text('Edit');
             });
 
             $('#reset_btn').click(function () {
                 $('#attribute_value_id').val('');
-                $('#attribute_form').attr('action', '{{route('admin.attribute.value.store')}}');
+                $('#attribute_form').attr('action', "{{route('admin.attribute.value.store')}}");
                 $('#submit_btn').text('Submit');
                 $('.process-type').text('Add');
             });

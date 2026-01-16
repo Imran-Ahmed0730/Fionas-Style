@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Category;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\CategoryRequest;
+use App\Services\CategoryService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller implements HasMiddleware
 {
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
     public static function middleware(): array
     {
         return [
@@ -44,42 +52,14 @@ class CategoryController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required|unique:categories,name',
-            'description' => 'required',
-            'icon' => 'required|image|mimes:jpeg,png,jpg',
-            'cover_photo' => 'required|image|mimes:jpeg,png,jpg',
-        ]);
-        $icon = saveImagePath($request->file('icon'), null, 'category/icon');
-        if($request->file('cover_photo')){
-            $cover_photo = saveImagePath($request->file('cover_photo'), null,'category/cover-photo');
-        }
-        if($request->parent_id != 0){
-            $parent_category = Category::where('id', $request->parent_id)->first();
-            $level = $parent_category->level + 1;
-        }
-        else{
-            $level = 1;
-        }
-        $category = Category::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'slug' => Str::slug($request->name),
-            'icon' => $icon,
-            'level' => $level,
-            'parent_id' => $request->parent_id,
-            'cover_photo' => $cover_photo,
-            'priority' => $request->priority,
-            'status' => $request->status,
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'meta_keywords' => $request->meta_keywords,
-            'meta_image' => saveImagePath($request->file('meta_image'), null, 'category/meta-image'),
-        ]); 
-        
+        $this->categoryService->createCategory(
+            $request->validated(),
+            $request->file('icon'),
+            $request->file('cover_photo'),
+            $request->file('meta_image')
+        );
         return redirect()->route('admin.category.index')->with('success', 'Category has been added successfully.');
     }
 
@@ -105,59 +85,16 @@ class CategoryController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(CategoryRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required|unique:brands,name',
-            'description' => 'required',
-            'icon' => 'image|mimes:jpeg,png,jpg',
-            'cover_photo' => 'image|mimes:jpeg,png,jpg',
-        ]);
         $category = Category::findOrFail($request->id);
-        if($category->name != $request->name){
-            $request->validate([
-                'name' => 'unique:categories,name'
-            ]);
-        }
-        if ($request->hasFile('icon')) {
-            $icon = $request->file('icon');
-            $icon = saveImagePath($icon, $category->icon, 'category/icon' );
-        }
-        else{
-            $icon = $category->icon;
-        }
-
-        if ($request->hasFile('cover_photo')) {
-            $cover_photo = $request->file('cover_photo');
-            $cover_photo = saveImagePath($cover_photo, $category->cover_photo, 'category/cover-photo' );
-        }
-        else{
-            $cover_photo = $category->cover_photo;
-        }
-        if($request->parent_id != 0){
-            $parent_category = Category::where('id', $request->parent_id)->first();
-            $level = $parent_category->level + 1;
-        }
-        else{
-            $level = 1;
-        }
-        $category->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'slug' => Str::slug($request->name),
-            'level' => $level,
-            'parent_id' => $request->parent_id,
-            'icon' => $icon,
-            'cover_photo' => $cover_photo,
-            'priority' => $request->priority,
-            'status' => $request->status,
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'meta_keywords' => $request->meta_keywords,
-            'meta_image' => saveImagePath($request->file('meta_image'), $category->meta_image, 'category/meta-image'),
-        ]); 
-        
+        $this->categoryService->updateCategory(
+            $category,
+            $request->validated(),
+            $request->file('icon'),
+            $request->file('cover_photo'),
+            $request->file('meta_image')
+        );
         return redirect()->route('admin.category.index')->with('success', 'Category has been updated successfully.');
     }
 
@@ -167,38 +104,20 @@ class CategoryController extends Controller implements HasMiddleware
     public function destroy(Request $request)
     {
         $category = Category::findOrFail($request->id);
-        if ($category->icon && file_exists($category->icon)) {
-            unlink($category->icon);
-        }
-        if ($category->cover_photo && file_exists($category->cover_photo)) {
-            unlink($category->cover_photo);
-        }
-        $category->delete();
+        $this->categoryService->deleteCategory($category);
         return redirect()->route('admin.category.index')->with('success', 'Category has been deleted successfully.');
     }
 
     public function changeStatus($id)
     {
         $category = Category::findOrFail($id);
-        $status = 1;
-        if($category->status == 1){
-            $status = 0;
-        }
-        $category->update([
-            'status' => $status,
-        ]);
+        $this->categoryService->changeStatus($category);
         return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
     }
     public function homeInclude($id)
     {
         $category = Category::findOrFail($id);
-        $home_include = 1;
-        if($category->included_to_home == 1){
-            $home_include = 0;
-        }
-        $category->update([
-            'included_to_home' => $home_include,
-        ]);
+        $this->categoryService->homeInclude($category);
         return response()->json(['success' => true, 'message' => 'Home inclusion updated successfully.']);
     }
 }

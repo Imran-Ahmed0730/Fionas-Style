@@ -32,7 +32,7 @@
                     <div class="card"> <!--begin::Header-->
                         <div class="card-header d-flex align-items-center">
                             <div class="card-title">@isset($item) Edit @else Add @endisset Color Information</div>
-                            <a href="{{route('admin.color.index')}}" title="View Colors" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Colors</a>
+                            <a href="{{route('admin.color.index')}}" data-bs-toggle="tooltip" title="View Colors" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Colors</a>
                         </div> <!--end::Header--> <!--begin::Form-->
                         <form id="Color _form" action="@isset($item){{route('admin.color.update')}}@else{{route('admin.color.store')}}@endisset" method="post" enctype="multipart/form-data">
                             @csrf<!--begin::Body-->

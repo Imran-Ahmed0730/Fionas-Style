@@ -31,8 +31,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header d-flex align-items-center">
                             <div class="card-title">Key Information</div>
+                            <a href="{{route('admin.setting.index')}}" data-bs-toggle="tooltip" title="View Settings" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Settings</a>
                         </div>
                         <form action="@isset($item){{route('admin.setting.update')}}@else{{route('admin.setting.store')}}@endisset" method="post" enctype="multipart/form-data">
                             @csrf<!--begin::Body-->

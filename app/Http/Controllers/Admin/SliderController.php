@@ -7,9 +7,17 @@ use App\Models\Admin\Slider;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Http\Requests\Admin\SliderRequest;
+use App\Services\SliderService;
 
 class SliderController extends Controller implements HasMiddleware
 {
+    protected $sliderService;
+
+    public function __construct(SliderService $sliderService)
+    {
+        $this->sliderService = $sliderService;
+    }
     public static function middleware(): array
     {
         return [
@@ -40,26 +48,9 @@ class SliderController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SliderRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg',
-        ]);
-        $imagePath = saveImagePath($request->file('image'), null,'slider');
-        $slider = Slider::create([
-            'title' => $request->title,
-            'subtitle' => $request->subtitle,
-            'description' => $request->description,
-            'btn_text' => $request->btn_text,
-            'link' => $request->link,
-            'image' => $imagePath,
-            'priority' => $request->priority,
-            'position' => $request->position,
-            'status' => $request->status,
-
-        ]);
-
+        $this->sliderService->createSlider($request->validated(), $request->file('image'));
         return redirect()->route('admin.slider.index')->with('success', 'Slider has been added successfully.');
     }
 
@@ -83,34 +74,10 @@ class SliderController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(SliderRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'image' => 'image|mimes:jpeg,png,jpg',
-        ]);
         $slider = Slider::findOrFail($request->id);
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imagePath = saveImagePath($image, $slider->image, 'slider' );
-
-        }
-        else{
-            $imagePath = $slider->image;
-        }
-        $slider->update([
-            'title' => $request->title,
-            'subtitle' => $request->subtitle,
-            'description' => $request->description,
-            'btn_text' => $request->btn_text,
-            'link' => $request->link,
-            'image' => $imagePath,
-            'priority' => $request->priority,
-            'position' => $request->position,
-            'status' => $request->status,
-
-        ]);
-
+        $this->sliderService->updateSlider($slider, $request->validated(), $request->file('image'));
         return redirect()->route('admin.slider.index')->with('success', 'Slider has been updated successfully.');
     }
 
@@ -119,24 +86,13 @@ class SliderController extends Controller implements HasMiddleware
      */
     public function destroy(Request $request)
     {
-        $slider = Slider::findOrFail($request->id);
-        if ($slider->image && file_exists($slider->image)) {
-            unlink($slider->image);
-        }
-        $slider->delete();
+        $this->sliderService->deleteSlider($request->id);
         return redirect()->route('admin.slider.index')->with('success', 'Slider has been deleted successfully.');
     }
 
     public function changeStatus($id)
     {
-        $slider = Slider::findOrFail($id);
-        $status = 1;
-        if($slider->status == 1){
-            $status = 0;
-        }
-        $slider->update([
-            'status' => $status,
-        ]);
+        $this->sliderService->changeStatus($id);
         return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
     }
 }

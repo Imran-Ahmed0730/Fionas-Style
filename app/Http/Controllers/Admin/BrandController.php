@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Brand;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\BrandRequest;
+use App\Services\BrandService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Str;
 
 class BrandController extends Controller implements HasMiddleware
 {
+    protected $brandService;
+
+    public function __construct(BrandService $brandService)
+    {
+        $this->brandService = $brandService;
+    }
     public static function middleware(): array
     {
         return [
@@ -41,27 +49,9 @@ class BrandController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BrandRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required|unique:brands,name',
-            'description' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg',
-        ]);
-        $imagePath = saveImagePath($request->file('image'), null,'brand');
-        $brand = Brand::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'slug' => Str::slug($request->name),
-            'image' => $imagePath,
-            'status' => $request->status,
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'meta_keywords' => $request->meta_keywords,
-            'meta_image' => saveImagePath($request->file('meta_image'), null, 'brand/meta-image'),
-        ]); 
-        
+        $this->brandService->createBrand($request->validated(), $request->file('image'), $request->file('meta_image'));
         return redirect()->route('admin.brand.index')->with('success', 'Brand has been added successfully.');
     }
 
@@ -85,40 +75,10 @@ class BrandController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(BrandRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required|unique:brands,name',
-            'description' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg',
-        ]);
         $brand = Brand::findOrFail($request->id);
-        if($brand->name != $request->name){
-            $request->validate([
-                'name' => 'unique:brands,name'
-            ]);
-        }
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imagePath = saveImagePath($image, $brand->image, 'brand' );
-
-        }
-        else{
-            $imagePath = $brand->image;
-        }
-        $brand->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'slug' => Str::slug($request->name),
-            'image' => $imagePath,
-            'status' => $request->status,
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'meta_keywords' => $request->meta_keywords,
-            'meta_image' => saveImagePath($request->file('meta_image'), $brand->meta_image, 'brand/meta-image'),
-        ]); 
-        
+        $this->brandService->updateBrand($brand, $request->validated(), $request->file('image'), $request->file('meta_image'));
         return redirect()->route('admin.brand.index')->with('success', 'Brand has been updated successfully.');
     }
 
@@ -128,23 +88,14 @@ class BrandController extends Controller implements HasMiddleware
     public function destroy(Request $request)
     {
         $brand = Brand::findOrFail($request->id);
-        if ($brand->image && file_exists($brand->image)) {
-            unlink($brand->image);
-        }
-        $brand->delete();
+        $this->brandService->deleteBrand($brand);
         return redirect()->route('admin.brand.index')->with('success', 'Brand has been deleted successfully.');
     }
 
     public function changeStatus($id)
     {
         $brand = Brand::findOrFail($id);
-        $status = 1;
-        if($brand->status == 1){
-            $status = 0;
-        }
-        $brand->update([
-            'status' => $status,
-        ]);
+        $this->brandService->changeStatus($brand);
         return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
     }
 }

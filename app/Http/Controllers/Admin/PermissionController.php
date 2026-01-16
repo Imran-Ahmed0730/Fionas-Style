@@ -7,9 +7,17 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Models\Permission;
+use App\Http\Requests\Admin\PermissionRequest;
+use App\Services\PermissionService;
 
 class PermissionController extends Controller implements HasMiddleware
 {
+    protected $permissionService;
+
+    public function __construct(PermissionService $permissionService)
+    {
+        $this->permissionService = $permissionService;
+    }
     public static function middleware():array
     {
         return [
@@ -37,26 +45,9 @@ class PermissionController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PermissionRequest $request)
     {
-        $request->validate([
-            'name' => 'required | unique:permissions,name',
-        ]);
-        if(isset($request->suffix) && count($request->suffix) > 0){
-            foreach ($request->suffix as $suffix)
-            {
-                Permission::create([
-                    'name' => $request->name.' '.$suffix,
-                    'status' => $request->status ?? 1,
-                ]);
-            }
-        }
-        else{
-            Permission::create([
-                'name' => $request->name,
-                'status' => $request->status ?? 1,
-            ]);
-        }
+        $this->permissionService->createPermissions($request->validated());
         return redirect()->route('admin.permission.index')->with('success', 'Permission created successfully');
     }
 
@@ -80,18 +71,10 @@ class PermissionController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(PermissionRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-        ]);
         $permission = Permission::findOrFail($request->id);
-        if($request->name != $permission->name){
-            $request->validate([
-                'name' => 'unique:permissions,name'
-            ]);
-        }
-        $permission->update($request->all());
+        $this->permissionService->updatePermission($permission, $request->validated());
         return redirect()->route('admin.permission.index')->with('success', 'Permission updated successfully');
     }
 
@@ -100,14 +83,16 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function destroy(Request $request)
     {
-        Permission::where('id', $request->id)->delete();
+        // Using findOrFail as consistent with other methods, although original used where->delete
+        $permission = Permission::findOrFail($request->id);
+        $this->permissionService->deletePermission($permission);
         return redirect()->route('admin.permission.index')->with('success', 'Permission deleted successfully');
     }
 
     public function changeStatus($id)
     {
         $permission = Permission::findOrFail($id);
-        $permission->update(['status' => !$permission->status]);
+        $this->permissionService->changeStatus($permission);
         return response()->json([
             'success' => true,
             'message'=> 'Permission status changed successfully',

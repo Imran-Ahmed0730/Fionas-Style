@@ -5,10 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Color;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\ColorRequest;
+use App\Services\ColorService;
 use Illuminate\Routing\Controllers\Middleware;
 
 class ColorController extends Controller
 {
+    protected $colorService;
+
+    public function __construct(ColorService $colorService)
+    {
+        $this->colorService = $colorService;
+    }
     public static function middleware(): array
     {
         return [
@@ -38,16 +46,9 @@ class ColorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ColorRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required',
-            'color_code' => 'required',
-        ]);
-
-        $color = Color::create($request->all());
-
+        $this->colorService->createColor($request->validated());
         return redirect()->route('admin.color.index')->with('success', 'Color has been added successfully.');
     }
 
@@ -71,17 +72,10 @@ class ColorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(ColorRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required',
-            'color_code' => 'required',
-        ]);
         $color = Color::findOrFail($request->id);
-
-        $color->update($request->all());
-
+        $this->colorService->updateColor($color, $request->validated());
         return redirect()->route('admin.color.index')->with('success', 'Color has been updated successfully.');
     }
 
@@ -91,7 +85,7 @@ class ColorController extends Controller
     public function destroy(Request $request)
     {
         $color = Color::findOrFail($request->id);
-        $color->delete();
+        $this->colorService->deleteColor($color);
         return redirect()->route('admin.color.index')->with('success', 'Color has been deleted successfully.');
     }
 }

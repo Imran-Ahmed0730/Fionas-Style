@@ -32,7 +32,7 @@
                     <div class="card"> <!--begin::Header-->
                         <div class="card-header d-flex align-items-center">
                             <div class="card-title">@isset($item) Edit @else Add @endisset Attribute Information</div>
-                            <a href="{{route('admin.attribute.index')}}" title="View Attributes" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Attributes</a>
+                            <a href="{{route('admin.attribute.index')}}" data-bs-toggle="tooltip" title="View Attributes" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Attributes</a>
                         </div> <!--end::Header--> <!--begin::Form-->
                         <form id="attribute_form" action="@isset($item){{route('admin.attribute.update')}}@else{{route('admin.attribute.store')}}@endisset" method="post" enctype="multipart/form-data">
                             @csrf<!--begin::Body-->

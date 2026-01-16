@@ -32,7 +32,7 @@
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
                             <div class="card-title">Permission Information</div>
-                            <a href="{{route('admin.permission.index')}}" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Permissions</a>
+                            <a href="{{route('admin.permission.index')}}" data-bs-toggle="tooltip" title="View Permissions" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Permissions</a>
                         </div> <!--end::Header--> <!--begin::Form-->
                         <form action="@isset($item){{route('admin.permission.update')}}@else{{route('admin.permission.store')}}@endisset" method="post" >
                             @csrf<!--begin::Body-->

@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Banner;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\BannerRequest;
+use App\Services\BannerService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Str;
 
 class BannerController extends Controller implements HasMiddleware
 {
+    protected $bannerService;
+
+    public function __construct(BannerService $bannerService)
+    {
+        $this->bannerService = $bannerService;
+    }
     public static function middleware(): array
     {
         return [
@@ -41,26 +49,9 @@ class BannerController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BannerRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg',
-        ]);
-        $imagePath = saveImagePath($request->file('image'), null,'banner');
-        $banner = Banner::create([
-            'title' => $request->title,
-            'subtitle' => $request->subtitle,
-            'description' => $request->description,
-            'btn_text' => $request->btn_text,
-            'link' => $request->link,
-            'image' => $imagePath,
-            'priority' => $request->priority,
-            'position' => $request->position,
-            'status' => $request->status,
-
-        ]);
-
+        $this->bannerService->createBanner($request->validated(), $request->file('image'));
         return redirect()->route('admin.banner.index')->with('success', 'Banner has been added successfully.');
     }
 
@@ -84,34 +75,10 @@ class BannerController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(BannerRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'image' => 'image|mimes:jpeg,png,jpg',
-        ]);
         $banner = Banner::findOrFail($request->id);
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imagePath = saveImagePath($image, $banner->image, 'banner' );
-
-        }
-        else{
-            $imagePath = $banner->image;
-        }
-        $banner->update([
-            'title' => $request->title,
-            'subtitle' => $request->subtitle,
-            'description' => $request->description,
-            'btn_text' => $request->btn_text,
-            'link' => $request->link,
-            'image' => $imagePath,
-            'priority' => $request->priority,
-            'position' => $request->position,
-            'status' => $request->status,
-
-        ]);
-
+        $this->bannerService->updateBanner($banner, $request->validated(), $request->file('image'));
         return redirect()->route('admin.banner.index')->with('success', 'Banner has been updated successfully.');
     }
 
@@ -121,23 +88,14 @@ class BannerController extends Controller implements HasMiddleware
     public function destroy(Request $request)
     {
         $banner = Banner::findOrFail($request->id);
-        if ($banner->image && file_exists($banner->image)) {
-            unlink($banner->image);
-        }
-        $banner->delete();
+        $this->bannerService->deleteBanner($banner);
         return redirect()->route('admin.banner.index')->with('success', 'Banner has been deleted successfully.');
     }
 
     public function changeStatus($id)
     {
         $banner = Banner::findOrFail($id);
-        $status = 1;
-        if($banner->status == 1){
-            $status = 0;
-        }
-        $banner->update([
-            'status' => $status,
-        ]);
+        $this->bannerService->changeStatus($banner);
         return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
     }
 }

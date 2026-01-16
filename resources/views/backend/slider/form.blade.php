@@ -32,7 +32,7 @@
                     <div class="card"> <!--begin::Header-->
                         <div class="card-header d-flex align-items-center">
                             <div class="card-title">@isset($item) Edit @else Add @endisset Slider Information</div>
-                            <a href="{{route('admin.slider.index')}}" title="View Sliders" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Sliders</a>
+                            <a href="{{route('admin.slider.index')}}" data-bs-toggle="tooltip" title="View Sliders" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Sliders</a>
                         </div> <!--end::Header--> <!--begin::Form-->
                         <form id="slider_form" action="@isset($item){{route('admin.slider.update')}}@else{{route('admin.slider.store')}}@endisset" method="post" enctype="multipart/form-data">
                             @csrf<!--begin::Body-->

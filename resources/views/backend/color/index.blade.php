@@ -70,18 +70,18 @@
                                         <td>{{$item->name}}</td>
                                         <td>{{$item->color_code}}</td>
                                         <td>
-                                            <div class="color-preview" style="background: {{$item->color_code}}"></div>
+                                            <div class="color-preview" style="background-color: {{$item->color_code}}"></div>
                                         </td>
                                         <td>
                                             <div class="d-flex">
                                                 @can('Color Update')
-                                                    <a href="{{route('admin.color.edit', $item->id)}}" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                    <a href="{{route('admin.color.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
                                                 @endcan
                                                 @can('Color Delete')
                                                     <form action="{{route('admin.color.delete')}}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{$item->id}}">
-                                                        <button class="btn btn-danger btn-delete" title="Delete"><i class="fa fa-trash"></i></button>
+                                                        <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
                                                     </form>
                                                 @endcan
                                             </div>

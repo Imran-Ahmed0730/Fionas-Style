@@ -67,16 +67,16 @@
                                         <td>
                                             <div class="d-flex">
                                                 @can('Role Permission Add/Update')
-                                                    <a href="{{route('admin.role.accessibility.assign', $item->id)}}" title="Add/Edit Permission" class="btn btn-warning me-2"><i class="fa fa-lock"></i></a>
+                                                    <a href="{{route('admin.role.accessibility.assign', $item->id)}}" data-bs-toggle="tooltip" title="Add/Edit Permission" class="btn btn-warning me-2"><i class="fa fa-lock"></i></a>
                                                 @endcan
                                                 @can('Role Update')
-                                                    <a href="{{route('admin.role.edit', $item->id)}}" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                    <a href="{{route('admin.role.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
                                                 @endcan
                                                 @can('Role Delete')
                                                     <form action="{{route('admin.role.delete')}}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{$item->id}}">
-                                                        <button class="btn btn-danger btn-delete" title="Remove"><i class="fa fa-trash"></i></button>
+                                                        <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Remove"><i class="fa fa-trash"></i></button>
                                                     </form>
                                                 @endcan
                                             </div>

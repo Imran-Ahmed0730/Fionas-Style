@@ -6,11 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Attribute;
 use App\Models\Admin\AttributeValue;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\AttributeValueRequest;
+use App\Services\AttributeValueService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 class AttributeValueController extends Controller implements HasMiddleware
 {
+    protected $attributeValueService;
+
+    public function __construct(AttributeValueService $attributeValueService)
+    {
+        $this->attributeValueService = $attributeValueService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -28,14 +36,9 @@ class AttributeValueController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AttributeValueRequest $request)
     {
-        $request->validate([
-            'value' => 'required',
-        ]);
-
-        AttributeValue::create($request->all());
-
+        $this->attributeValueService->createAttributeValue($request->validated());
         return back()->with('success', 'Attribute value has been added successfully.');
     }
 
@@ -59,16 +62,10 @@ class AttributeValueController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(AttributeValueRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'value' => 'required',
-        ]);
         $attribute_value = AttributeValue::findOrFail($request->attribute_value_id);
-
-        $attribute_value->update($request->all());
-
+        $this->attributeValueService->updateAttributeValue($attribute_value, $request->validated());
         return back()->with('success', 'Attribute value has been updated successfully.');
     }
 
@@ -78,7 +75,7 @@ class AttributeValueController extends Controller implements HasMiddleware
     public function destroy(Request $request)
     {
         $attribute_value = AttributeValue::findOrFail($request->id);
-        $attribute_value->delete();
+        $this->attributeValueService->deleteAttributeValue($attribute_value);
         return back()->with('success', 'Attribute value has been deleted successfully.');
     }
 }

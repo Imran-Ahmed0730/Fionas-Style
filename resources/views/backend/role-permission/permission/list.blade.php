@@ -72,13 +72,13 @@
                                         <td>
                                             <div class="d-flex">
                                                 @can('Permission Update')
-                                                    <a href="{{route('admin.permission.edit', $item->id)}}" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                    <a href="{{route('admin.permission.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
                                                 @endcan
                                                 @can('Permission Delete')
                                                     <form action="{{route('admin.permission.delete')}}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{$item->id}}">
-                                                        <button class="btn btn-danger btn-delete"><i class="fa fa-trash"></i></button>
+                                                        <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
                                                     </form>
                                                 @endcan
                                             </div>

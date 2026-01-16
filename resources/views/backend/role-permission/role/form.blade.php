@@ -32,7 +32,7 @@
                     <div class="card"> <!--begin::Header-->
                         <div class="card-header d-flex align-items-center">
                             <div class="card-title">Role Information</div>
-                            <a href="{{route('admin.role.index')}}" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Roles</a>
+                            <a href="{{route('admin.role.index')}}" data-bs-toggle="tooltip" title="View Roles" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Roles</a>
                         </div> <!--end::Header--> <!--begin::Form-->
                         <form action="@isset($item){{route('admin.role.update')}}@else{{route('admin.role.store')}}@endisset" method="post" enctype="multipart/form-data">
                             @csrf<!--begin::Body-->

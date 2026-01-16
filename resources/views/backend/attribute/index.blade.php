@@ -83,16 +83,16 @@
                                         <td>
                                             <div class="d-flex">
                                                 @canany(['Attribute Value Add', 'Attribute Value Update'])
-                                                    <a href="{{route('admin.attribute.value.edit', $item->id)}}" title="Add/Edit Value" class="btn btn-warning me-2"><i class="fa fa-file-pen"></i></a>
+                                                    <a href="{{route('admin.attribute.value.edit', $item->id)}}" data-bs-toggle="tooltip" title="Add/Edit Value" class="btn btn-warning me-2"><i class="fa fa-file-pen"></i></a>
                                                 @endcan
                                                 @can('Attribute Update')
-                                                    <a href="{{route('admin.attribute.edit', $item->id)}}" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                    <a href="{{route('admin.attribute.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
                                                 @endcan
                                                 @can('Attribute Delete')
                                                     <form action="{{route('admin.attribute.delete')}}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{$item->id}}">
-                                                        <button class="btn btn-danger btn-delete" title="Delete"><i class="fa fa-trash"></i></button>
+                                                        <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
                                                     </form>
                                                 @endcan
                                             </div>

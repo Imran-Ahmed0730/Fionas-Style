@@ -67,22 +67,30 @@
         "positionClass": "toast-top-right",
         "timeOut": "5000",
     }
+</script>
 
-    @if (session('success'))
-    toastr.success("{{ session('success') }}");
-    @endif
+{{-- Flash Messages Data --}}
+<div id="flash-messages"
+     data-success="{{ session('success') }}"
+     data-error="{{ session('error') }}"
+     data-info="{{ session('info') }}"
+     data-warning="{{ session('warning') }}"
+     style="display: none;">
+</div>
 
-    @if (session('error'))
-    toastr.error("{{ session('error') }}");
-    @endif
+<script>
+    $(document).ready(function() {
+        const flashMessages = $('#flash-messages');
+        const success = flashMessages.data('success');
+        const error = flashMessages.data('error');
+        const info = flashMessages.data('info');
+        const warning = flashMessages.data('warning');
 
-    @if (session('info'))
-    toastr.info("{{ session('info') }}");
-    @endif
-
-    @if (session('warning'))
-    toastr.warning("{{ session('warning') }}");
-    @endif
+        if (success) toastr.success(success);
+        if (error) toastr.error(error);
+        if (info) toastr.info(info);
+        if (warning) toastr.warning(warning);
+    });
 </script>
 <!-- SweetAlert2 CDN -->
 <script>

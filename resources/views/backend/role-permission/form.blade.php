@@ -32,7 +32,7 @@
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
                             <div class="card-title">Role Permission for {{ Str::title($role->name) }}</div>
-                            <a href="{{ route('admin.role.index') }}" class="btn btn-primary ms-auto">
+                            <a href="{{ route('admin.role.index') }}" data-bs-toggle="tooltip" title="View Roles" class="btn btn-primary ms-auto">
                                 <i class="fa fa-list me-2"></i>View Roles
                             </a>
                         </div>

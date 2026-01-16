@@ -6,9 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Http\Requests\Admin\UnitRequest;
+use App\Services\UnitService;
 
 class UnitController extends Controller
 {
+    protected $unitService;
+
+    public function __construct(UnitService $unitService)
+    {
+        $this->unitService = $unitService;
+    }
     public static function middleware(): array
     {
         return [
@@ -39,15 +47,9 @@ class UnitController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UnitRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required',
-        ]);
-
-        $unit = Unit::create($request->all());
-
+        $this->unitService->createUnit($request->validated());
         return redirect()->route('admin.unit.index')->with('success', 'Unit has been added successfully.');
     }
 
@@ -71,16 +73,10 @@ class UnitController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(UnitRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'name' => 'required',
-        ]);
         $unit = Unit::findOrFail($request->id);
-
-        $unit->update($request->all());
-
+        $this->unitService->updateUnit($unit, $request->validated());
         return redirect()->route('admin.unit.index')->with('success', 'Unit has been updated successfully.');
     }
 
@@ -89,21 +85,13 @@ class UnitController extends Controller
      */
     public function destroy(Request $request)
     {
-        $unit = Unit::findOrFail($request->id);
-        $unit->delete();
+        $this->unitService->deleteUnit($request->id);
         return redirect()->route('admin.unit.index')->with('success', 'Unit has been deleted successfully.');
     }
 
     public function changeStatus($id)
     {
-        $unit = Unit::findOrFail($id);
-        $status = 1;
-        if($unit->status == 1){
-            $status = 0;
-        }
-        $unit->update([
-            'status' => $status,
-        ]);
+        $this->unitService->changeStatus($id);
         return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
     }
 }

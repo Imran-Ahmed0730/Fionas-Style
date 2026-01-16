@@ -32,7 +32,7 @@
                     <div class="card"> <!--begin::Header-->
                         <div class="card-header d-flex align-items-center">
                             <div class="card-title">@isset($item) Edit @else Add @endisset Supplier</div>
-                            <a href="{{route('admin.supplier.index')}}" title="View Suppliers" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Suppliers</a>
+                            <a href="{{route('admin.supplier.index')}}" data-bs-toggle="tooltip" title="View Suppliers" class="btn btn-primary ms-auto"><i class="fa fa-list me-2"></i>View Suppliers</a>
 
                         </div> <!--end::Header--> <!--begin::Form-->
                         <form action="@isset($item){{route('admin.supplier.update')}}@else{{route('admin.supplier.store')}}@endisset" method="post" enctype="multipart/form-data">

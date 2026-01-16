@@ -40,9 +40,6 @@
         </div>
         <!-- End Logo Header -->
     </div>
-    <div class="p-3">
-        <input type="text" id="sidebar-search" class="form-control" placeholder="Search Menu">
-    </div>
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
 
@@ -382,33 +379,6 @@
                         </div>
                     </li>
                 @endcanany
-                @canany(['Vendor Add', 'Vendor View'])
-                    <li class="nav-item {{Str::contains($route, 'vendor') ? 'active':''}}">
-                        <a data-bs-toggle="collapse" href="#vendor">
-                            <i class="fas fa-shop"></i>
-                            <p>Vendors</p>
-                            <span class="caret"></span>
-                        </a>
-                        <div class="collapse {{Str::contains($route, 'vendor') ? 'show':''}}" id="vendor">
-                            <ul class="nav nav-collapse">
-                                @can('Vendor View')
-                                    <li class="{{$route =='admin.vendor.index' ? 'active':''}}">
-                                        <a href="{{route('admin.vendor.index')}}">
-                                            <span class="sub-item">View Vendors</span>
-                                        </a>
-                                    </li>
-                                @endcan
-                                @can('Vendor Add')
-                                    <li class="{{$route =='admin.vendor.create' ? 'active':''}}">
-                                        <a href="{{route('admin.vendor.create')}}">
-                                            <span class="sub-item">Add Vendor </span>
-                                        </a>
-                                    </li>
-                                @endcan
-                            </ul>
-                        </div>
-                    </li>
-                @endcanany
                 @canany(['Banner Add', 'Banner View'])
                     <li class="nav-item {{Str::contains($route, 'banner') ? 'active':''}}">
                         <a data-bs-toggle="collapse" href="#banner">
@@ -456,6 +426,33 @@
                                     <li class="{{$route =='admin.slider.create' ? 'active':''}}">
                                         <a href="{{route('admin.slider.create')}}">
                                             <span class="sub-item">Add Slider </span>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </div>
+                    </li>
+                @endcanany
+                @canany(['Page Add', 'Page View'])
+                    <li class="nav-item {{Str::contains($route, 'page') ? 'active':''}}">
+                        <a data-bs-toggle="collapse" href="#page">
+                            <i class="fas fa-file"></i>
+                            <p>Pages</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse {{Str::contains($route, 'page') ? 'show':''}}" id="page">
+                            <ul class="nav nav-collapse">
+                                @can('Page View')
+                                    <li class="{{$route =='admin.page.index' ? 'active':''}}">
+                                        <a href="{{route('admin.page.index')}}">
+                                            <span class="sub-item">View Pages</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('Page Add')
+                                    <li class="{{$route =='admin.page.create' ? 'active':''}}">
+                                        <a href="{{route('admin.page.create')}}">
+                                            <span class="sub-item">Add Page</span>
                                         </a>
                                     </li>
                                 @endcan

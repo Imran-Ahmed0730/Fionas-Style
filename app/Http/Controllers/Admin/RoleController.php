@@ -6,13 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use DB;
+use App\Http\Requests\Admin\RoleRequest;
+use App\Services\RoleService;
 
 class RoleController extends Controller implements HasMiddleware
 {
+    protected $roleService;
+
+    public function __construct(RoleService $roleService)
+    {
+        $this->roleService = $roleService;
+    }
     public static function middleware(): array
     {
         return[
@@ -40,12 +45,9 @@ class RoleController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(RoleRequest $request)
     {
-        $request->validate([
-            'name' => 'required|unique:roles,name',
-        ]);
-        $role = Role::create($request->all());
+        $this->roleService->createRole($request->validated());
         return redirect()->route('admin.role.index')->with('success', 'Role created successfully');
     }
 
@@ -69,18 +71,10 @@ class RoleController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(RoleRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-        ]);
         $role = Role::findOrFail($request->id);
-        if ($request->name != $role->name) {
-            $request->validate([
-                'name' => 'unique:roles,name'
-            ]);
-        }
-        $role->update($request->all());
+        $this->roleService->updateRole($role, $request->validated());
         return redirect()->route('admin.role.index')->with('success', 'Role updated successfully');
     }
 
@@ -89,35 +83,25 @@ class RoleController extends Controller implements HasMiddleware
      */
     public function destroy(Request $request)
     {
-        Role::destroy($request->id);
+        $this->roleService->deleteRole($request->id);
         return redirect()->route('admin.role.index')->with('success', 'Role deleted successfully');
     }
 
     public function assignPermission($id)
     {
         $data['role'] = Role::findOrFail($id);
-        if(Auth::user()->hasRole('Super Admin')) {
-            $data['permissions'] = Permission::orderBy('name', 'asc')->get();
-        }
-        else{
-            $data['permissions'] = Permission::where('status', 1)->orderBy('name', 'asc')->get();
-        }
+        $data['permissions'] = $this->roleService->getPermissionsForUser();
         $data['permissionsGrouped'] = $data['permissions']->groupBy(function ($permission) {
             return explode(' ', $permission->name)[0]; // Get the part before the first hyphen
         });
-        $data['items'] = DB::table('role_has_permissions')->where('role_id', $id)->pluck('permission_id')->toArray();
+        $data['items'] = $this->roleService->getRolePermissions($id);
         return view('backend.role-permission.form', $data);
     }
 
-    public function assignPermissionSubmit(Request $request)
+    public function assignPermissionSubmit(RoleRequest $request)
     {
-//        return $request;
-        $request->validate([
-            'permission' => 'required | array',
-        ]);
-//        dd($request->permission);
         $role = Role::findOrFail($request->id);
-        $role->syncPermissions($request->permission);
+        $this->roleService->syncPermissions($role, $request->permission);
         return redirect()->route('admin.role.index')->with('success', 'Permission assigned to the role successfully');
     }
 }
