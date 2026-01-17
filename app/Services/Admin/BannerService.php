@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admin;
 
 use App\Models\Admin\Banner;
 use Illuminate\Http\UploadedFile;
@@ -11,7 +11,7 @@ class BannerService
     {
         $imagePath = $image ? saveImagePath($image, null, 'banner') : null;
         $data['image'] = $imagePath;
-        
+
         return Banner::create($data);
     }
 

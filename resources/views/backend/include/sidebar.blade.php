@@ -379,6 +379,33 @@
                         </div>
                     </li>
                 @endcanany
+                @canany(['Product View', 'Product Add'])
+                    <li class="nav-item {{Str::contains($route, 'product') ? 'active':''}}">
+                        <a data-bs-toggle="collapse" href="#product">
+                            <i class="fas fa-image"></i>
+                            <p>Products</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse {{Str::contains($route, 'product') ? 'show':''}}" id="product">
+                            <ul class="nav nav-collapse">
+                                @can('Product Add')
+                                    <li class="{{$route =='admin.product.index' ? 'active':''}}">
+                                        <a href="{{route('admin.product.index')}}">
+                                            <span class="sub-item">View Products</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('Product View')
+                                    <li class="{{$route =='admin.product.create' ? 'active':''}}">
+                                        <a href="{{route('admin.product.create')}}">
+                                            <span class="sub-item">Add Product</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </div>
+                    </li>
+                @endcanany
                 @canany(['Banner Add', 'Banner View'])
                     <li class="nav-item {{Str::contains($route, 'banner') ? 'active':''}}">
                         <a data-bs-toggle="collapse" href="#banner">

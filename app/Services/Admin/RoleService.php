@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admin;
 
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use App\Models\Admin\Permission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 
 class RoleService
 {
@@ -29,7 +29,7 @@ class RoleService
         if (Auth::user()->hasRole('Super Admin')) {
             return Permission::orderBy('name', 'asc')->get();
         } else {
-            return Permission::where('status', 1)->orderBy('name', 'asc')->get();
+            return Permission::active()->orderBy('name', 'asc')->get();
         }
     }
 

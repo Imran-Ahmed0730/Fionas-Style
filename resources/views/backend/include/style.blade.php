@@ -6,4 +6,9 @@
 {{--Laravel Project Style--}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+<style>
+    .form-check{
+        padding: 0 !important
+    }
+</style>
 @stack('css')

@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Brand;
-use Illuminate\Http\Request;
 use App\Http\Requests\Admin\BrandRequest;
-use App\Services\BrandService;
+use App\Models\Admin\Brand;
+use App\Services\Admin\BrandService;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Str;
 
 class BrandController extends Controller implements HasMiddleware
 {

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Attribute;
-use Illuminate\Http\Request;
 use App\Http\Requests\Admin\AttributeRequest;
-use App\Services\AttributeService;
+use App\Models\Admin\Attribute;
+use App\Services\Admin\AttributeService;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 

@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Banner;
-use Illuminate\Http\Request;
 use App\Http\Requests\Admin\BannerRequest;
-use App\Services\BannerService;
+use App\Models\Admin\Banner;
+use App\Services\Admin\BannerService;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Str;
 
 class BannerController extends Controller implements HasMiddleware
 {

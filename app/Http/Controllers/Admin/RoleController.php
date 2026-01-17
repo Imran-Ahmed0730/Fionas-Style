@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\RoleRequest;
+use App\Services\Admin\RoleService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Models\Role;
-use App\Http\Requests\Admin\RoleRequest;
-use App\Services\RoleService;
 
 class RoleController extends Controller implements HasMiddleware
 {

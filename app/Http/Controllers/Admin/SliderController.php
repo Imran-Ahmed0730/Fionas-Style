@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SliderRequest;
 use App\Models\Admin\Slider;
+use App\Services\Admin\SliderService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use App\Http\Requests\Admin\SliderRequest;
-use App\Services\SliderService;
 
 class SliderController extends Controller implements HasMiddleware
 {

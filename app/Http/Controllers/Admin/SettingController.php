@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SettingUpdateRequest;
 use App\Models\Admin\Setting;
-use Illuminate\Http\Request;
+use App\Services\Admin\SettingService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use App\Http\Requests\Admin\SettingUpdateRequest;
-use App\Services\SettingService;
 
 class SettingController extends Controller implements HasMiddleware
 {

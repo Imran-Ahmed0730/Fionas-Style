@@ -23,8 +23,9 @@ class RoleRequest extends FormRequest
             ],
         ];
 
-        if ($this->routeIs('admin.role.assign_permission.submit')) {
+        if ($this->routeIs('admin.role.permission.assign.submit')) {
             $rules = [
+                'id' => 'required|exists:roles,id',
                 'permission' => 'required|array',
             ];
         }

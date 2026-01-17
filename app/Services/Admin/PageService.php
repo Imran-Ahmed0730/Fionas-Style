@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admin;
 
 use App\Models\Admin\Page;
 use Illuminate\Http\UploadedFile;
@@ -17,7 +17,7 @@ class PageService
     public function createPage(array $data, ?UploadedFile $image): Page
     {
         $metaImage = $image ? saveImagePath($image, null, 'page') : null;
-        
+
         $data['slug'] = str()->slug($data['title']) . uniqid();
         $data['meta_image'] = $metaImage;
 
@@ -57,8 +57,8 @@ class PageService
      */
     public function deletePage(Page $page): ?bool
     {
-        // Ideally we should delete the image too if it exists, 
-        // but sticking to original logic which didn't seem to delete it explicitly 
+        // Ideally we should delete the image too if it exists,
+        // but sticking to original logic which didn't seem to delete it explicitly
         // or relied on model observers/helper handling.
         // Assuming original destroy only deleted the record.
         if ($page->meta_image) {

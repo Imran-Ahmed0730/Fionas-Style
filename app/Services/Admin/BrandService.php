@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admin;
 
 use App\Models\Admin\Brand;
 use Illuminate\Http\UploadedFile;
@@ -11,7 +11,7 @@ class BrandService
     public function createBrand(array $data, ?UploadedFile $image, ?UploadedFile $metaImage): Brand
     {
         $data['slug'] = Str::slug($data['name']);
-        
+
         $data['image'] = $image ? saveImagePath($image, null, 'brand') : null;
         $data['meta_image'] = $metaImage ? saveImagePath($metaImage, null, 'brand/meta-image') : null;
 
@@ -22,7 +22,7 @@ class BrandService
     {
         if ($brand->name != $data['name']) {
              $data['slug'] = Str::slug($data['name']);
-        } // Controller re-validates unique name but doesn't explicitly update slug if name changes? 
+        } // Controller re-validates unique name but doesn't explicitly update slug if name changes?
           // Line 113 in original controller: 'slug' => Str::slug($request->name),
           // So it updates slug every time.
         $data['slug'] = Str::slug($data['name']);

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SupplierRequest;
 use App\Models\Admin\Supplier;
+use App\Services\Admin\SupplierService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use App\Http\Requests\Admin\SupplierRequest;
-use App\Services\SupplierService;
 
 class SupplierController extends Controller implements HasMiddleware
 {

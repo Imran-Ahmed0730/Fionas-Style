@@ -12,6 +12,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        rel="icon"
+        href="{{ asset(getSetting('site_favicon')) }}"
+        type="image/x-icon"
+    />
 
     <style>
         :root {
@@ -215,7 +220,6 @@
         .auth-right {
             width: 50%;
             display: flex;
-            align-items: center;
             justify-content: center;
             padding: 40px;
             background: #ffffff;

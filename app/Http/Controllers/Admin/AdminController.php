@@ -3,15 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
-use App\Services\AdminService;
-use App\Http\Requests\Admin\ProfileUpdateRequest;
 use App\Http\Requests\Admin\PasswordChangeRequest;
+use App\Http\Requests\Admin\ProfileUpdateRequest;
 use App\Http\Requests\Admin\RoleAssignRequest;
+use App\Models\User;
+use App\Services\Admin\AdminService;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admin;
 
 use App\Models\Admin\Category;
 use Illuminate\Http\UploadedFile;
@@ -11,7 +11,7 @@ class CategoryService
     public function createCategory(array $data, ?UploadedFile $icon, ?UploadedFile $coverPhoto, ?UploadedFile $metaImage): Category
     {
         $data['slug'] = Str::slug($data['name']);
-        
+
         $data['icon'] = $icon ? saveImagePath($icon, null, 'category/icon') : null;
         $data['cover_photo'] = $coverPhoto ? saveImagePath($coverPhoto, null, 'category/cover-photo') : null;
         $data['meta_image'] = $metaImage ? saveImagePath($metaImage, null, 'category/meta-image') : null;
@@ -86,5 +86,10 @@ class CategoryService
         return $category->update([
             'included_to_home' => $included,
         ]);
+    }
+
+    public function getActiveCategories()
+    {
+        return Category::active()->orderBy('name', 'asc')->get();
     }
 }

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Color;
-use Illuminate\Http\Request;
 use App\Http\Requests\Admin\ColorRequest;
-use App\Services\ColorService;
+use App\Models\Admin\Color;
+use App\Services\Admin\ColorService;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 
 class ColorController extends Controller

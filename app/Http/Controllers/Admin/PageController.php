@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Page;
-use Illuminate\Http\Request;
 use App\Http\Requests\Admin\PageRequest;
-use App\Services\PageService;
+use App\Models\Admin\Page;
+use App\Services\Admin\PageService;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 

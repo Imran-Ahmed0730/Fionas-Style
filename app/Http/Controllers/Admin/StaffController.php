@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StaffRequest;
 use App\Models\Admin\Staff;
+use App\Services\Admin\StaffService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Models\Role;
-use App\Http\Requests\Admin\StaffRequest;
-use App\Services\StaffService;
 
 class StaffController extends Controller implements HasMiddleware
 {

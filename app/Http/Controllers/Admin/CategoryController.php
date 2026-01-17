@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Category;
-use Illuminate\Http\Request;
 use App\Http\Requests\Admin\CategoryRequest;
-use App\Services\CategoryService;
+use App\Models\Admin\Category;
+use App\Services\Admin\CategoryService;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller implements HasMiddleware
 {

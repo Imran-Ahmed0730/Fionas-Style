@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admin;
 
 use App\Models\Admin\Staff;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StaffService
 {
@@ -54,7 +54,7 @@ class StaffService
     {
         return DB::transaction(function () use ($staff, $data, $image) {
             $user = User::find($staff->user_id);
-            
+
             $imagePath = $staff->image;
             if ($image) {
                 $imagePath = saveImagePath($image, $staff->image, 'staff');
@@ -84,12 +84,12 @@ class StaffService
                 $userData['password'] = $passwordHash;
                 $staffData['password'] = $passwordHash;
             }
-            
+
             if ($user) {
                 $user->update($userData);
                 $user->syncRoles($data['role']);
             }
-           
+
             return $staff->update($staffData);
         });
     }

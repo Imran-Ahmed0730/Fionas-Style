@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admin;
 
 use App\Models\Admin\Setting;
-
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
