@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Admin\Product;
+use App\Models\Admin\ProductVariant;
 use App\Models\Admin\ProductImage;
 use App\Services\Admin\ProductService;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ use Illuminate\Routing\Controllers\Middleware;
 class ProductController extends Controller implements HasMiddleware
 {
     private $productService;
-    public function __construct(ProductService $productService,)
+    public function __construct(ProductService $productService, )
     {
         $this->productService = $productService;
     }
@@ -46,9 +47,9 @@ class ProductController extends Controller implements HasMiddleware
     public function create()
     {
         $data['categories'] = $this->productService->getActiveCategories();
-        $data['brands']     = $this->productService->getActiveBrands();
-        $data['units']      = $this->productService->getActiveUnits();
-        $data['colors']     = $this->productService->getColors();
+        $data['brands'] = $this->productService->getActiveBrands();
+        $data['units'] = $this->productService->getActiveUnits();
+        $data['colors'] = $this->productService->getColors();
         $data['attributes'] = $this->productService->getActiveAttributes();
 
         return view('backend.product.form', $data);
@@ -77,11 +78,11 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function edit(string $id)
     {
-        $data['item']       = $this->productService->getById($id);
+        $data['item'] = $this->productService->getById($id);
         $data['categories'] = $this->productService->getActiveCategories();
-        $data['brands']     = $this->productService->getActiveBrands();
-        $data['units']      = $this->productService->getActiveUnits();
-        $data['colors']     = $this->productService->getColors();
+        $data['brands'] = $this->productService->getActiveBrands();
+        $data['units'] = $this->productService->getActiveUnits();
+        $data['colors'] = $this->productService->getColors();
         $data['attributes'] = $this->productService->getActiveAttributes();
         return view('backend.product.form', $data);
     }
@@ -140,17 +141,30 @@ class ProductController extends Controller implements HasMiddleware
         ]);
     }
 
-    public function getAttributeValues(Request $request){
-        $attributeValues = $this->productService->getAttributeValues($request->id);
+    public function getAttributeValues(Request $request)
+    {
+        $attribute_ids = $request->attribute_id;
+        $attributeValues = $this->productService->getAttributeValues($attribute_ids);
         return response()->json($attributeValues);
     }
 
-    public function deleteImage(Request $request){
+    public function deleteImage(Request $request)
+    {
         $productImage = ProductImage::findOrFail($request->id);
         $this->productService->deleteImage($productImage);
         return response()->json([
             'status' => 'success',
             'message' => 'Product image deleted successfully'
+        ]);
+    }
+
+    public function deleteVariant(Request $request)
+    {
+        $variant = ProductVariant::findOrFail($request->id);
+        $this->productService->deleteVariant($variant);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product variant deleted successfully'
         ]);
     }
 }

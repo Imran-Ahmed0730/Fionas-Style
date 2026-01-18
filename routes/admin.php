@@ -21,7 +21,7 @@ use App\Http\Controllers\Admin\ProductController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'login'])->name('login');
-    Route::middleware('admin')->group(function (){
+    Route::middleware('admin')->group(function () {
         Route::controller(AdminController::class)->group(function () {
             Route::get('/dashboard', 'index')->name('dashboard');
             Route::get('/profile/edit', 'profileEdit')->name('profile.edit');
@@ -51,18 +51,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         //permission module
         Route::resource('permission', PermissionController::class)->except('show', 'destroy', 'update');
         Route::controller(PermissionController::class)->prefix('permission')->name('permission.')->group(function () {
-            Route::post('/update',  'update')->name('update');
-            Route::post('/delete',  'destroy')->name('delete');
-            Route::get('/status/change/{id}',  'changeStatus')->name('status.change');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });
 
         //staff module
         Route::resource('staff', StaffController::class)->except('show', 'destroy', 'update');
         Route::prefix('staff')->name('staff.')->group(function () {
             Route::controller(StaffController::class)->group(function () {
-                Route::post('/update','update')->name('update');
-                Route::post('/delete','destroy')->name('delete');
-                Route::get('/status/change/{id}',  'changeStatus')->name('status.change');
+                Route::post('/update', 'update')->name('update');
+                Route::post('/delete', 'destroy')->name('delete');
+                Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
 
             });
             Route::controller(AdminController::class)->group(function () {
@@ -74,41 +74,41 @@ Route::prefix('admin')->name('admin.')->group(function () {
         //category module
         Route::resource('category', CategoryController::class)->except('show', 'destroy', 'update');
         Route::controller(CategoryController::class)->prefix('category')->name('category.')->group(function () {
-            Route::post('/update',  'update')->name('update');
-            Route::post('/delete',  'destroy')->name('delete');
-            Route::get('/status/change/{id}',  'changeStatus')->name('status.change');
-            Route::get('/include/home/{id}',  'homeInclude')->name('include.home');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+            Route::get('/include/home/{id}', 'homeInclude')->name('include.home');
         });
 
         //brand module
         Route::resource('brand', BrandController::class)->except('show', 'destroy', 'update');
         Route::controller(BrandController::class)->prefix('brand')->name('brand.')->group(function () {
-            Route::post('/update',  'update')->name('update');
-            Route::post('/delete',  'destroy')->name('delete');
-            Route::get('/status/change/{id}',  'changeStatus')->name('status.change');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });
 
         //unit module
         Route::resource('unit', UnitController::class)->except('show', 'destroy', 'update');
         Route::controller(UnitController::class)->prefix('unit')->name('unit.')->group(function () {
-            Route::post('/update',  'update')->name('update');
-            Route::post('/delete',  'destroy')->name('delete');
-            Route::get('/status/change/{id}',  'changeStatus')->name('status.change');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });
 
         //supplier module
         Route::resource('supplier', SupplierController::class)->except('show', 'destroy', 'update');
         Route::controller(SupplierController::class)->prefix('supplier')->name('supplier.')->group(function () {
-            Route::post('/update',  'update')->name('update');
-            Route::post('/delete',  'destroy')->name('delete');
-            Route::get('/status/change/{id}',  'changeStatus')->name('status.change');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });
 
         //color module
         Route::resource('color', ColorController::class)->except('show', 'destroy', 'update');
         Route::controller(ColorController::class)->prefix('color')->name('color.')->group(function () {
-            Route::post('/update',  'update')->name('update');
-            Route::post('/delete',  'destroy')->name('delete');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
         });
 
         //attribute module
@@ -136,6 +136,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::post('/delete', 'destroy')->name('delete');
                 Route::get('/attribute/values/get', 'getAttributeValues')->name('attribute.values.get');
                 Route::get('/image/delete', 'deleteImage')->name('image.delete');
+                Route::get('/variant/delete', 'deleteVariant')->name('variant.delete');
                 Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
                 Route::get('/todays-deal/change', 'changeTodaysDealStatus')->name('todays-deal.change');
                 Route::get('/featured/change', 'changeFeaturedStatus')->name('featured.change');
@@ -145,25 +146,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
         //banner module
         Route::resource('banner', BannerController::class)->except('show', 'destroy', 'update');
         Route::controller(BannerController::class)->prefix('banner')->name('banner.')->group(function () {
-            Route::post('/update',  'update')->name('update');
-            Route::post('/delete',  'destroy')->name('delete');
-            Route::get('/status/change/{id}',  'changeStatus')->name('status.change');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });
 
         //slider module
         Route::resource('slider', SliderController::class)->except('show', 'destroy', 'update');
         Route::controller(SliderController::class)->prefix('slider')->name('slider.')->group(function () {
-            Route::post('/update',  'update')->name('update');
-            Route::post('/delete',  'destroy')->name('delete');
-            Route::get('/status/change/{id}',  'changeStatus')->name('status.change');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });
 
         //page module
         Route::resource('page', PageController::class)->except('show', 'destroy', 'update');
         Route::controller(PageController::class)->prefix('page')->name('page.')->group(function () {
-            Route::post('/update',  'update')->name('update');
-            Route::post('/delete',  'destroy')->name('delete');
-            Route::get('/status/change/{id}',  'changeStatus')->name('status.change');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });
 
     });

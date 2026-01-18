@@ -38,10 +38,13 @@ class ProductRequest extends FormRequest
             'tax' => 'nullable|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
             'stock_qty' => 'required|integer|min:0',
-            'point' => 'nullable|integer|min:0',
+            'buying_price' => 'nullable|numeric|min:0',
             'thumbnail' => $this->isMethod('POST') ? 'required|image|mimes:jpeg,png,jpg|max:2048' : 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'status' => 'nullable|integer|in:0,1',
             'shipping_cost' => 'nullable|numeric|min:0',
             'shipping_time' => 'nullable|string|max:255',
@@ -55,7 +58,13 @@ class ProductRequest extends FormRequest
             'attribute_id' => 'nullable|array',
             'attribute_value_id' => 'nullable|array',
             'variant' => 'nullable|array',
+            'variant.*.price' => 'required|numeric|min:0',
+            'variant.*.buying_price' => 'required|numeric|min:0',
+            'variant.*.stock_qty' => 'required|integer|min:0',
             'existing_variant' => 'nullable|array',
+            'existing_variant.*.price' => 'required|numeric|min:0',
+            'existing_variant.*.buying_price' => 'required|numeric|min:0',
+            'existing_variant.*.stock_qty' => 'required|integer|min:0',
         ];
 
         return $rules;
