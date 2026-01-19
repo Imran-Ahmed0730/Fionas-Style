@@ -132,14 +132,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('product', ProductController::class)->except('destroy', 'update');
         Route::prefix('product')->name('product.')->group(function () {
             Route::controller(ProductController::class)->group(function () {
+                Route::get('/sku/generate', 'generateSku')->name('sku.generate');
                 Route::post('/update', 'update')->name('update');
                 Route::post('/delete', 'destroy')->name('delete');
                 Route::get('/attribute/values/get', 'getAttributeValues')->name('attribute.values.get');
                 Route::get('/image/delete', 'deleteImage')->name('image.delete');
                 Route::get('/variant/delete', 'deleteVariant')->name('variant.delete');
                 Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
-                Route::get('/todays-deal/change', 'changeTodaysDealStatus')->name('todays-deal.change');
-                Route::get('/featured/change', 'changeFeaturedStatus')->name('featured.change');
+                Route::get('/todays-deal/change/{id}', 'changeTodaysDealStatus')->name('todays-deal.change');
+                Route::get('/featured/change/{id}', 'changeFeaturedStatus')->name('featured.change');
             });
         });
 

@@ -11,9 +11,19 @@ use App\Models\Admin\ProductImage;
 use App\Models\Admin\AttributeValue;
 use App\Models\Admin\ProductVariant;
 use App\Models\Admin\ProductStock;
+use Illuminate\Support\Str;
 
 class ProductService
 {
+    public function getProductAttributes()
+    {
+        $data['categories'] = $this->getActiveCategories();
+        $data['brands']     = $this->getActiveBrands();
+        $data['units']      = $this->getActiveUnits();
+        $data['colors']     = $this->getColors();
+        $data['attributes'] = $this->getActiveAttributes();
+        return $data;
+    }
     public function getById($id): Product
     {
         return Product::findOrFail($id);
@@ -50,7 +60,7 @@ class ProductService
             unset($data['attribute_value_id']);
         }
 
-        // points and attributes
+        // attributes
         unset($data['attribute_id']);
 
         // Handle variants flag
@@ -72,13 +82,14 @@ class ProductService
         // Store variants
         if (count($variants) > 0) {
             foreach ($variants as $v) {
+                $v['final_price'] = $data['discount_type'] == 1 ? $v['price'] - $v['price']*$data['discount']/100 : $v['price'] - $data['discount'];
                 $variantData = [
                     'product_id' => $product->id,
                     'name' => $v['name'],
                     'sku' => $v['sku'] ?? null,
                     'regular_price' => $v['price'],
-                    'final_price' => $v['price'],
-                    'stock_qty' => $v['stock_qty'] ?? 0,
+                    'final_price' => $v['final_price'] ,
+                    'stock_qty' => 0,
                 ];
 
                 if (isset($v['image'])) {
@@ -87,24 +98,7 @@ class ProductService
 
                 ProductVariant::create($variantData);
 
-                // Create stock record for variant
-                ProductStock::create([
-                    'product_name' => $product->name,
-                    'variant_name' => $v['name'],
-                    'variant_sku' => $v['sku'] ?? null,
-                    'qty' => $v['stock_qty'] ?? 0,
-                    'sku' => $v['sku'] ?? $product->sku,
-                    'buying_price' => $v['buying_price'] ?? 0,
-                ]);
             }
-        } else {
-            // Create stock record for single product
-            ProductStock::create([
-                'product_name' => $product->name,
-                'qty' => $product->stock_qty,
-                'sku' => $product->sku,
-                'buying_price' => $data['buying_price'] ?? 0,
-            ]);
         }
 
         return $product;
@@ -112,6 +106,7 @@ class ProductService
 
     public function update(Product $product, array $data): bool
     {
+
         if (isset($data['name']) && $data['name'] != $product->name) {
             $data['slug'] = str()->slug($data['name']) . '-' . uniqid();
             ProductStock::where('product_name', $product->name)->update(['product_name' => $data['name']]);
@@ -171,19 +166,8 @@ class ProductService
                 if ($variant) {
                     $variant->update([
                         'regular_price' => $v['price'],
-                        'stock_qty' => $v['stock_qty'],
                         'sku' => $v['sku'] ?? $variant->sku,
                     ]);
-
-                    // Update stock record for existing variant
-                    ProductStock::updateOrCreate(
-                        ['product_name' => $product->name, 'variant_name' => $v['name']],
-                        [
-                            'qty' => $v['stock_qty'],
-                            'sku' => $v['sku'] ?? $variant->sku,
-                            'buying_price' => $v['buying_price'] ?? 0,
-                        ]
-                    );
                 }
             }
         }
@@ -203,16 +187,6 @@ class ProductService
                     $variantData['image'] = saveImagePath($v['image'], null, 'product/variant');
                 }
                 ProductVariant::create($variantData);
-
-                // Create stock record for new variant
-                ProductStock::create([
-                    'product_name' => $product->name,
-                    'variant_name' => $v['name'],
-                    'variant_sku' => $v['sku'] ?? null,
-                    'qty' => $v['stock_qty'] ?? 0,
-                    'sku' => $v['sku'] ?? $product->sku,
-                    'buying_price' => $v['buying_price'] ?? 0,
-                ]);
             }
         }
 
@@ -244,7 +218,7 @@ class ProductService
             $image->delete();
         }
         // Delete variants
-        foreach ($product->productVariants as $variant) {
+        foreach ($product->variants as $variant) {
             if ($variant->image && file_exists($variant->image)) {
                 unlink($variant->image);
             }
@@ -320,5 +294,19 @@ class ProductService
             ->delete();
 
         return $variant->delete();
+    }
+
+    public function generateSku()
+    {
+        $sku_syntax = getSetting('product_sku_syntax');
+        do {
+            // Generate a SKU with format 'sk0001' to 'sk9999'
+            $sku = Str::replace('[[random_number]]', '', $sku_syntax) . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+            // Check if SKU is unique
+            $isUnique = !Product::where('sku', $sku)->exists();
+        } while (!$isUnique); // Retry if SKU is not unique
+
+        return $sku;
     }
 }

@@ -30,9 +30,9 @@ class Product extends Model
         return $this->belongsTo(Unit::class)->withDefault([
             'name'=> 'N/A',
         ]);
-    }      
+    }
 
-    public function productVariants()
+    public function variants()
     {
         return $this->hasMany(ProductVariant::class);
     }

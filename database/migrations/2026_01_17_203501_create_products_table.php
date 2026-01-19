@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('detailed_description');
             $table->text('additional_information')->nullable();
             $table->bigInteger('category_id');
-            $table->bigInteger('brand_id')->default(1);
+            $table->bigInteger('brand_id')->nullable();
             $table->integer('unit_id')->nullable();
             $table->integer('weight')->nullable();
             $table->string('sku')->nullable();
@@ -42,7 +42,7 @@ return new class extends Migration
             $table->text('attribute_values')->nullable();
 
             $table->text('shipping_and_return_policy')->nullable();
-            $table->decimal('shipping_cost', 8, 2)->default(0);
+            $table->decimal('shipping_cost', 8, 2)->nullable()->default(0);
             $table->string('shipping_duration')->nullable();
             $table->text('slug');
             $table->string('meta_title')->nullable();

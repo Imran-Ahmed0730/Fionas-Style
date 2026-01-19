@@ -6,7 +6,7 @@
     <div class="container">
         <div class="page-inner">
             <div class="page-header">
-                <h3 class="fw-bold mb-3">Product Details: {{$item->name}}</h3>
+                <h3 class="fw-bold mb-3">Product Details</h3>
                 <ul class="breadcrumbs mb-3">
                     <li class="nav-home">
                         <a href="{{route('admin.dashboard')}}">
@@ -31,7 +31,7 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h4 class="card-title">Product Information</h4>
+                            <h4 class="card-title">{{$item->name}} Information</h4>
                             <a href="{{route('admin.product.edit', $item->id)}}" class="btn btn-primary ms-auto"><i class="fa fa-pencil me-2"></i>Edit Product</a>
                         </div>
                         <div class="card-body">

@@ -48,8 +48,7 @@
                                 <thead>
                                 <tr>
                                     <th style="width: 10px">#</th>
-                                    <th>Thumbnail</th>
-                                    <th>Product Name</th>
+                                    <th>Name</th>
                                     <th>Category</th>
                                     <th>Price</th>
                                     <th>Stock</th>
@@ -63,14 +62,17 @@
                                 @foreach($items as $key => $item)
                                     <tr class="align-middle">
                                         <td>{{$key+1}}.</td>
+
                                         <td>
-                                            @if($item->thumbnail)
-                                                <img src="{{asset($item->thumbnail)}}" width="50px" alt="">
-                                            @else 
-                                                <img src="{{asset('backend')}}/assets/img/default-150x150.png" width="50px" alt="">
-                                            @endif
+                                            <div class="d-flex align-items-center">
+                                                @if($item->thumbnail && file_exists(public_path($item->thumbnail)))
+                                                    <img src="{{asset($item->thumbnail)}}" width="35px" height="35px" class="rounded-circle me-2" alt="">
+                                                @else
+                                                    <img src="{{asset('backend/assets/img/default-150x150.png')}}" class="rounded-circle me-2" width="35px" height="35px" alt="">
+                                                @endif
+                                                <span>{{$item->name}}</span>
+                                            </div>
                                         </td>
-                                        <td>{{$item->name}}</td>
                                         <td>{{$item->category->name ?? 'N/A'}}</td>
                                         <td>
                                             <div>Reg: {{$item->regular_price}}</div>
@@ -79,15 +81,17 @@
                                         <td>{{$item->stock_qty}}</td>
                                         <td>
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input toggle-switch" type="checkbox" role="switch"
+                                                <input class="form-check-input product-toggle-switch" type="checkbox" role="switch"
                                                        data-url="{{route('admin.product.featured.change', $item->id)}}"
+                                                       data-type="featured"
                                                     {{ $item->is_featured == 1 ? 'checked' : '' }}>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input toggle-switch" type="checkbox" role="switch"
+                                                <input class="form-check-input product-toggle-switch" type="checkbox" role="switch"
                                                        data-url="{{route('admin.product.todays-deal.change', $item->id)}}"
+                                                       data-type="today's deal"
                                                     {{ $item->include_to_todays_deal == 1 ? 'checked' : '' }}>
                                             </div>
                                         </td>
@@ -96,23 +100,25 @@
                                                 <div class="form-check form-switch">
                                                     <input class="form-check-input toggle-switch" type="checkbox" role="switch"
                                                            data-url="{{route('admin.product.status.change', $item->id)}}"
+                                                           data-type="status"
                                                         {{ $item->status == 1 ? 'checked' : '' }}>
                                                 </div>
                                             @else
                                                 <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success': 'danger'}}">{{$item->status == 1 ? 'Active':'Inactive'}}</span>
-                                            @endcan 
+                                            @endcan
                                         </td>
                                         <td>
                                             <div class="d-flex">
+                                                @can('Product Details')
+                                                    <a href="{{route('admin.product.show', $item->id)}}" data-bs-toggle="tooltip" title="Details" class="btn btn-info me-2"><i class="fa fa-eye"></i></a>
+                                                @endcan
                                                 @can('Product Update')
-                                                <a href="{{route('admin.product.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                    <a href="{{route('admin.product.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
                                                 @endcan
                                                 @can('Product Delete')
-                                                <form action="{{route('admin.product.delete')}}" method="post">
-                                                    @csrf
-                                                    <input type="hidden" name="id" value="{{$item->id}}">
-                                                    <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
-                                                </form>
+                                                    <button type="button" class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete" data-id="{{$item->id}}" data-name="{{$item->name}}">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
                                                 @endcan
                                             </div>
                                         </td>
@@ -131,27 +137,68 @@
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-
     <script>
         $(document).ready(function () {
-            $('#datatable').DataTable();
-            
-            $(document).on('change', '.toggle-switch', function() {
+            // Initialize DataTable
+            $('#datatable').DataTable({
+                "order": [[0, "asc"]]
+            });
+
+            // Handle toggle switches
+            $(document).on('change', '.toggle-switch, .product-toggle-switch', function() {
                 var url = $(this).data('url');
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function(response) {
-                        if(response.status == 'success'){
-                            toastr.success(response.message);
-                        }
-                    },
-                    error: function(err) {
-                        toastr.error('Something went wrong');
+                var isChecked = $(this).is(':checked');
+                var type = $(this).data('type') || 'setting';
+                var switchElement = $(this);
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `You are about to ${isChecked ? 'activate' : 'deactivate'} this product's ${type}.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, change it!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            success: function (response) {
+                                if (response.status == 'success') {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: response.message,
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    switchElement.prop('checked', !isChecked); // Revert if error
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: response.message || 'Something went wrong',
+                                    });
+                                }
+                            },
+                            error: function (err) {
+                                switchElement.prop('checked', !isChecked); // Revert on error
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'Something went wrong. Please try again.',
+                                });
+                            }
+                        });
+                    } else {
+                        // Revert the switch if user cancels
+                        switchElement.prop('checked', !isChecked);
                     }
                 });
             });
-        });
 
+            // Handle delete button
+        });
     </script>
 @endpush

@@ -15,7 +15,7 @@ use Illuminate\Routing\Controllers\Middleware;
 class ProductController extends Controller implements HasMiddleware
 {
     private $productService;
-    public function __construct(ProductService $productService, )
+    public function __construct(ProductService $productService)
     {
         $this->productService = $productService;
     }
@@ -46,12 +46,7 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        $data['categories'] = $this->productService->getActiveCategories();
-        $data['brands'] = $this->productService->getActiveBrands();
-        $data['units'] = $this->productService->getActiveUnits();
-        $data['colors'] = $this->productService->getColors();
-        $data['attributes'] = $this->productService->getActiveAttributes();
-
+        $data = $this->productService->getProductAttributes();
         return view('backend.product.form', $data);
     }
 
@@ -79,11 +74,11 @@ class ProductController extends Controller implements HasMiddleware
     public function edit(string $id)
     {
         $data['item'] = $this->productService->getById($id);
-        $data['categories'] = $this->productService->getActiveCategories();
-        $data['brands'] = $this->productService->getActiveBrands();
-        $data['units'] = $this->productService->getActiveUnits();
-        $data['colors'] = $this->productService->getColors();
-        $data['attributes'] = $this->productService->getActiveAttributes();
+
+        $data = array_merge(
+            $data,
+            $this->productService->getProductAttributes()
+        );
         return view('backend.product.form', $data);
     }
 
@@ -92,6 +87,7 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function update(ProductRequest $request)
     {
+//        dd($request->all());
         $product = $this->productService->getById($request->id);
         $this->productService->update($product, $request->validated());
 
@@ -167,4 +163,12 @@ class ProductController extends Controller implements HasMiddleware
             'message' => 'Product variant deleted successfully'
         ]);
     }
+
+    public function generateSku()
+    {
+        $sku = $this->productService->generateSku();
+        // Return the unique SKU in the response
+        return response()->json(['sku' => $sku]);
+    }
+
 }
