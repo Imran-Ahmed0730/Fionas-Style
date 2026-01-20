@@ -43,72 +43,74 @@
                             @endcan
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body table-responsive">
-                            <table class="table table-bordered table-hover" id="datatable">
-                                <thead>
-                                <tr>
-                                    <th style="width: 10px">#</th>
-                                    <th></th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Roles</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($items as $key => $item)
-                                    <tr class="align-middle">
-                                        <td>{{$key+1}}.</td>
-                                        <td>
-                                            @if($item->image)
-                                                <img src="{{asset($item->image)}}" width="50px" height="50px" class="rounded-circle" alt="">
-                                            @else
-                                                <img src="{{asset('backend')}}/assets/img/user1-128x128.jpg" id="previewImage" width="50" class="my-2 rounded-circle " alt="">
-                                            @endif
-                                        </td>
-                                        <td>{{Str::title($item->name)}}</td>
-                                        <td>{{$item->email}}</td>
-                                        <td>{{$item->phone}}</td>
-                                        <td>
-                                            @php $roles = $item->user->getRoleNames(); @endphp
-                                            @if($roles != null)
-                                                {{--                                                @php dd($roles) @endphp--}}
-                                                @foreach($roles as $role)
-                                                    <label class="p-2 badge text-bg-primary mx-2">{{$role}}</label>
-                                                @endforeach
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @can('Staff Status Change')
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input toggle-switch" type="checkbox" role="switch"
-                                                           data-module="brand" data-id="{{ $item->id }}"
-                                                        {{ $item->status == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
-                                                </div>
-                                            @else
-                                                <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success': 'danger'}}">{{$item->status == 1 ? 'Showed':'Hidden'}}</span>
-                                            @endcan
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                @can('Staff Update')
-                                                    <a href="{{route('admin.staff.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
-                                                @endcan
-                                                @can('Staff Delete')
-                                                    <form action="{{route('admin.staff.delete')}}" method="post">
-                                                        @csrf
-                                                        <input type="hidden" name="id" value="{{$item->id}}">
-                                                        <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Remove"><i class="fa fa-trash"></i></button>
-                                                    </form>
-                                                @endcan
-                                            </div>
-                                        </td>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" id="datatable">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Roles</th>
+                                        <th>Status</th>
+                                        <th></th>
                                     </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($items as $key => $item)
+                                        <tr class="align-middle">
+                                            <td>{{$key+1}}.</td>
+                                            <td>
+                                                @if($item->image)
+                                                    <img src="{{asset($item->image)}}" width="50px" height="50px" class="rounded-circle" alt="">
+                                                @else
+                                                    <img src="{{asset('backend')}}/assets/img/user1-128x128.jpg" id="previewImage" width="50" class="my-2 rounded-circle " alt="">
+                                                @endif
+                                            </td>
+                                            <td>{{Str::title($item->name)}}</td>
+                                            <td>{{$item->email}}</td>
+                                            <td>{{$item->phone}}</td>
+                                            <td>
+                                                @php $roles = $item->user->getRoleNames(); @endphp
+                                                @if($roles != null)
+                                                    {{--                                                @php dd($roles) @endphp--}}
+                                                    @foreach($roles as $role)
+                                                        <label class="p-2 badge text-bg-primary mx-2">{{$role}}</label>
+                                                    @endforeach
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @can('Staff Status Change')
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input toggle-switch" type="checkbox" role="switch"
+                                                               data-module="brand" data-id="{{ $item->id }}"
+                                                            {{ $item->status == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
+                                                    </div>
+                                                @else
+                                                    <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success': 'danger'}}">{{$item->status == 1 ? 'Showed':'Hidden'}}</span>
+                                                @endcan
+                                            </td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    @can('Staff Update')
+                                                        <a href="{{route('admin.staff.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                    @endcan
+                                                    @can('Staff Delete')
+                                                        <form action="{{route('admin.staff.delete')}}" method="post">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{$item->id}}">
+                                                            <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Remove"><i class="fa fa-trash"></i></button>
+                                                        </form>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div> <!-- /.card-body -->
                     </div> <!-- /.card -->
                 </div> <!-- /.col -->

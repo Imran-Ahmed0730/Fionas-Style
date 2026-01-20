@@ -6,7 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.6.0/bootstrap-tagsinput.min.css" />
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.6.0/bootstrap-tagsinput.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         .bootstrap-tagsinput .tag {
@@ -15,23 +15,28 @@
             padding: 2px 6px;
             margin-right: 2px;
         }
-        .bootstrap-tagsinput{
+
+        .bootstrap-tagsinput {
             width: 100%;
             min-height: 37px;
         }
+
         .tab-content {
             padding: 20px 0;
         }
+
         .nav-pills .nav-link.active {
             background-color: #4361ee;
             color: white;
         }
+
         .image-preview-container {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 10px;
         }
+
         .image-preview {
             width: 80px;
             height: 80px;
@@ -39,6 +44,7 @@
             border-radius: 4px;
             border: 1px solid #ddd;
         }
+
         .variant-image-preview {
             width: 50px;
             height: 50px;
@@ -46,31 +52,40 @@
             border-radius: 3px;
             margin-right: 5px;
         }
+
         .attribute-values-section {
             border-left: 3px solid #4361ee;
             padding-left: 15px;
             margin-left: 10px;
         }
+
         .form-label.required:after {
             content: " *";
             color: red;
         }
+
         .invalid-feedback {
             display: block;
         }
+
         .btn-group .btn {
             padding: 0.375rem 0.75rem;
         }
+
         .form-check.form-switch {
             padding-left: 3.5rem;
         }
+
         .form-check-input:checked {
             background-color: #4361ee;
             border-color: #4361ee;
         }
-        .select2-container--default .select2-selection--multiple, .select2-selection--single {
+
+        .select2-container--default .select2-selection--multiple,
+        .select2-selection--single {
             min-height: 40px;
         }
+
         .table-variants th {
             background-color: #f8f9fa;
         }
@@ -107,24 +122,19 @@
                         <div class="card-header d-flex align-items-center">
                             <div class="card-title">@isset($item) Edit @else Add @endisset Product Information</div>
                             <div class="card-tools ms-auto">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#productSetting" title="Product Settings" class="btn btn-secondary me-2">
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#productSetting"
+                                    title="Product Settings" class="btn btn-secondary me-2">
                                     <i class="fa fa-cog me-2"></i>Settings
                                 </button>
-                                <a href="{{ route('admin.product.index') }}" data-bs-toggle="tooltip" title="View Products" class="btn btn-primary">
+                                <a href="{{ route('admin.product.index') }}" data-bs-toggle="tooltip" title="View Products"
+                                    class="btn btn-primary">
                                     <i class="fa fa-list me-2"></i>View Products
                                 </a>
                             </div>
-                            @if($errors->any())
-                                <div class="alert alert-danger mt-2">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{$error}}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
                         </div>
-                        <form id="product_form" action="@isset($item){{ route('admin.product.update') }}@else{{ route('admin.product.store') }}@endisset" method="post" enctype="multipart/form-data">
+                        <form id="product_form"
+                            action="@isset($item){{ route('admin.product.update') }}@else{{ route('admin.product.store') }}@endisset"
+                            method="post" enctype="multipart/form-data">
                             @csrf
                             @isset($item)
                                 <input type="hidden" name="id" value="{{ $item->id }}">
@@ -132,44 +142,58 @@
                             @else
                                 <input type="hidden" name="is_variant" id="is_variant" value="0">
                             @endisset
-                            <input type="hidden" name="sku" id="sku" value="@isset($item){{$item->sku}}@else{{old('sku')}}@endisset" class="form-control @error('sku') is-invalid @enderror" required>
+                            <input type="hidden" name="sku" id="sku"
+                                value="@isset($item){{$item->sku}}@else{{old('sku')}}@endisset"
+                                class="form-control @error('sku') is-invalid @enderror" required>
 
                             <input type="hidden" name="variantUpdate" id="variantUpdate" value="0">
 
                             <div class="card-body">
-                                <ul class="nav nav-pills nav-secondary nav-pills-no-bd mb-3" id="pills-tab-without-border" role="tablist">
+                                <ul class="nav nav-pills nav-secondary nav-pills-no-bd mb-3" id="pills-tab-without-border"
+                                    role="tablist">
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link active" id="pills-home-tab-nobd" data-bs-toggle="pill" href="#primary-info" role="tab" aria-controls="primary-info" aria-selected="true">
+                                        <a class="nav-link active" id="pills-home-tab-nobd" data-bs-toggle="pill"
+                                            href="#primary-info" role="tab" aria-controls="primary-info"
+                                            aria-selected="true">
                                             Primary Info
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="pills-price-tab-nobd" data-bs-toggle="pill" href="#price-info" role="tab" aria-controls="price-info" aria-selected="false">
+                                        <a class="nav-link" id="pills-price-tab-nobd" data-bs-toggle="pill"
+                                            href="#price-info" role="tab" aria-controls="price-info" aria-selected="false">
                                             Price Info
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="pills-attribute-tab-nobd" data-bs-toggle="pill" href="#attribute-info" role="tab" aria-controls="attribute-info" aria-selected="false">
+                                        <a class="nav-link" id="pills-attribute-tab-nobd" data-bs-toggle="pill"
+                                            href="#attribute-info" role="tab" aria-controls="attribute-info"
+                                            aria-selected="false">
                                             Attributes
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="pills-image-tab-nobd" data-bs-toggle="pill" href="#image-info" role="tab" aria-controls="image-info" aria-selected="false">
+                                        <a class="nav-link" id="pills-image-tab-nobd" data-bs-toggle="pill"
+                                            href="#image-info" role="tab" aria-controls="image-info" aria-selected="false">
                                             Images
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="pills-shipping-tab-nobd" data-bs-toggle="pill" href="#shipping-info" role="tab" aria-controls="shipping-info" aria-selected="false">
+                                        <a class="nav-link" id="pills-shipping-tab-nobd" data-bs-toggle="pill"
+                                            href="#shipping-info" role="tab" aria-controls="shipping-info"
+                                            aria-selected="false">
                                             Shipping
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="pills-seo-tab-nobd" data-bs-toggle="pill" href="#seo-info" role="tab" aria-controls="seo-info" aria-selected="false">
+                                        <a class="nav-link" id="pills-seo-tab-nobd" data-bs-toggle="pill" href="#seo-info"
+                                            role="tab" aria-controls="seo-info" aria-selected="false">
                                             SEO
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="pills-additional-tab-nobd" data-bs-toggle="pill" href="#additional-info" role="tab" aria-controls="additional-info" aria-selected="false">
+                                        <a class="nav-link" id="pills-additional-tab-nobd" data-bs-toggle="pill"
+                                            href="#additional-info" role="tab" aria-controls="additional-info"
+                                            aria-selected="false">
                                             Additional
                                         </a>
                                     </li>
@@ -182,97 +206,96 @@
                                             <div class="col-md-6 mb-3">
                                                 <label for="name" class="form-label">Name</label>
                                                 <input id="name" type="text" name="name"
-                                                       value="@isset($item){{ $item->name }}@else{{ old('name') }}@endisset"
-                                                       placeholder="Enter product name"
-                                                       class="form-control @error('name') is-invalid @enderror" required>
+                                                    value="@isset($item){{ $item->name }}@else{{ old('name') }}@endisset"
+                                                    placeholder="Enter product name"
+                                                    class="form-control @error('name') is-invalid @enderror" required>
                                                 @error('name')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label for="category_id" class="form-label">Category</label>
                                                 <select name="category_id" id="category_id"
-                                                        class="form-control js-example-basic-single @error('category_id') is-invalid @enderror" required>
+                                                    class="form-control js-example-basic-single @error('category_id') is-invalid @enderror"
+                                                    required>
                                                     <option value="" disabled selected>Select Category</option>
                                                     @foreach($categories as $category)
-                                                        <option value="{{ $category->id }}"
-                                                        @isset($item){{ $item->category_id == $category->id ? 'selected' : '' }}
-                                                            @else{{ old('category_id') == $category->id ? 'selected' : '' }}@endisset>
+                                                        <option value="{{ $category->id }}" @isset($item){{ $item->category_id == $category->id ? 'selected' : '' }} @else{{ old('category_id') == $category->id ? 'selected' : '' }}@endisset>
                                                             {{ $category->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                                 @error('category_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-6 mb-3">
-                                                <label for="brand_id" class="form-label">Brand <small class="text-muted">[optional]</small></label>
+                                                <label for="brand_id" class="form-label">Brand <small
+                                                        class="text-muted">[optional]</small></label>
                                                 <select name="brand_id" id="brand_id"
-                                                        class="form-control js-example-basic-single @error('brand_id') is-invalid @enderror">
+                                                    class="form-control js-example-basic-single @error('brand_id') is-invalid @enderror">
                                                     <option value="">Select Brand</option>
                                                     @foreach($brands as $brand)
-                                                        <option value="{{ $brand->id }}"
-                                                        @isset($item){{ $item->brand_id == $brand->id ? 'selected' : '' }}
-                                                            @else{{ old('brand_id') == $brand->id ? 'selected' : '' }}@endisset>
+                                                        <option value="{{ $brand->id }}" @isset($item){{ $item->brand_id == $brand->id ? 'selected' : '' }} @else{{ old('brand_id') == $brand->id ? 'selected' : '' }}@endisset>
                                                             {{ $brand->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                                 @error('brand_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label for="unit_id" class="form-label">Unit</label>
                                                 <select name="unit_id" id="unit_id"
-                                                        class="form-control @error('unit_id') is-invalid @enderror" required>
+                                                    class="form-control @error('unit_id') is-invalid @enderror" required>
                                                     <option value="" disabled selected>Select Unit</option>
                                                     @foreach($units as $unit)
-                                                        <option value="{{ $unit->id }}"
-                                                        @isset($item){{ $item->unit_id == $unit->id ? 'selected' : '' }}
-                                                            @else{{ old('unit_id') == $unit->id ? 'selected' : '' }}@endisset>
+                                                        <option value="{{ $unit->id }}" @isset($item){{ $item->unit_id == $unit->id ? 'selected' : '' }} @else{{ old('unit_id') == $unit->id ? 'selected' : '' }}@endisset>
                                                             {{ $unit->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                                 @error('unit_id')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <label for="short_description" class="form-label">Short Description</label>
                                                 <textarea id="short_description" name="short_description" rows="2"
-                                                          placeholder="Enter short description"
-                                                          class="form-control @error('short_description') is-invalid @enderror" required>@isset($item){{ $item->short_description }}@else{{ old('short_description') }}@endisset</textarea>
+                                                    placeholder="Enter short description"
+                                                    class="form-control @error('short_description') is-invalid @enderror"
+                                                    required>@isset($item){{ $item->short_description }}@else{{ old('short_description') }}@endisset</textarea>
                                                 @error('short_description')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-12 mb-3">
-                                                <label for="detailed_description" class="form-label">Detailed Description</label>
+                                                <label for="detailed_description" class="form-label">Detailed
+                                                    Description</label>
                                                 <textarea id="detailed_description" name="detailed_description" rows="5"
-                                                          class="form-control summernote @error('detailed_description') is-invalid @enderror" required>@isset($item){{ $item->detailed_description }}@else{{ old('detailed_description') }}@endisset</textarea>
+                                                    class="form-control summernote @error('detailed_description') is-invalid @enderror"
+                                                    required>@isset($item){{ $item->detailed_description }}@else{{ old('detailed_description') }}@endisset</textarea>
                                                 @error('detailed_description')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-12">
                                                 <label class="form-label">Status</label>
                                                 <div class="d-flex gap-3">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="status" id="status1" value="1"
-                                                               @isset($item){{ $item->status == 1 ? 'checked' : '' }}@else checked @endisset>
+                                                        <input class="form-check-input" type="radio" name="status"
+                                                            id="status1" value="1" @isset($item){{ $item->status == 1 ? 'checked' : '' }}@else checked @endisset>
                                                         <label class="form-check-label" for="status1">Active</label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="status" id="status0" value="0"
-                                                        @isset($item){{ $item->status == 0 ? 'checked' : '' }}@endisset>
+                                                        <input class="form-check-input" type="radio" name="status"
+                                                            id="status0" value="0" @isset($item){{ $item->status == 0 ? 'checked' : '' }}@endisset>
                                                         <label class="form-check-label" for="status0">Inactive</label>
                                                     </div>
                                                 </div>
                                                 @error('status')
-                                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                                    <div class="text-danger small mt-1">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -284,63 +307,64 @@
                                             <div class="col-md-4 mb-3">
                                                 <label for="regular_price" class="form-label">Regular Price</label>
                                                 <input id="regular_price" type="number" step="0.01" name="regular_price"
-                                                       placeholder="Enter regular price"
-                                                       value="@isset($item){{ $item->regular_price }}@else{{ old('regular_price') }}@endisset"
-                                                       class="form-control @error('regular_price') is-invalid @enderror" required>
+                                                    placeholder="Enter regular price"
+                                                    value="@isset($item){{ $item->regular_price }}@else{{ old('regular_price') }}@endisset"
+                                                    class="form-control @error('regular_price') is-invalid @enderror"
+                                                    required>
                                                 @error('regular_price')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label for="selling_price" class="form-label">Selling Price</label>
                                                 <input id="selling_price" type="number" step="0.01" name="selling_price"
-                                                       placeholder="Enter selling price"
-                                                       value="@isset($item){{ $item->selling_price }}@else{{ old('selling_price') }}@endisset"
-                                                       class="form-control @error('selling_price') is-invalid @enderror" required>
+                                                    placeholder="Enter selling price"
+                                                    value="@isset($item){{ $item->selling_price }}@else{{ old('selling_price') }}@endisset"
+                                                    class="form-control @error('selling_price') is-invalid @enderror"
+                                                    required>
                                                 @error('selling_price')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label for="discount" class="form-label">Discount</label>
                                                 <input id="discount" type="number" step="0.01" name="discount"
-                                                       placeholder="Enter discount"
-                                                       value="@isset($item){{ $item->discount }}@else{{ old('discount') ?? 0 }}@endisset"
-                                                       class="form-control @error('discount') is-invalid @enderror">
+                                                    placeholder="Enter discount"
+                                                    value="@isset($item){{ $item->discount }}@else{{ old('discount') ?? 0 }}@endisset"
+                                                    class="form-control @error('discount') is-invalid @enderror">
                                                 @error('discount')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label for="discount_type" class="form-label">Discount Type</label>
                                                 <select name="discount_type" id="discount_type"
-                                                        class="form-control @error('discount_type') is-invalid @enderror">
+                                                    class="form-control @error('discount_type') is-invalid @enderror">
                                                     <option value="1" @isset($item){{ $item->discount_type == 1 ? 'selected' : '' }}@else selected @endisset>Flat</option>
                                                     <option value="2" @isset($item){{ $item->discount_type == 2 ? 'selected' : '' }}@endisset>Percent</option>
                                                 </select>
                                                 @error('discount_type')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label for="tax" class="form-label">Tax</label>
-                                                <input id="tax" type="number" step="0.01" name="tax"
-                                                       placeholder="Enter tax"
-                                                       value="@isset($item){{ $item->tax }}@else{{ old('tax') ?? 0 }}@endisset"
-                                                       class="form-control @error('tax') is-invalid @enderror" required>
+                                                <input id="tax" type="number" step="0.01" name="tax" placeholder="Enter tax"
+                                                    value="@isset($item){{ $item->tax }}@else{{ old('tax') ?? 0 }}@endisset"
+                                                    class="form-control @error('tax') is-invalid @enderror" required>
                                                 @error('tax')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <label for="tax_inclusion" class="form-label">Tax Inclusion</label>
                                                 <select name="tax_inclusion" id="tax_inclusion"
-                                                        class="form-control @error('tax_inclusion') is-invalid @enderror">
+                                                    class="form-control @error('tax_inclusion') is-invalid @enderror">
                                                     <option value="1" @isset($item){{ $item->tax_inclusion == 1 ? 'selected' : '' }}@else selected @endisset>Included</option>
                                                     <option value="2" @isset($item){{ $item->tax_inclusion == 2 ? 'selected' : '' }}@endisset>Excluded</option>
                                                 </select>
                                                 @error('tax_inclusion')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -356,12 +380,14 @@
                                             <div class="mb-3 d-flex align-items-center justify-content-between">
                                                 <label class="form-label me-3 mb-0">Color Variations</label>
                                                 <div class="form-check form-switch">
-                                                    <input class="form-check-input" id="color_switch" type="checkbox" role="switch"
-                                                           @if(isset($item) && $item->color != null) checked @endif>
+                                                    <input class="form-check-input" id="color_switch" type="checkbox"
+                                                        role="switch" @if(isset($item) && $item->color != null) checked
+                                                        @endif>
                                                     <label class="form-check-label" for="color_switch"></label>
                                                 </div>
                                             </div>
-                                            <div class="color-selection @if(!isset($item) || $item->color == null) d-none @endif">
+                                            <div
+                                                class="color-selection @if(!isset($item) || $item->color == null) d-none @endif">
                                                 @php
                                                     $selected_color = [];
                                                     if (isset($item) && $item->color != null) {
@@ -369,15 +395,16 @@
                                                     }
                                                 @endphp
                                                 <label class="form-label mb-2">Select Colors</label>
-                                                <select name="color_id[]" id="color_id" class="form-select js-example-basic-single" multiple="multiple">
+                                                <select name="color_id[]" id="color_id"
+                                                    class="form-select js-example-basic-single" multiple="multiple">
                                                     @foreach($colors as $color)
-                                                        <option value="{{ $color->name }}"
-                                                                @if(in_array($color->name, $selected_color)) selected @endif>
+                                                        <option value="{{ $color->name }}" @if(in_array($color->name, $selected_color)) selected @endif>
                                                             {{ $color->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                <small class="text-muted">Select multiple colors if your product has color variations</small>
+                                                <small class="text-muted">Select multiple colors if your product has color
+                                                    variations</small>
                                             </div>
                                         </div>
 
@@ -385,13 +412,15 @@
                                             <div class="mb-3 d-flex align-items-center justify-content-between">
                                                 <label class="form-label me-3 mb-0">Product Attributes</label>
                                                 <div class="form-check form-switch">
-                                                    <input class="form-check-input" id="attribute_switch" type="checkbox" role="switch"
-                                                           @if(isset($item) && $item->attribute_values != null) checked @endif>
+                                                    <input class="form-check-input" id="attribute_switch" type="checkbox"
+                                                        role="switch" @if(isset($item) && $item->attribute_values != null)
+                                                        checked @endif>
                                                     <label class="form-check-label" for="attribute_switch"></label>
                                                 </div>
                                             </div>
 
-                                            <div class="attribute-selection @if(!isset($item) || $item->attribute_values == null) d-none @endif">
+                                            <div
+                                                class="attribute-selection @if(!isset($item) || $item->attribute_values == null) d-none @endif">
                                                 @php
                                                     $attribute_array = [];
                                                     if (isset($item) && $item->attribute_values != null) {
@@ -399,18 +428,20 @@
                                                     }
                                                 @endphp
                                                 <label class="form-label mb-2">Select Attributes</label>
-                                                <select name="attribute_id[]" id="attribute_id" class="form-select js-example-basic-single" multiple="multiple">
+                                                <select name="attribute_id[]" id="attribute_id"
+                                                    class="form-select js-example-basic-single" multiple="multiple">
                                                     @foreach($attributes as $attribute)
-                                                        <option value="{{ $attribute->id }}"
-                                                                @if(isset($attribute_array) && array_key_exists($attribute->id, $attribute_array)) selected @endif>
+                                                        <option value="{{ $attribute->id }}" @if(isset($attribute_array) && array_key_exists($attribute->id, $attribute_array)) selected @endif>
                                                             {{ $attribute->name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                <small class="text-muted">Select attributes like Size, Material, etc.</small>
+                                                <small class="text-muted">Select attributes like Size, Material,
+                                                    etc.</small>
                                             </div>
 
-                                            <div id="attributeValueSelectionContainer" class="attribute-values-section mt-3">
+                                            <div id="attributeValueSelectionContainer"
+                                                class="attribute-values-section mt-3">
                                                 @if(isset($item) && $item->attribute_values != null)
                                                     @foreach($attribute_array as $key => $selected_values)
                                                         @php
@@ -420,12 +451,10 @@
                                                             <div class="mb-3 attribute-value-selection" data-attribute-id="{{ $key }}">
                                                                 <label class="form-label">{{ $attr->name }}</label>
                                                                 <select name="attribute_value_id[{{ $key }}][]"
-                                                                        class="form-select js-example-basic-single"
-                                                                        data-attr-name="{{ $attr->name }}"
-                                                                        multiple="multiple">
+                                                                    class="form-select js-example-basic-single"
+                                                                    data-attr-name="{{ $attr->name }}" multiple="multiple">
                                                                     @foreach($attr->attributeValues as $attr_value)
-                                                                        <option value="{{ $attr_value->value }}"
-                                                                            {{ in_array($attr_value->value, $selected_values) ? 'selected' : '' }}>
+                                                                        <option value="{{ $attr_value->value }}" {{ in_array($attr_value->value, $selected_values) ? 'selected' : '' }}>
                                                                             {{ $attr_value->value }}
                                                                         </option>
                                                                     @endforeach
@@ -440,7 +469,7 @@
                                         <!-- Generate Variants Button -->
                                         <div class="mb-4">
                                             <button type="button" id="generateVariantsBtn" class="btn btn-primary"
-                                                    @if(!isset($item) || $item->is_variant == 0) disabled @endif>
+                                                @if(!isset($item) || $item->is_variant == 0) disabled @endif>
                                                 <i class="fa fa-cogs me-2"></i>Generate Variants
                                             </button>
                                             <button type="button" id="clearVariantsBtn" class="btn btn-danger ms-2">
@@ -459,42 +488,53 @@
                                                     <div class="table-responsive">
                                                         <table class="table table-bordered table-variants">
                                                             <thead>
-                                                            <tr>
-                                                                <th>Variant</th>
-                                                                <th>Price</th>
-                                                                <th>Image [optional]</th>
-                                                            </tr>
+                                                                <tr>
+                                                                    <th>Variant</th>
+                                                                    <th>Price</th>
+                                                                    <th>Image [optional]</th>
+                                                                </tr>
                                                             </thead>
                                                             <tbody>
-                                                            @foreach($item->variants as $key => $variant)
-                                                                <tr>
-                                                                    <td>
-                                                                        <input type="hidden" name="existing_variant[{{ $key }}][id]" value="{{ $variant->id }}">
-                                                                        <input type="hidden" name="existing_variant[{{ $key }}][name]" value="{{ $variant->name }}">
-                                                                        <input type="hidden" name="existing_variant[{{ $key }}][attr_name]" value="{{ $variant->attr_name }}">
-                                                                        <input type="hidden" name="existing_variant[{{ $key }}][sku]" value="{{ $variant->sku }}">
-                                                                        {{ $variant->name }}
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="number" step="0.01" name="existing_variant[{{ $key }}][price]"
-                                                                               class="form-control" placeholder="Price"
-                                                                               value="{{ $variant->regular_price }}" required>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="d-flex align-items-center">
-                                                                            <img id="variantPreview{{ $key }}"
-                                                                                 src="{{ asset($variant->image ?? 'backend/assets/img/default-150x150.png') }}"
-                                                                                 class="img-thumbnail variant-image-preview me-2 mt-2 variant-preview"
-                                                                                 style="width:50px;height:50px;cursor:pointer;"
-                                                                                 data-bs-toggle="modal"
-                                                                                 data-bs-target="#imagePreviewModal" alt="{{$variant->image ?? ''}}">
+                                                                @foreach($item->variants as $key => $variant)
+                                                                    <tr>
+                                                                        <td>
+                                                                            <input type="hidden" name="existing_variant[{{ $key }}][id]"
+                                                                                value="{{ $variant->id }}">
+                                                                            <input type="hidden"
+                                                                                name="existing_variant[{{ $key }}][name]"
+                                                                                value="{{ $variant->name }}">
+                                                                            <input type="hidden"
+                                                                                name="existing_variant[{{ $key }}][attr_name]"
+                                                                                value="{{ $variant->attr_name }}">
+                                                                            <input type="hidden"
+                                                                                name="existing_variant[{{ $key }}][sku]"
+                                                                                value="{{ $variant->sku }}">
+                                                                            {{ $variant->name }}
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="number" step="0.01"
+                                                                                name="existing_variant[{{ $key }}][price]"
+                                                                                class="form-control" placeholder="Price"
+                                                                                value="{{ $variant->regular_price }}" required>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="d-flex align-items-center">
+                                                                                <img id="variantPreview{{ $key }}"
+                                                                                    src="{{ asset($variant->image ?? 'backend/assets/img/default-150x150.png') }}"
+                                                                                    class="img-thumbnail variant-image-preview me-2 mt-2 variant-preview"
+                                                                                    style="width:50px;height:50px;cursor:pointer;"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#imagePreviewModal"
+                                                                                    alt="{{$variant->image ?? ''}}">
 
-                                                                            <input type="file" name="existing_variant[{{ $key }}][image]"
-                                                                                   class="form-control variant-image-input" accept="image/jpeg, image/png, image/jpg">
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
+                                                                                <input type="file"
+                                                                                    name="existing_variant[{{ $key }}][image]"
+                                                                                    class="form-control variant-image-input"
+                                                                                    accept="image/jpeg, image/png, image/jpg">
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -509,36 +549,40 @@
                                             <div class="col-md-6 mb-3">
                                                 <label for="thumbnail" class="form-label">Thumbnail</label>
                                                 <input type="file" name="thumbnail" id="thumbnail"
-                                                       class="form-control @error('thumbnail') is-invalid @enderror"
-                                                       accept="image/jpeg, image/png, image/jpg, image/webp">
+                                                    class="form-control @error('thumbnail') is-invalid @enderror"
+                                                    accept="image/jpeg, image/png, image/jpg, image/webp">
                                                 <small class="text-muted">Recommended: 500x500px, Max: 2MB</small>
                                                 <div class="mt-2">
                                                     @isset($item)
                                                         <img src="{{ asset($item->thumbnail) }}" id="previewThumbnail"
-                                                             class="image-preview" alt="Thumbnail Preview">
+                                                            class="image-preview" alt="Thumbnail Preview">
                                                     @else
                                                         <img src="{{ asset('backend/assets/img/default-150x150.png') }}"
-                                                             id="previewThumbnail" class="image-preview" alt="Thumbnail Preview">
+                                                            id="previewThumbnail" class="image-preview" alt="Thumbnail Preview">
                                                     @endisset
                                                 </div>
                                                 @error('thumbnail')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-6 mb-3">
-                                                <label for="gallery" class="form-label">Gallery Images <small>[optional]</small></label>
+                                                <label for="gallery" class="form-label">Gallery Images
+                                                    <small>[optional]</small></label>
                                                 <input type="file" name="images[]" id="gallery"
-                                                       class="form-control @error('images') is-invalid @enderror" accept="image/jpeg, image/png, image/jpg, image/webp" multiple>
-                                                <small class="text-muted">Select multiple images (Max 10 images, 2MB each)</small>
+                                                    class="form-control @error('images') is-invalid @enderror"
+                                                    accept="image/jpeg, image/png, image/jpg, image/webp" multiple>
+                                                <small class="text-muted">Select multiple images (Max 10 images, 2MB
+                                                    each)</small>
                                                 <div id="previewGallery" class="image-preview-container mt-2">
                                                     @isset($item)
                                                         @foreach($item->gallery as $img)
                                                             <div class="position-relative" id="gallery-img-{{ $img->id }}">
                                                                 <img src="{{ asset($img->image) }}" width="60px" height="60px"
-                                                                     class="image-preview border" alt="Gallery Image">
-                                                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0"
-                                                                        onclick="deleteImage({{ $img->id }})"
-                                                                        style="transform: translate(50%, -50%);">
+                                                                    class="image-preview border" alt="Gallery Image">
+                                                                <button type="button"
+                                                                    class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                                                    onclick="deleteImage({{ $img->id }})"
+                                                                    style="transform: translate(50%, -50%);">
                                                                     <i class="fa fa-times"></i>
                                                                 </button>
                                                             </div>
@@ -546,7 +590,7 @@
                                                     @endisset
                                                 </div>
                                                 @error('images')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -556,31 +600,34 @@
                                     <div class="tab-pane fade" id="shipping-info" role="tabpanel">
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
-                                                <label for="shipping_cost" class="form-label">Shipping Cost <small>[optional]</small></label>
+                                                <label for="shipping_cost" class="form-label">Shipping Cost
+                                                    <small>[optional]</small></label>
                                                 <input id="shipping_cost" type="number" step="0.01" name="shipping_cost"
-                                                       placeholder="Enter shipping cost"
-                                                       value="@isset($item){{ $item->shipping_cost }}@else{{ old('shipping_cost') }}@endisset"
-                                                       class="form-control @error('shipping_cost') is-invalid @enderror" >
+                                                    placeholder="Enter shipping cost"
+                                                    value="@isset($item){{ $item->shipping_cost }}@else{{ old('shipping_cost') }}@endisset"
+                                                    class="form-control @error('shipping_cost') is-invalid @enderror">
                                                 @error('shipping_cost')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-6 mb-3">
-                                                <label for="shipping_time" class="form-label">Shipping Time <small>[optional]</small></label>
+                                                <label for="shipping_time" class="form-label">Shipping Time
+                                                    <small>[optional]</small></label>
                                                 <input id="shipping_time" type="text" name="shipping_time"
-                                                       placeholder="e.g., 3-5 business days"
-                                                       value="@isset($item){{ $item->shipping_time }}@else{{ old('shipping_time') }}@endisset"
-                                                       class="form-control @error('shipping_time') is-invalid @enderror" >
+                                                    placeholder="e.g., 3-5 business days"
+                                                    value="@isset($item){{ $item->shipping_time }}@else{{ old('shipping_time') }}@endisset"
+                                                    class="form-control @error('shipping_time') is-invalid @enderror">
                                                 @error('shipping_time')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-12 mb-3">
-                                                <label for="shipping_return_policy" class="form-label">Shipping & Return Policy <small>[optional]</small></label>
+                                                <label for="shipping_return_policy" class="form-label">Shipping & Return
+                                                    Policy <small>[optional]</small></label>
                                                 <textarea id="shipping_return_policy" name="shipping_return_policy" rows="5"
-                                                          class="form-control summernote @error('shipping_return_policy') is-invalid @enderror">@isset($item){{ $item->shipping_return_policy }}@else{{ old('shipping_return_policy') }}@endisset</textarea>
+                                                    class="form-control summernote @error('shipping_return_policy') is-invalid @enderror">@isset($item){{ $item->shipping_return_policy }}@else{{ old('shipping_return_policy') }}@endisset</textarea>
                                                 @error('shipping_return_policy')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -590,57 +637,64 @@
                                     <div class="tab-pane fade" id="seo-info" role="tabpanel">
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
-                                                <label for="meta_title" class="form-label">Meta Title <small>[optional]</small></label>
+                                                <label for="meta_title" class="form-label">Meta Title
+                                                    <small>[optional]</small></label>
                                                 <input type="text" name="meta_title" id="meta_title"
-                                                       class="form-control @error('meta_title') is-invalid @enderror"
-                                                       value="@isset($item){{ $item->meta_title }}@else{{ old('meta_title') }}@endisset"
-                                                       placeholder="Enter meta title" maxlength="60">
+                                                    class="form-control @error('meta_title') is-invalid @enderror"
+                                                    value="@isset($item){{ $item->meta_title }}@else{{ old('meta_title') }}@endisset"
+                                                    placeholder="Enter meta title" maxlength="60">
                                                 <small class="text-muted">Recommended: 50-60 characters</small>
                                                 @error('meta_title')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-12 mb-3">
-                                                <label for="meta_keywords" class="form-label">Meta Keywords <small>[optional]</small></label>
+                                                <label for="meta_keywords" class="form-label">Meta Keywords
+                                                    <small>[optional]</small></label>
                                                 <input type="text" name="meta_keywords" id="meta_keywords"
-                                                       class="form-control @error('meta_keywords') is-invalid @enderror"
-                                                       value="@isset($item){{ $item->meta_keywords }}@else{{ old('meta_keywords') }}@endisset"
-                                                       placeholder="Enter meta keywords (comma separated)">
+                                                    class="form-control @error('meta_keywords') is-invalid @enderror"
+                                                    value="@isset($item){{ $item->meta_keywords }}@else{{ old('meta_keywords') }}@endisset"
+                                                    placeholder="Enter meta keywords (comma separated)">
                                                 @error('meta_keywords')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-12 mb-3">
-                                                <label for="meta_description" class="form-label">Meta Description <small>[optional]</small></label>
+                                                <label for="meta_description" class="form-label">Meta Description
+                                                    <small>[optional]</small></label>
                                                 <textarea name="meta_description" id="meta_description" rows="3"
-                                                          class="form-control @error('meta_description') is-invalid @enderror"
-                                                          placeholder="Enter meta description" maxlength="160">@isset($item){{ $item->meta_description }}@else{{ old('meta_description') }}@endisset</textarea>
+                                                    class="form-control @error('meta_description') is-invalid @enderror"
+                                                    placeholder="Enter meta description"
+                                                    maxlength="160">@isset($item){{ $item->meta_description }}@else{{ old('meta_description') }}@endisset</textarea>
                                                 <small class="text-muted">Recommended: 150-160 characters</small>
                                                 @error('meta_description')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-12 mb-3">
-                                                <label for="meta_image" class="form-label">Meta Image <small>[optional]</small></label>
+                                                <label for="meta_image" class="form-label">Meta Image
+                                                    <small>[optional]</small></label>
                                                 <input type="file" name="meta_image" id="meta_image"
-                                                       class="form-control @error('meta_image') is-invalid @enderror"
-                                                       accept="image/jpg, image/jpeg, image/png">
+                                                    class="form-control @error('meta_image') is-invalid @enderror"
+                                                    accept="image/jpg, image/jpeg, image/png">
                                                 <div class="mt-2">
                                                     @isset($item)
                                                         @if($item->meta_image)
                                                             <img src="{{ asset($item->meta_image) }}" id="previewMetaImage"
-                                                                 class="image-preview" alt="Meta Image Preview">
+                                                                class="image-preview" alt="Meta Image Preview">
                                                         @else
                                                             <img src="{{ asset('backend/assets/img/default-150x150.png') }}"
-                                                                 id="previewMetaImage" class="image-preview" alt="Meta Image Preview">
+                                                                id="previewMetaImage" class="image-preview"
+                                                                alt="Meta Image Preview">
                                                         @endif
                                                     @else
                                                         <img src="{{ asset('backend/assets/img/default-150x150.png') }}"
-                                                             id="previewMetaImage" class="image-preview" alt="Meta Image Preview">
+                                                            id="previewMetaImage" class="image-preview"
+                                                            alt="Meta Image Preview">
                                                     @endisset
                                                 </div>
                                                 @error('meta_image')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -650,58 +704,61 @@
                                     <div class="tab-pane fade" id="additional-info" role="tabpanel">
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
-                                                <label for="additional_information" class="form-label">Additional Information <small>[optional]</small></label>
+                                                <label for="additional_information" class="form-label">Additional
+                                                    Information <small>[optional]</small></label>
                                                 <textarea id="additional_information" name="additional_information" rows="5"
-                                                          class="form-control summernote @error('additional_information') is-invalid @enderror">@isset($item){{ $item->additional_information }}@else{{ old('additional_information') }}@endisset</textarea>
+                                                    class="form-control summernote @error('additional_information') is-invalid @enderror">@isset($item){{ $item->additional_information }}@else{{ old('additional_information') }}@endisset</textarea>
                                                 @error('additional_information')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <label for="tags" class="form-label">Tags <small>[optional]</small></label>
                                                 <input type="text" name="tags" id="tags"
-                                                       value="@isset($item){{ $item->tags }}@else{{ old('tags') }}@endisset"
-                                                       placeholder="Enter tags and press Enter"
-                                                       class="form-control tags-input @error('tags') is-invalid @enderror">
-                                                <small class="text-muted">Press Enter after each tag. Maximum 10 tags allowed.</small>
+                                                    value="@isset($item){{ $item->tags }}@else{{ old('tags') }}@endisset"
+                                                    placeholder="Enter tags and press Enter"
+                                                    class="form-control tags-input @error('tags') is-invalid @enderror">
+                                                <small class="text-muted">Press Enter after each tag. Maximum 10 tags
+                                                    allowed.</small>
                                                 @error('tags')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                    <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
 
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label mb-2">Product Features</label>
                                                 <div class="form-check mb-2">
-                                                    <input class="form-check-input" type="checkbox" name="cod_available" id="cod_available" value="1"
-                                                    @isset($item){{ $item->cod_available == 1 ? 'checked' : '' }}@endisset>
+                                                    <input class="form-check-input" type="checkbox" name="cod_available"
+                                                        id="cod_available" value="1" @isset($item){{ $item->cod_available == 1 ? 'checked' : '' }}@endisset>
                                                     <label class="form-check-label" for="cod_available">
                                                         Cash on Delivery Available
                                                     </label>
                                                 </div>
                                                 <div class="form-check mb-2">
-                                                    <input class="form-check-input" type="checkbox" name="include_to_todays_deal" id="include_to_todays_deal" value="1"
-                                                    @isset($item){{ $item->include_to_todays_deal == 1 ? 'checked' : '' }}@endisset>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="include_to_todays_deal" id="include_to_todays_deal" value="1"
+                                                        @isset($item){{ $item->include_to_todays_deal == 1 ? 'checked' : '' }}@endisset>
                                                     <label class="form-check-label" for="include_to_todays_deal">
                                                         Include to Today's Deal
                                                     </label>
                                                 </div>
                                                 <div class="form-check mb-2">
-                                                    <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" value="1"
-                                                    @isset($item){{ $item->is_featured == 1 ? 'checked' : '' }}@endisset>
+                                                    <input class="form-check-input" type="checkbox" name="is_featured"
+                                                        id="is_featured" value="1" @isset($item){{ $item->is_featured == 1 ? 'checked' : '' }}@endisset>
                                                     <label class="form-check-label" for="is_featured">
                                                         Featured
                                                     </label>
                                                 </div>
                                                 <div class="form-check mb-2">
-                                                    <input class="form-check-input" type="checkbox" name="is_replaceable" id="is_replaceable" value="1"
-                                                    @isset($item){{ $item->is_replaceable == 1 ? 'checked' : '' }}@endisset>
+                                                    <input class="form-check-input" type="checkbox" name="is_replaceable"
+                                                        id="is_replaceable" value="1" @isset($item){{ $item->is_replaceable == 1 ? 'checked' : '' }}@endisset>
                                                     <label class="form-check-label" for="is_replaceable">
                                                         Replaceable
                                                     </label>
                                                 </div>
                                                 <div class="form-check mb-2">
-                                                    <input class="form-check-input" type="checkbox" name="is_trending" id="is_trending" value="1"
-                                                    @isset($item){{ $item->is_trending == 1 ? 'checked' : '' }}@endisset>
+                                                    <input class="form-check-input" type="checkbox" name="is_trending"
+                                                        id="is_trending" value="1" @isset($item){{ $item->is_trending == 1 ? 'checked' : '' }}@endisset>
                                                     <label class="form-check-label" for="is_trending">
                                                         Trending
                                                     </label>
@@ -733,27 +790,27 @@
 
     <!-- Product Settings Modal -->
     <div class="modal fade" id="productSetting" data-bs-backdrop="static" tabindex="-1"
-         aria-labelledby="productSettingModalLabel" aria-hidden="true">
+        aria-labelledby="productSettingModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="productSettingModalLabel">Product Settings</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.setting.update') }}" method="post" id="productSettingsForm">
+                <form action="{{ route('admin.setting.update-fields') }}" method="post" id="productSettingsForm">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="product_sku_syntax" class="form-label">Main Product SKU Syntax</label>
                             <input type="text" name="product_sku_syntax" id="product_sku_syntax"
-                                   value="{{ getSetting('product_sku_syntax') }}" placeholder="Enter SKU syntax products"
-                                   class="form-control" disabled>
+                                value="{{ getSetting('product_sku_syntax') }}" placeholder="Enter SKU syntax products"
+                                class="form-control" disabled>
                         </div>
                         <div class="mb-3">
                             <label for="variant_product_sku_syntax" class="form-label">Variant SKU Syntax</label>
                             <input type="text" name="variant_product_sku_syntax" id="variant_product_sku_syntax"
-                                   value="{{ getSetting('variant_product_sku_syntax') }}"
-                                   placeholder="Enter SKU syntax for product's variants" class="form-control" disabled>
+                                value="{{ getSetting('variant_product_sku_syntax') }}"
+                                placeholder="Enter SKU syntax for product's variants" class="form-control" disabled>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -771,9 +828,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                    <img id="modalPreviewImage"
-                         class="img-fluid rounded"
-                         alt="Variant Preview">
+                    <img id="modalPreviewImage" class="img-fluid rounded" alt="Variant Preview">
                 </div>
             </div>
         </div>
@@ -793,7 +848,7 @@
             setupEventHandlers();
             @isset($item)
             @else
-            generateSKU();
+                generateSKU();
             @endisset
             initializeVariantManagement();
         });
@@ -802,7 +857,7 @@
             $.ajax({
                 url: "{{ route('admin.product.sku.generate') }}",
                 method: "get",
-                success: function(response) {
+                success: function (response) {
                     if (response.sku) {
                         $('#sku').val(response.sku);
                     } else {
@@ -815,7 +870,7 @@
                         });
                     }
                 },
-                error: function() {
+                error: function () {
                     Swal.fire({
                         icon: 'error',
                         title: 'Failed to Generate SKU',
@@ -858,7 +913,7 @@
                 });
 
                 // Prevent form submission on Enter in tags input
-                $('.bootstrap-tagsinput input').on('keydown', function(e) {
+                $('.bootstrap-tagsinput input').on('keydown', function (e) {
                     if (e.which === 13) {
                         e.preventDefault();
                         $(this).blur().focus();
@@ -870,10 +925,10 @@
 
         function setupEventHandlers() {
             // Image previews
-            $('#thumbnail').change(function() { previewImage(this, '#previewThumbnail'); });
-            $('#meta_image').change(function() { previewImage(this, '#previewMetaImage'); });
+            $('#thumbnail').change(function () { previewImage(this, '#previewThumbnail'); });
+            $('#meta_image').change(function () { previewImage(this, '#previewMetaImage'); });
 
-            $('#gallery').change(function() {
+            $('#gallery').change(function () {
                 $('#previewGallery').empty();
                 if (this.files && this.files.length > 0) {
                     Array.from(this.files).forEach(file => previewImageFile(file, '#previewGallery'));
@@ -899,6 +954,53 @@
 
             // Form submission
             $('#product_form').on('submit', validateForm);
+
+            $('#productSettingsForm').on('submit', function (e) {
+                e.preventDefault();
+                const $form = $(this);
+                const $saveBtn = $('#saveButton');
+                const originalText = $saveBtn.html();
+
+                $saveBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Saving...');
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    method: 'POST',
+                    data: $form.serialize(),
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                            $('#productSetting').modal('hide');
+                            // Disable inputs again
+                            $('#productSettingsForm .modal-body input').prop('disabled', true);
+                            $('#editButton').removeClass('d-none');
+                            $('#saveButton, #cancelButton').addClass('d-none');
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || 'Something went wrong.'
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to update settings. Please try again.'
+                        });
+                    },
+                    complete: function () {
+                        $saveBtn.prop('disabled', false).html(originalText);
+                    }
+                });
+            });
         }
 
         function previewImage(input, selector) {
@@ -913,19 +1015,19 @@
             const reader = new FileReader();
             reader.onload = e => {
                 $(selector).append(`
-                    <div class="position-relative">
-                        <img src="${e.target.result}" width="60px" height="60px" class="image-preview border" alt="">
-                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-preview"
-                                style="transform: translate(50%, -50%);">
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
-                `);
+                        <div class="position-relative">
+                            <img src="${e.target.result}" width="60px" height="60px" class="image-preview border" alt="">
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-preview"
+                                    style="transform: translate(50%, -50%);">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    `);
             };
             reader.readAsDataURL(file);
         }
 
-        $(document).on('click', '.remove-preview', function() {
+        $(document).on('click', '.remove-preview', function () {
             $(this).closest('.position-relative').remove();
         });
 
@@ -946,7 +1048,7 @@
         }
 
         // Delete image via AJAX
-        window.deleteImage = function(id) {
+        window.deleteImage = function (id) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "This image will be permanently deleted!",
@@ -965,7 +1067,7 @@
                             _token: '{{ csrf_token() }}',
                             id: id
                         },
-                        success: function(response) {
+                        success: function (response) {
                             if (response.success) {
                                 $('#gallery-img-' + id).remove();
                                 Swal.fire({
@@ -983,7 +1085,7 @@
                                 });
                             }
                         },
-                        error: function() {
+                        error: function () {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
@@ -997,14 +1099,14 @@
 
         function initializeVariantManagement() {
             // Color switch
-            $('#color_switch').change(function() {
+            $('#color_switch').change(function () {
                 $('.color-selection').toggleClass('d-none', !this.checked);
                 if (!this.checked) $('#color_id').val(null).trigger('change');
                 updateGenerateButton();
             });
 
             // Attribute switch
-            $('#attribute_switch').change(function() {
+            $('#attribute_switch').change(function () {
                 $('.attribute-selection').toggleClass('d-none', !this.checked);
                 if (!this.checked) {
                     $('#attribute_id').val(null).trigger('change');
@@ -1014,7 +1116,7 @@
             });
 
             // Attribute selection
-            $('#attribute_id').change(function() {
+            $('#attribute_id').change(function () {
                 const attributeIds = $(this).val();
                 $('#attributeValueSelectionContainer').empty();
 
@@ -1025,21 +1127,21 @@
                         method: 'GET',
                         url: '{{ route("admin.product.attribute.values.get") }}',
                         data: { attribute_id: attributeIds },
-                        success: function(data) {
+                        success: function (data) {
                             Swal.close();
                             if (data && data.length > 0) {
                                 const html = data.map(attribute => {
                                     if (!attribute) return '';
                                     return `
-                                        <div class="mb-3 attribute-value-selection" data-attribute-id="${attribute.id}">
-                                            <label class="form-label">${attribute.name || 'Unknown Attribute'}</label>
-                                            <select name="attribute_value_id[${attribute.id}][]"
-                                                    class="form-select js-example-basic-single attribute-value-select"
-                                                    data-attr-name="${attribute.name || 'Attribute'}" multiple="multiple">
-                                                ${(attribute.attribute_values || []).map(v => `<option value="${v.value}">${v.value}</option>`).join('')}
-                                            </select>
-                                        </div>
-                                    `;
+                                            <div class="mb-3 attribute-value-selection" data-attribute-id="${attribute.id}">
+                                                <label class="form-label">${attribute.name || 'Unknown Attribute'}</label>
+                                                <select name="attribute_value_id[${attribute.id}][]"
+                                                        class="form-select js-example-basic-single attribute-value-select"
+                                                        data-attr-name="${attribute.name || 'Attribute'}" multiple="multiple">
+                                                    ${(attribute.attribute_values || []).map(v => `<option value="${v.value}">${v.value}</option>`).join('')}
+                                                </select>
+                                            </div>
+                                        `;
                                 }).join('');
 
                                 $('#attributeValueSelectionContainer').html(html);
@@ -1058,7 +1160,7 @@
 
             // Buttons
             $('#generateVariantsBtn').click(generateVariants);
-            $('#clearVariantsBtn').click(function() {
+            $('#clearVariantsBtn').click(function () {
                 Swal.fire({
                     title: 'Clear All Variants?',
                     text: "This will remove all generated variants!",
@@ -1092,7 +1194,7 @@
                 const attributeValues = {};
 
                 // Collect attribute values
-                $('#attributeValueSelectionContainer select').each(function() {
+                $('#attributeValueSelectionContainer select').each(function () {
                     const matches = $(this).attr('name')?.match(/\[(\d+)\]/);
                     if (matches) {
                         const attrId = matches[1];
@@ -1222,44 +1324,44 @@
                 const rows = variants.map((variant, index) => {
                     const sku = generateVariantSKU(variant.name);
                     return `
-                        <tr>
-                            <td>
-                                ${variant.display_name}
-                                <input type="hidden" name="variant[${index}][name]" value="${variant.name}">
-                                <input type="hidden" name="variant[${index}][attr_name]" value="${variant.attr_name}">
-                                <input type="hidden" name="variant[${index}][sku]" value="${sku}">
-                            </td>
-                            <td>
-                                <input type="number" step="0.01" name="variant[${index}][price]"
-                                       class="form-control" value="${basePrice}" required>
-                            </td>
-                            <td>
-                                <input type="file" name="variant[${index}][image]"
-                                       class="form-control variant-image-input" accept="image/jpeg, image/png, image/jpg">
-                                <img id="variantPreview${index}"
-                                     src="{{ asset('backend/assets/img/default-150x150.png') }}"
-                                     class="img-thumbnail mt-2 variant-preview"
-                                     style="width:50px;height:50px;cursor:pointer;"
-                                     data-bs-toggle="modal"
-                                     data-bs-target="#imagePreviewModal">
-                            </td>
-                        </tr>`;
+                            <tr>
+                                <td>
+                                    ${variant.display_name}
+                                    <input type="hidden" name="variant[${index}][name]" value="${variant.name}">
+                                    <input type="hidden" name="variant[${index}][attr_name]" value="${variant.attr_name}">
+                                    <input type="hidden" name="variant[${index}][sku]" value="${sku}">
+                                </td>
+                                <td>
+                                    <input type="number" step="0.01" name="variant[${index}][price]"
+                                           class="form-control" value="${basePrice}" required>
+                                </td>
+                                <td>
+                                    <input type="file" name="variant[${index}][image]"
+                                           class="form-control variant-image-input" accept="image/jpeg, image/png, image/jpg">
+                                    <img id="variantPreview${index}"
+                                         src="{{ asset('backend/assets/img/default-150x150.png') }}"
+                                         class="img-thumbnail mt-2 variant-preview"
+                                         style="width:50px;height:50px;cursor:pointer;"
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#imagePreviewModal">
+                                </td>
+                            </tr>`;
                 }).join('');
 
                 $('#variantsTableContainer').html(`
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-variants">
-                            <thead>
-                                <tr>
-                                    <th>Variant</th>
-                                    <th>Price</th>
-                                    <th>Image</th>
-                                </tr>
-                            </thead>
-                            <tbody>${rows}</tbody>
-                        </table>
-                    </div>
-                `);
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-variants">
+                                <thead>
+                                    <tr>
+                                        <th>Variant</th>
+                                        <th>Price</th>
+                                        <th>Image</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rows}</tbody>
+                            </table>
+                        </div>
+                    `);
 
                 // Initialize variant image preview for newly generated variants
                 initVariantImagePreviews();
@@ -1267,9 +1369,12 @@
 
             function generateVariantSKU(variantName) {
                 const productId = {{ $item->id ?? '0' }};
-                const prefix = '{{ getSetting("variant_product_sku_syntax") ?? "VAR" }}';
+                let prefix = '{{ getSetting("variant_product_sku_syntax") ?? "VAR" }}';
                 const random = Math.floor(1000 + Math.random() * 9000);
                 const variantCode = variantName.replace(/[^a-zA-Z0-9]/g, '').substring(0, 3).toUpperCase();
+
+                // Replace [[random_number]] placeholder with actual random number
+                prefix = prefix.replace('[[random_number]]', random);
 
                 return `${prefix}-${productId}-${variantCode}-${random}`;
             }
@@ -1277,14 +1382,14 @@
             // Initialize variant image previews for both existing and new variant inputs
             function initVariantImagePreviews() {
                 // Handle existing variant image inputs (from edit mode)
-                $('input.variant-image-input[name^="existing_variant"]').each(function() {
+                $('input.variant-image-input[name^="existing_variant"]').each(function () {
                     const index = $(this).attr('name').match(/\[(\d+)\]/)[1];
                     const previewImg = $(`#variantPreview${index}`);
 
-                    $(this).off('change').on('change', function() {
+                    $(this).off('change').on('change', function () {
                         if (this.files && this.files[0]) {
                             const reader = new FileReader();
-                            reader.onload = function(e) {
+                            reader.onload = function (e) {
                                 previewImg.attr('src', e.target.result);
                             };
                             reader.readAsDataURL(this.files[0]);
@@ -1293,14 +1398,14 @@
                 });
 
                 // Handle newly generated variant image inputs
-                $('input.variant-image-input[name^="variant["]').each(function() {
+                $('input.variant-image-input[name^="variant["]').each(function () {
                     const index = $(this).attr('name').match(/\[(\d+)\]/)[1];
                     const previewImg = $(`#variantPreview${index}`);
 
-                    $(this).off('change').on('change', function() {
+                    $(this).off('change').on('change', function () {
                         if (this.files && this.files[0]) {
                             const reader = new FileReader();
-                            reader.onload = function(e) {
+                            reader.onload = function (e) {
                                 previewImg.attr('src', e.target.result);
                             };
                             reader.readAsDataURL(this.files[0]);

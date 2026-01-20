@@ -43,77 +43,80 @@
                             @endcan
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body table-responsive">
-                            <table class="table table-bordered table-hover" id="datatable">
-                                <thead>
-                                <tr>
-                                    <th style="width: 10px">#</th>
-                                    <th>Page Name</th>
-                                    <th>Slug</th>
-                                    <th>Content</th>
-                                    <th style="width: 40px">Status</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($items as $key => $item)
-                                    <tr class="align-middle">
-                                        <td>{{$key+1}}.</td>
-                                        <td>{{$item->title}}</td>
-                                        <td>{{$item->slug}}</td>
-                                        <td>
-                                            {{Str::limit(strip_tags($item->content), 100)}}
-                                            <!-- Button trigger modal -->
-                                            @if(Str::length(strip_tags($item->content)) > 100)
-                                                <small class="text-decoration-underline text-primary cursor-pointer ms-2 content-btn" data-content="{{$item->content}}"  data-bs-toggle="modal" data-bs-target="#contentModal">
-                                                    View All
-                                                </small>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @can('Page Status Change')
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input toggle-switch" type="checkbox" role="switch"
-                                                           data-module="page" data-id="{{ $item->id }}"
-                                                        {{ $item->status == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
-                                                </div>
-                                            @else
-                                                <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success': 'danger'}}">{{$item->status == 1 ? 'Showed':'Hidden'}}</span>
-                                            @endcan 
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                @can('Page Update')
-                                                <a href="{{route('admin.page.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
-                                                @endcan
-                                                @can('Page Delete')
-                                                <form action="{{route('admin.page.delete')}}" method="post">
-                                                    @csrf
-                                                    <input type="hidden" name="id" value="{{$item->id}}">
-                                                    <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
-                                                </form>
-                                                @endcan
-                                            </div>
-                                        </td>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" id="datatable">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>Page Name</th>
+                                        <th>Slug</th>
+                                        <th>Content</th>
+                                        <th style="width: 40px">Status</th>
+                                        <th></th>
                                     </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                            <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Template Body</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    {!! $item->content !!}
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($items as $key => $item)
+                                        <tr class="align-middle">
+                                            <td>{{$key+1}}.</td>
+                                            <td>{{$item->title}}</td>
+                                            <td>{{$item->slug}}</td>
+                                            <td>
+                                                {{Str::limit(strip_tags($item->content), 100)}}
+                                                <!-- Button trigger modal -->
+                                                @if(Str::length(strip_tags($item->content)) > 100)
+                                                    <small class="text-decoration-underline text-primary cursor-pointer ms-2 content-btn" data-content="{{$item->content}}"  data-bs-toggle="modal" data-bs-target="#contentModal">
+                                                        View All
+                                                    </small>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @can('Page Status Change')
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input toggle-switch" type="checkbox" role="switch"
+                                                               data-module="page" data-id="{{ $item->id }}"
+                                                            {{ $item->status == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
+                                                    </div>
+                                                @else
+                                                    <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success': 'danger'}}">{{$item->status == 1 ? 'Showed':'Hidden'}}</span>
+                                                @endcan 
+                                            </td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    @can('Page Update')
+                                                    <a href="{{route('admin.page.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                    @endcan
+                                                    @can('Page Delete')
+                                                    <form action="{{route('admin.page.delete')}}" method="post">
+                                                        @csrf
+                                                        <input type="hidden" name="id" value="{{$item->id}}">
+                                                        <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
+                                                    </form>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                    </div>
+                            <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Template Body</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {!! $item->content !!}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div> <!-- /.card-body -->
                     </div> <!-- /.card -->
                 </div> <!-- /.col -->

@@ -21,26 +21,55 @@ class SettingController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:Settings Update',only: ['goToSection']),
+            new Middleware('permission:Settings Update', only: ['goToSection']),
         ];
     }
-    public function create(){
+    public function create()
+    {
         return view('backend.setting.form');
     }
-    public function store(SettingUpdateRequest $request){
+    public function store(SettingUpdateRequest $request)
+    {
         Setting::create($request->validated());
-        return redirect()->route('admin.setting.index')->with('success','Setting created successfully');
+        return redirect()->route('admin.setting.index')->with('success', 'Setting created successfully');
     }
     //
-    public function index(){
+    public function index()
+    {
         $data['items'] = Setting::latest()->get();
-        return view('backend.setting.list',$data);
+        return view('backend.setting.list', $data);
     }
 
     public function update(SettingUpdateRequest $request)
     {
         $section = $request->getSection(url()->previous());
         $this->settingService->updateSettings($request->all(), $request->allFiles(), $section);
+
+        return back()->with('success', 'Settings updated successfully');
+    }
+
+    /**
+     * Update specific settings fields via AJAX
+     */
+    public function updateFields(\Illuminate\Http\Request $request)
+    {
+        $data = $request->except(['_token', '_method']);
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
+            foreach ($data as $key => $value) {
+                Setting::updateOrCreate(
+                    ['key' => $key],
+                    ['value' => $value]
+                );
+            }
+        });
+
+        if ($request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Settings updated successfully'
+            ]);
+        }
 
         return back()->with('success', 'Settings updated successfully');
     }

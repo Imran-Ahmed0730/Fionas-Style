@@ -175,13 +175,15 @@ class ProductService
         // Handle new variants if added during update
         if (count($newVariants) > 0) {
             foreach ($newVariants as $v) {
+                $v['final_price'] = $data['discount_type'] == 1 ? $v['price'] - $v['price'] * $data['discount'] / 100 : $v['price'] - $data['discount'];
+
                 $variantData = [
                     'product_id' => $product->id,
                     'name' => $v['name'],
                     'sku' => $v['sku'] ?? null,
                     'regular_price' => $v['price'],
-                    'final_price' => $v['price'],
-                    'stock_qty' => $v['stock_qty'],
+                    'final_price' => $v['final_price'],
+                    'stock_qty' => $v['stock_qty'] ?? 0,
                 ];
                 if (isset($v['image'])) {
                     $variantData['image'] = saveImagePath($v['image'], null, 'product/variant');
@@ -224,6 +226,9 @@ class ProductService
             }
             $variant->delete();
         }
+
+        $product->stocks()->delete();
+        
         return $product->delete();
     }
 

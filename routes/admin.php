@@ -18,6 +18,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductStockController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\CampaignController;
+use App\Http\Controllers\Admin\CustomerController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'login'])->name('login');
@@ -37,6 +41,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/edit/{slug}', 'goToSection')->name('edit');
             Route::post('/language/remove', 'removeLanguage')->name('language.remove');
             Route::post('/update', 'update')->name('update');
+            Route::post('/update-fields', 'updateFields')->name('update-fields');
         });
 
         //role module
@@ -143,6 +148,40 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('/featured/change/{id}', 'changeFeaturedStatus')->name('featured.change');
             });
         });
+
+        //stock module
+        Route::resource('stock', ProductStockController::class)->except('show', 'edit', 'update', 'destroy');
+        Route::controller(ProductStockController::class)->prefix('stock')->name('stock.')->group(function () {
+            Route::get('/sku/generate', 'generateSku')->name('sku.generate');
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/get-product', 'getProduct')->name('get-product');
+        });
+
+        //coupon module
+        Route::resource('coupon', CouponController::class)->except('edit', 'update', 'destroy');
+        Route::controller(CouponController::class)->prefix('coupon')->name('coupon.')->group(function () {
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+        });
+
+        //customer module
+        Route::resource('customer', CustomerController::class)->except('update', 'destroy');
+        Route::controller(CustomerController::class)->prefix('customer')->name('customer.')->group(function () {
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+        });
+
+        //campaign module
+        Route::resource('campaign', CampaignController::class)->except('edit', 'update', 'destroy');
+        Route::controller(CampaignController::class)->prefix('campaign')->name('campaign.')->group(function () {
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+        });
+
 
         //banner module
         Route::resource('banner', BannerController::class)->except('show', 'destroy', 'update');

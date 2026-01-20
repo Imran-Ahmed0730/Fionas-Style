@@ -43,70 +43,72 @@
                             @endcan
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body table-responsive">
-                            <table class="table table-bordered table-hover" id="datatable">
-                                <thead>
-                                <tr>
-                                    <th style="width: 10px">#</th>
-                                    <th style="width: 50px">Image</th>
-                                    <th>Priority</th>
-                                    <th>Position</th>
-                                    <th style="width: 50px">Status</th>
-                                    <th ></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @php $counter = 0; @endphp
-                                @foreach($items as $key => $item)
-                                    <tr class="align-middle">
-                                        <td>{{$key+1}}.</td>
-                                        <td>
-                                            @if($item->image != null)
-                                                <img src="{{asset($item->image)}}" class="rounded-circle" width="50px" alt="">
-                                            @else
-                                                <img src="{{asset('backend')}}/assets/img/default-150x150.png" width="50px" class="rounded-circle" alt="">
-                                            @endif
-                                        </td>
-                                        <td>{{$item->priority}}</td>
-                                        <td>
-                                            @if($item->position == 1)
-                                                Header
-                                            @elseif($item->position == 2)
-                                                Main
-                                            @else
-                                                Footer
-                                            @endif
-                                            Section
-                                        </td>
-                                        <td class="">
-                                            @can('Slider Status Change')
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input toggle-switch" type="checkbox" role="switch"
-                                                           data-module="slider" data-id="{{ $item->id }}"
-                                                        {{ $item->status == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
-                                                </div>
-                                            @else
-                                                <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success': 'danger'}}">{{$item->status == 1 ? 'Active':'Inactive'}}</span>
-                                            @endcan
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                @can('Slider Update')
-                                                    <a href="{{route('admin.slider.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
-                                                @endcan
-                                                @can('Slider Delete')
-                                                    <form action="{{route('admin.slider.delete')}}" method="post">
-                                                        @csrf
-                                                        <input type="hidden" name="id" value="{{$item->id}}">
-                                                        <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
-                                                    </form>
-                                                @endcan
-                                            </div>
-                                        </td>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" id="datatable">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th style="width: 50px">Image</th>
+                                        <th>Priority</th>
+                                        <th>Position</th>
+                                        <th style="width: 50px">Status</th>
+                                        <th ></th>
                                     </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    @php $counter = 0; @endphp
+                                    @foreach($items as $key => $item)
+                                        <tr class="align-middle">
+                                            <td>{{$key+1}}.</td>
+                                            <td>
+                                                @if($item->image != null)
+                                                    <img src="{{asset($item->image)}}" class="rounded-circle" width="50px" alt="">
+                                                @else
+                                                    <img src="{{asset('backend')}}/assets/img/default-150x150.png" width="50px" class="rounded-circle" alt="">
+                                                @endif
+                                            </td>
+                                            <td>{{$item->priority}}</td>
+                                            <td>
+                                                @if($item->position == 1)
+                                                    Header
+                                                @elseif($item->position == 2)
+                                                    Main
+                                                @else
+                                                    Footer
+                                                @endif
+                                                Section
+                                            </td>
+                                            <td class="">
+                                                @can('Slider Status Change')
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input toggle-switch" type="checkbox" role="switch"
+                                                               data-module="slider" data-id="{{ $item->id }}"
+                                                            {{ $item->status == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
+                                                    </div>
+                                                @else
+                                                    <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success': 'danger'}}">{{$item->status == 1 ? 'Active':'Inactive'}}</span>
+                                                @endcan
+                                            </td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    @can('Slider Update')
+                                                        <a href="{{route('admin.slider.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                    @endcan
+                                                    @can('Slider Delete')
+                                                        <form action="{{route('admin.slider.delete')}}" method="post">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{$item->id}}">
+                                                            <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>
+                                                        </form>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div> <!-- /.card-body -->
                     </div> <!-- /.card -->
                 </div> <!-- /.col -->

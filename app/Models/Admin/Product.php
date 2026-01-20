@@ -14,21 +14,21 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class)->withDefault([
-            'name'=> 'N/A',
+            'name' => 'N/A',
         ]);
     }
 
     public function brand()
     {
         return $this->belongsTo(Brand::class)->withDefault([
-            'name'=> 'N/A',
+            'name' => 'N/A',
         ]);
     }
 
     public function unit()
     {
         return $this->belongsTo(Unit::class)->withDefault([
-            'name'=> 'N/A',
+            'name' => 'N/A',
         ]);
     }
 
@@ -40,5 +40,10 @@ class Product extends Model
     public function gallery()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function stocks()
+    {
+        return $this->hasMany(ProductStock::class, 'product_name', 'name');
     }
 }

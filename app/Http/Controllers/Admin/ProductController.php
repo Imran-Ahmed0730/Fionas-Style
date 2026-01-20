@@ -64,7 +64,7 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function show(string $id)
     {
-        $data['item'] = $this->productService->getById($id);
+        $data['item'] = Product::with(['variants', 'gallery', 'stocks.supplier', 'stocks.addedBy'])->findOrFail($id);
         return view('backend.product.details', $data);
     }
 
@@ -87,7 +87,7 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function update(ProductRequest $request)
     {
-//        dd($request->all());
+        //        dd($request->all());
         $product = $this->productService->getById($request->id);
         $this->productService->update($product, $request->validated());
 

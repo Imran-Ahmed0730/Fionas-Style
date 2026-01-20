@@ -43,8 +43,9 @@
                             @endcan
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body table-responsive">
-                            <table class="table table-bordered table-hover" id="datatable">
+                        <div class="card-body ">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" id="datatable">
                                 <thead>
                                 <tr>
                                     <th style="width: 10px">#</th>
@@ -61,7 +62,7 @@
                                 <tbody>
                                 @foreach($items as $key => $item)
                                     <tr class="align-middle">
-                                        <td>{{$key+1}}.</td>
+                                        <td>{{$key + 1}}.</td>
 
                                         <td>
                                             <div class="d-flex align-items-center">
@@ -104,7 +105,7 @@
                                                         {{ $item->status == 1 ? 'checked' : '' }}>
                                                 </div>
                                             @else
-                                                <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success': 'danger'}}">{{$item->status == 1 ? 'Active':'Inactive'}}</span>
+                                                <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success' : 'danger'}}">{{$item->status == 1 ? 'Active' : 'Inactive'}}</span>
                                             @endcan
                                         </td>
                                         <td>
@@ -125,7 +126,8 @@
                                     </tr>
                                 @endforeach
                                 </tbody>
-                            </table>
+                                </table>
+                            </div>
                         </div> <!-- /.card-body -->
                     </div> <!-- /.card -->
                 </div> <!-- /.col -->

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,6 +12,7 @@ return new class extends Migration
     {
         Schema::create('product_stocks', function (Blueprint $table) {
             $table->id();
+            $table->integer('product_id')->nullable();
             $table->string('product_name');
             $table->integer('supplier_id')->nullable();
             $table->string('variant_name')->nullable();
@@ -22,6 +22,8 @@ return new class extends Migration
             $table->integer('qty');
             $table->integer('damaged_qty')->default(0);
             $table->tinyInteger('track_error')->default(0)->comment('1=>Yes, 0=>No');
+            $table->bigInteger('added_by');
+            $table->dateTime('added_on');
             $table->timestamps();
         });
     }
