@@ -4,15 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductStockRequest;
+use App\Models\Admin\Product;
+use App\Models\Admin\ProductStock;
+use App\Models\Admin\ProductVariant;
+use App\Models\Admin\Supplier;
+use App\Services\Admin\ProductStockService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use App\Models\Admin\ProductStock;
-use App\Services\ProductStockService;
-use App\Models\Admin\Product;
-use App\Models\Admin\Supplier;
 use Illuminate\Support\Facades\DB;
-use App\Models\Admin\ProductVariant;
 
 class ProductStockController extends Controller implements HasMiddleware
 {

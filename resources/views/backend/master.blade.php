@@ -34,7 +34,7 @@
        @include('backend.include.footer')
     </div>
 
-    <!-- Custom template | don't include it in your project! -->
+    <!-- Custom template | don't include it in your project!
     <div class="custom-template">
         <div class="title">Settings</div>
         <div class="custom-content">
@@ -226,7 +226,7 @@
         <div class="custom-toggle">
             <i class="icon-settings"></i>
         </div>
-    </div>
+    </div> -->
     <!-- End Custom template -->
 </div>
 @include('backend.include.script')

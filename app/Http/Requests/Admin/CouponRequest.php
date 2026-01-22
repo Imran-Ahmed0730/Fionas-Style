@@ -24,16 +24,17 @@ class CouponRequest extends FormRequest
         return [
             'title'                 => 'required|string|max:255',
             'description'           => 'nullable|string',
-            'code'                  => 'required|string|max:255|unique:coupons',
+            'code'                  => 'required|string|max:255|unique:coupons,code,' . $this->id,
             'discount_type'         => 'required|in:1,2',
             'discount'              => 'required|numeric',
-            'min_purchase_amount'   => 'required|numeric|min:1',
+            'min_purchase_price'    => 'required|numeric|min:1',
             'total_use_limit'       => 'required|integer|min:1',
-            'use_limit_per_person'  => 'required|integer|min:1',
+            'use_limit_per_user'    => 'required|integer|min:1',
             'applicable_for'        => 'required|integer',
             'applicable_products'   => 'nullable|array',
-            'start_date'            => 'required|datetime|before:end_date|after_or_equal:today',
-            'end_date'              => 'required|datetime|after:start_date|after_or_equal:today',
+            'applicable_products.*' => 'required|integer|exists:products,id',
+            'start_date'            => 'required|date|before:end_date|after_or_equal:today',
+            'end_date'              => 'required|date|after:start_date|after_or_equal:today',
             'status'                => 'required|in:0,1',
         ];
     }

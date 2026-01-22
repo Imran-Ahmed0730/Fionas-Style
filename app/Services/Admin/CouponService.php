@@ -37,12 +37,20 @@ class CouponService
         if (isset($data['applicable_products'])) {
             $data['applicable_products'] = json_encode($data['applicable_products']);
         }
+        else{
+            $data['applicable_products'] = json_encode([]);
+        }
         return Coupon::create($data);
     }
 
     public function update(Coupon $coupon, array $data): bool
     {
-        $data['applicable_products'] = json_encode($data['applicable_products']);
+        if (isset($data['applicable_products'])) {
+            $data['applicable_products'] = json_encode($data['applicable_products']);
+        }
+        else{
+            $data['applicable_products'] = json_encode([]);
+        }
         return $coupon->update($data);
     }
 

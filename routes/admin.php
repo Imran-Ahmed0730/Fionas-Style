@@ -159,11 +159,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         //coupon module
-        Route::resource('coupon', CouponController::class)->except('edit', 'update', 'destroy');
+        Route::resource('coupon', CouponController::class)->except('update', 'destroy');
         Route::controller(CouponController::class)->prefix('coupon')->name('coupon.')->group(function () {
             Route::post('/update', 'update')->name('update');
             Route::post('/delete', 'destroy')->name('delete');
             Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+            Route::get('/code/generate', 'generateCode')->name('code.generate');
         });
 
         //customer module

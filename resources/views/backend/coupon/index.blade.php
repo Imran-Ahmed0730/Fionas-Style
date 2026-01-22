@@ -1,6 +1,6 @@
 @extends('backend.master')
 @section('title')
-    View Brands
+    View Coupons
 @endsection
 @push('css')
     <!-- DataTables CSS and Bootstrap 5 Integration -->
@@ -10,7 +10,7 @@
     <div class="container">
         <div class="page-inner">
             <div class="page-header">
-                <h3 class="fw-bold mb-3">View Brands</h3>
+                <h3 class="fw-bold mb-3">View Coupons</h3>
                 <ul class="breadcrumbs mb-3">
                     <li class="nav-home">
                         <a href="{{ route('admin.dashboard') }}">
@@ -21,7 +21,7 @@
                         <i class="icon-arrow-right"></i>
                     </li>
                     <li class="nav-item">
-                        <a href="#">Brands</a>
+                        <a href="#">Coupons</a>
                     </li>
                     <li class="separator">
                         <i class="icon-arrow-right"></i>
@@ -35,10 +35,10 @@
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-header d-flex align-items-center">
-                            <h3 class="card-title mb-0">View Brands</h3>
-                            @can('Brand Add')
-                                <a href="{{route('admin.brand.create')}}" data-bs-toggle="tooltip" title="Add Brand" class="btn btn-primary ms-auto">
-                                    <i class="fa fa-plus me-2"></i> Add Brand
+                            <h3 class="card-title mb-0">View Coupons</h3>
+                            @can('Coupon Add')
+                                <a href="{{route('admin.coupon.create')}}" data-bs-toggle="tooltip" title="Add Coupon" class="btn btn-primary ms-auto">
+                                    <i class="fa fa-plus me-2"></i> Add Coupon
                                 </a>
                             @endcan
                         </div>
@@ -48,8 +48,11 @@
                                 <thead>
                                 <tr>
                                     <th style="width: 10px">#</th>
-                                    <th style="width: 50px">Image</th>
-                                    <th>Name</th>
+                                    <th>Title</th>
+                                    <th>Code</th>
+                                    <th>Discount</th>
+                                    <th>Duration</th>
+                                    <th>Usage</th>
                                     <th style="width: 50px">Status</th>
                                     <th ></th>
                                 </tr>
@@ -58,34 +61,32 @@
                                 @php $counter = 0; @endphp
                                 @foreach($items as $key => $item)
                                     <tr class="align-middle">
-                                        <td>{{$key+1}}.</td>
-                                        <td>
-                                            @if($item->image != null)
-                                                <img src="{{asset($item->image)}}" class="rounded-circle" width="50px" alt="">
-
-                                            @else
-                                                <img src="{{asset('backend')}}/assets/img/default-150x150.png" width="50px" class="rounded-circle" alt="">
-                                            @endif
+                                        <td>{{$key + 1}}.</td>
+                                        <td>{{$item->title}}</td>
+                                        <td>{{$item->code}}</td>
+                                        <td>{{$item->discount}}
+                                            {{ $item->discount_type == '1' ? 'BDT' : '%' }}
                                         </td>
-                                        <td>{{$item->name}}</td>
+                                        <td>{{$item->getDuration}}</td>
+                                        <td>{{$item->total_use_limit}}</td>
                                         <td class="">
-                                            @can('Brand Status Change')
+                                            @can('Coupon Status Change')
                                                 <div class="form-check form-switch">
                                                     <input class="form-check-input toggle-switch" type="checkbox" role="switch"
-                                                           data-module="brand" data-id="{{ $item->id }}"
+                                                           data-module="coupon" data-id="{{ $item->id }}"
                                                         {{ $item->status == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
                                                 </div>
                                             @else
-                                                <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success': 'danger'}}">{{$item->status == 1 ? 'Active':'Inactive'}}</span>
+                                                <span class="p-2 badge text-bg-{{$item->status == 1 ? 'success' : 'danger'}}">{{$item->status == 1 ? 'Active' : 'Inactive'}}</span>
                                             @endcan
                                         </td>
                                         <td>
                                             <div class="d-flex">
-                                                @can('Brand Update')
-                                                    <a href="{{route('admin.brand.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                @can('Coupon Update')
+                                                    <a href="{{route('admin.coupon.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
                                                 @endcan
-                                                @can('Brand Delete')
-                                                    <form action="{{route('admin.brand.delete')}}" method="post">
+                                                @can('Coupon Delete')
+                                                    <form action="{{route('admin.coupon.delete')}}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{$item->id}}">
                                                         <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>

@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Coupon extends Model
 {
@@ -12,6 +13,13 @@ class Coupon extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
+
+    public function getDuration():Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => date("D, d M Y h:i A", strtotime($this->end_date)). " - " . date("D, d M Y h:i A", strtotime($this->start_date))
+        );
+    }
 
     public function customer()
     {

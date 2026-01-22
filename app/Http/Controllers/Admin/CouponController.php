@@ -58,6 +58,7 @@ class CouponController extends Controller implements HasMiddleware
      */
     public function store(CouponRequest $request)
     {
+//        dd($request->validated());
         $this->couponService->store($request->validated());
         return redirect()->route('admin.coupon.index')->with('success', 'Coupon created successfully');
     }
@@ -77,6 +78,10 @@ class CouponController extends Controller implements HasMiddleware
     public function edit(string $id)
     {
         $data['item'] = Coupon::findOrFail($id);
+        $data['customers'] = Customer::where('status', 1)->whereHas('user', function ($query) {
+            $query->orderBy('name', 'asc');
+        })->get();
+        $data['products'] = Product::where('status', 1)->orderBy('name', 'asc')->get();
         return view('backend.coupon.form', $data);
     }
 
@@ -108,5 +113,10 @@ class CouponController extends Controller implements HasMiddleware
             'success' => true,
             'message' => 'Coupon status updated successfully'
         ]);
+    }
+
+    public function generateCode(){
+        $code = $this->couponService->generateCode();
+        return response()->json(['code' => $code]);
     }
 }
