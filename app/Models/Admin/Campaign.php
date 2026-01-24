@@ -17,4 +17,26 @@ class Campaign extends Model
     {
         return $this->hasMany(CampaignProduct::class, 'campaign_id');
     }
+
+    public function getIsActiveAttribute()
+    {
+        if ($this->status != 1) {
+            return false;
+        }
+
+        if (empty($this->duration)) {
+            return false;
+        }
+
+        $dates = explode(' to ', $this->duration);
+        if (count($dates) != 2) {
+            return false;
+        }
+
+        $start = \Carbon\Carbon::parse($dates[0]);
+        $end = \Carbon\Carbon::parse($dates[1]);
+        $now = now();
+
+        return $now->betweenIncluded($start, $end);
+    }
 }

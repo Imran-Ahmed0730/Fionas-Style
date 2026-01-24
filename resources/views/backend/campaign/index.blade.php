@@ -1,6 +1,6 @@
 @extends('backend.master')
 @section('title')
-    View Brands
+    View Campaigns
 @endsection
 @push('css')
     <!-- DataTables CSS and Bootstrap 5 Integration -->
@@ -10,7 +10,7 @@
     <div class="container">
         <div class="page-inner">
             <div class="page-header">
-                <h3 class="fw-bold mb-3">View Brands</h3>
+                <h3 class="fw-bold mb-3">View Campaigns</h3>
                 <ul class="breadcrumbs mb-3">
                     <li class="nav-home">
                         <a href="{{ route('admin.dashboard') }}">
@@ -21,7 +21,7 @@
                         <i class="icon-arrow-right"></i>
                     </li>
                     <li class="nav-item">
-                        <a href="#">Brands</a>
+                        <a href="#">Campaigns</a>
                     </li>
                     <li class="separator">
                         <i class="icon-arrow-right"></i>
@@ -35,10 +35,10 @@
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-header d-flex align-items-center">
-                            <h3 class="card-title mb-0">View Brands</h3>
-                            @can('Brand Add')
-                                <a href="{{route('admin.brand.create')}}" data-bs-toggle="tooltip" title="Add Brand" class="btn btn-primary ms-auto">
-                                    <i class="fa fa-plus me-2"></i> Add Brand
+                            <h3 class="card-title mb-0">View Campaigns</h3>
+                            @can('Campaign Add')
+                                <a href="{{route('admin.campaign.create')}}" data-bs-toggle="tooltip" title="Add Campaign" class="btn btn-primary ms-auto">
+                                    <i class="fa fa-plus me-2"></i> Add Campaign
                                 </a>
                             @endcan
                         </div>
@@ -48,8 +48,9 @@
                                 <thead>
                                 <tr>
                                     <th style="width: 10px">#</th>
-                                    <th style="width: 50px">Image</th>
-                                    <th>Name</th>
+                                    <th style="width: 50px">Thumbnail</th>
+                                    <th>Title</th>
+                                    <th>Duration</th>
                                     <th style="width: 50px">Status</th>
                                     <th ></th>
                                 </tr>
@@ -60,19 +61,20 @@
                                     <tr class="align-middle">
                                         <td>{{$key+1}}.</td>
                                         <td>
-                                            @if($item->image != null)
-                                                <img src="{{asset($item->image)}}" class="rounded-circle" width="50px" alt="">
+                                            @if($item->thumbnail != null)
+                                                <img src="{{asset($item->thumbnail)}}" class="rounded-circle" width="50px" alt="">
 
                                             @else
                                                 <img src="{{asset('backend')}}/assets/img/default-150x150.png" width="50px" class="rounded-circle" alt="">
                                             @endif
                                         </td>
-                                        <td>{{$item->name}}</td>
+                                        <td>{{$item->title}}</td>
+                                        <td>{{$item->duration}}</td>
                                         <td class="">
-                                            @can('Brand Status Change')
+                                            @can('Campaign Status Change')
                                                 <div class="form-check form-switch">
                                                     <input class="form-check-input toggle-switch" type="checkbox" role="switch"
-                                                           data-module="brand" data-id="{{ $item->id }}"
+                                                           data-module="campaign" data-id="{{ $item->id }}"
                                                         {{ $item->status == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
                                                 </div>
                                             @else
@@ -81,11 +83,11 @@
                                         </td>
                                         <td>
                                             <div class="d-flex">
-                                                @can('Brand Update')
-                                                    <a href="{{route('admin.brand.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
+                                                @can('Campaign Update')
+                                                    <a href="{{route('admin.campaign.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
                                                 @endcan
-                                                @can('Brand Delete')
-                                                    <form action="{{route('admin.brand.delete')}}" method="post">
+                                                @can('Campaign Delete')
+                                                    <form action="{{route('admin.campaign.delete')}}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{$item->id}}">
                                                         <button class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></button>

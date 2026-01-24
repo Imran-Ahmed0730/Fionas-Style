@@ -22,6 +22,10 @@ use App\Http\Controllers\Admin\ProductStockController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\BlogCategoryController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\FaqCategoryController;
+use App\Http\Controllers\Admin\FaqController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'login'])->name('login');
@@ -146,6 +150,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
                 Route::get('/todays-deal/change/{id}', 'changeTodaysDealStatus')->name('todays-deal.change');
                 Route::get('/featured/change/{id}', 'changeFeaturedStatus')->name('featured.change');
+                Route::get('/get/by-category', 'getProductByCategory')->name('get-by-category');
             });
         });
 
@@ -158,6 +163,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/get-product', 'getProduct')->name('get-product');
         });
 
+        //customer module
+        Route::resource('customer', CustomerController::class)->except('update', 'destroy');
+        Route::controller(CustomerController::class)->prefix('customer')->name('customer.')->group(function () {
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+        });
+
         //coupon module
         Route::resource('coupon', CouponController::class)->except('update', 'destroy');
         Route::controller(CouponController::class)->prefix('coupon')->name('coupon.')->group(function () {
@@ -167,16 +180,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/code/generate', 'generateCode')->name('code.generate');
         });
 
-        //customer module
-        Route::resource('customer', CustomerController::class)->except('update', 'destroy');
-        Route::controller(CustomerController::class)->prefix('customer')->name('customer.')->group(function () {
-            Route::post('/update', 'update')->name('update');
-            Route::post('/delete', 'destroy')->name('delete');
-            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
-        });
-
         //campaign module
-        Route::resource('campaign', CampaignController::class)->except('edit', 'update', 'destroy');
+        Route::resource('campaign', CampaignController::class)->except('update', 'destroy');
         Route::controller(CampaignController::class)->prefix('campaign')->name('campaign.')->group(function () {
             Route::post('/update', 'update')->name('update');
             Route::post('/delete', 'destroy')->name('delete');
@@ -207,6 +212,42 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/delete', 'destroy')->name('delete');
             Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });
+
+        //blog module
+        Route::resource('blog', BlogController::class)->except('show', 'destroy', 'update');
+        Route::prefix('blog')->name('blog.')->group(function () {
+            Route::controller(BlogController::class)->group(function () {
+                Route::post('/update', 'update')->name('update');
+                Route::post('/delete', 'destroy')->name('delete');
+                Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+            });
+
+            Route::resource('category', BlogCategoryController::class)->except('show', 'destroy', 'update');
+            Route::prefix('category')->name('category.')->group(function () {
+                Route::controller(BlogCategoryController::class)->group(function () {
+                    Route::post('/update', 'update')->name('update');
+                    Route::post('/delete', 'destroy')->name('delete');
+                    Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+                });
+            });
+        });
+
+        //faq module
+        Route::resource('faq', FaqController::class)->except('show', 'destroy', 'update');
+        Route::prefix('faq')->name('faq.')->group(function () {
+            Route::controller(FaqController::class)->group(function () {
+                Route::post('/update', 'update')->name('update');
+                Route::post('/delete', 'destroy')->name('delete');
+                Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+            });
+            Route::resource('category', FaqCategoryController::class)->except('show', 'destroy', 'update');
+            Route::controller(FaqCategoryController::class)->prefix('category')->name('category.')->group(function () {
+                Route::post('/update', 'update')->name('update');
+                Route::post('/delete', 'destroy')->name('delete');
+                Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+            });
+        });
+
 
     });
 });

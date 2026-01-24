@@ -171,4 +171,23 @@ class ProductController extends Controller implements HasMiddleware
         return response()->json(['sku' => $sku]);
     }
 
+    public function getProductByCategory(Request $request)
+    {
+        $products = Product::where('category_id', $request->category_id)
+            ->where('status', 1)
+            ->whereHas('stocks', function ($q) {
+                $q->where('qty', '>', 0);
+            })
+            ->withMin([
+                'stocks as buying_price' => function ($q) {
+                    $q->where('qty', '>', 0);
+                }
+            ], 'buying_price')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json($products);
+    }
+
+
 }

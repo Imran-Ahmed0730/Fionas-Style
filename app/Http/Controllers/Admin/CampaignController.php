@@ -47,7 +47,17 @@ class CampaignController extends Controller implements HasMiddleware
     public function create()
     {
         $data['categories'] = Category::where('status', 1)->orderBy('name', 'asc')->get();
-        $data['products'] = Product::where('status', 1)->orderBy('name', 'asc')->get();
+        // Filter out products that are in an active campaign
+        $data['products'] = Product::with('stocks')
+            ->where('status', 1)
+            ->whereDoesntHave('campaignProducts', function ($q) {
+                $q->whereHas('campaign', function ($c) {
+                    $c->where('status', 1)
+                        ->whereRaw("STR_TO_DATE(SUBSTRING_INDEX(duration, ' to ', 1), '%Y-%m-%d %H:%i:%s') <= NOW()")
+                        ->whereRaw("STR_TO_DATE(SUBSTRING_INDEX(duration, ' to ', -1), '%Y-%m-%d %H:%i:%s') >= NOW()");
+                });
+            })
+            ->orderBy('name', 'asc')->get();
         return view('backend.campaign.form', $data);
     }
 
@@ -74,19 +84,38 @@ class CampaignController extends Controller implements HasMiddleware
      */
     public function edit(string $id)
     {
-        $data['item'] = Campaign::findOrFail($id);
+        $data['item'] = Campaign::with('campaignProducts')->findOrFail($id);
         $data['categories'] = Category::where('status', 1)->orderBy('name', 'asc')->get();
-        $data['products'] = Product::where('status', 1)->orderBy('name', 'asc')->get();
+
+        // For edit, we want products NOT in active campaigns, PLUS the products already in THIS campaign (even if active)
+        $currentCampaignId = $id;
+        $data['products'] = Product::with('stocks')
+            ->where('status', 1)
+            ->where(function ($query) use ($currentCampaignId) {
+                $query->whereDoesntHave('campaignProducts', function ($q) use ($currentCampaignId) {
+                    $q->whereHas('campaign', function ($c) use ($currentCampaignId) {
+                        $c->where('id', '!=', $currentCampaignId) // Exclude current campaign from "active" check so we can still see products in it
+                            ->where('status', 1)
+                            ->whereRaw("STR_TO_DATE(SUBSTRING_INDEX(duration, ' to ', 1), '%Y-%m-%d %H:%i:%s') <= NOW()")
+                            ->whereRaw("STR_TO_DATE(SUBSTRING_INDEX(duration, ' to ', -1), '%Y-%m-%d %H:%i:%s') >= NOW()");
+                    });
+                })->orWhereHas('campaignProducts', function ($q) use ($currentCampaignId) {
+                    $q->where('campaign_id', $currentCampaignId);
+                });
+            })
+            ->orderBy('name', 'asc')->get();
+
+        $data['campaign_products'] = $data['item']->campaignProducts->pluck('product_id')->toArray();
         return view('backend.campaign.form', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(CampaignRequest $request)
     {
         $campaign = Campaign::findOrFail($request->id);
-        $this->campaignService->update($campaign, $request->all());
+        $this->campaignService->update($campaign, $request->validated());
         return redirect()->route('admin.campaign.index')->with('success', 'Campaign updated successfully');
     }
 

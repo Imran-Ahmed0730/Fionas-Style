@@ -15,6 +15,10 @@ use Database\Seeders\Admin\SupplierSeeder;
 use Database\Seeders\Admin\UnitSeeder;
 use Database\Seeders\Vendor\VendorSeeder;
 use Illuminate\Database\Seeder;
+use Database\Seeders\Admin\BlogCategorySeeder;
+use Database\Seeders\Admin\BlogSeeder;
+use Database\Seeders\Admin\FaqCategorySeeder;
+use Database\Seeders\Admin\FaqSeeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -25,15 +29,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([AdminSeeder::class]);
-        $this->call([PermissionSeeder::class]);
-        $this->call([RoleSeeder::class]);
-        $this->call([SettingSeeder::class]);
-        $this->call([CategorySeeder::class]);
-        $this->call([BrandSeeder::class]);
-        $this->call([UnitSeeder::class]);
-        $this->call([ColorSeeder::class]);
-        $this->call([AttributeSeeder::class]);
-        $this->call([SupplierSeeder::class]);
+        // $this->call([AdminSeeder::class]);
+        // $this->call([PermissionSeeder::class]);
+        // $this->call([RoleSeeder::class]);
+        // $this->call([SettingSeeder::class]);
+        // $this->call([CategorySeeder::class]);
+        // $this->call([BrandSeeder::class]);
+        // $this->call([UnitSeeder::class]);
+        // $this->call([ColorSeeder::class]);
+        // $this->call([AttributeSeeder::class]);
+        // $this->call([SupplierSeeder::class]);
+        // $this->call([BlogCategorySeeder::class]);
+        // $this->call([FaqCategorySeeder::class]);
     }
 }

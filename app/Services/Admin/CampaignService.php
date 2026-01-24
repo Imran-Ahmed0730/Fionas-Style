@@ -24,7 +24,7 @@ class CampaignService
         }
 
         // Generate slug from title
-        $data['slug'] = Str::slug($data['title']);
+        $data['slug'] = Str::slug($data['title']) . uniqid();
 
         // Extract product data
         $products = $data['product_id'] ?? [];
@@ -43,9 +43,9 @@ class CampaignService
             CampaignProduct::create([
                 'campaign_id' => $campaign->id,
                 'product_id' => $productId,
-                'discount' => $discounts[$key] ?? 0,
-                'discount_type' => $discountTypes[$key] ?? 1,
-                'final_price' => $finalPrices[$key] ?? 0,
+                'discount' => $discounts[$productId] ?? 0,
+                'discount_type' => $discountTypes[$productId] ?? 1,
+                'final_price' => $finalPrices[$productId] ?? 0,
             ]);
         }
 
@@ -61,7 +61,7 @@ class CampaignService
 
         // Generate slug from title if title changed
         if (isset($data['title']) && $data['title'] !== $campaign->title) {
-            $data['slug'] = Str::slug($data['title']);
+            $data['slug'] = Str::slug($data['title']) . uniqid();
         }
 
         // Extract product data
@@ -69,7 +69,7 @@ class CampaignService
         $discounts = $data['discount'] ?? [];
         $discountTypes = $data['discount_type'] ?? [];
         $finalPrices = $data['final_price'] ?? [];
-
+        // dd($data);
         // Remove product data from campaign data
         unset($data['product_id'], $data['discount'], $data['discount_type'], $data['final_price']);
 
@@ -84,9 +84,9 @@ class CampaignService
             CampaignProduct::create([
                 'campaign_id' => $campaign->id,
                 'product_id' => $productId,
-                'discount' => $discounts[$key] ?? 0,
-                'discount_type' => $discountTypes[$key] ?? 1,
-                'final_price' => $finalPrices[$key] ?? 0,
+                'discount' => $discounts[$productId] ?? 0,
+                'discount_type' => $discountTypes[$productId] ?? 1,
+                'final_price' => ceil($finalPrices[$productId]) ?? 0,
             ]);
         }
 

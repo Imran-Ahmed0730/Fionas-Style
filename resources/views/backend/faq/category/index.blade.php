@@ -1,0 +1,106 @@
+@extends('backend.master')
+
+@section('title')
+    FAQ Categories
+@endsection
+@push('css')
+    <!-- DataTables CSS and Bootstrap 5 Integration -->
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+@endpush
+@section('content')
+    <div class="container">
+        <div class="page-inner">
+            <div class="page-header">
+                <h3 class="fw-bold mb-3">FAQ Categories</h3>
+                <ul class="breadcrumbs mb-3">
+                    <li class="nav-home">
+                        <a href="{{ route('admin.dashboard') }}">
+                            <i class="icon-home"></i>
+                        </a>
+                    </li>
+                    <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">FAQ</a>
+                    </li>
+                    <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">Category</a>
+                    </li>
+                    <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">View</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <div class="card-title">FAQ Category List</div>
+                    <a href="{{ route('admin.faq.category.create') }}" class="btn btn-primary">
+                        <i class="fa fa-plus me-2"></i>Add New
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($items as $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->name }}</td>
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input toggle-switch" type="checkbox" role="switch" data-module="faq/category"
+                                                    data-id="{{ $item->id }}" {{ $item->status == 1 ? 'checked' : '' }}>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('admin.faq.category.edit', $item->id) }}"
+                                                class="btn btn-primary">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <form action="{{ route('admin.faq.category.delete') }}" method="POST"
+                                                class="d-inline delete-form">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $item->id }}">
+                                                <button type="submit" class="btn btn-danger btn-delete">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('js')
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#datatable').DataTable();
+        })
+    </script>
+@endpush
