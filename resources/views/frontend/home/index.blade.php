@@ -1,5 +1,48 @@
 @extends('frontend.master')
 @section('title', 'Home')
+@push('css')
+    <style>
+        .product-category-section {
+            background: #f8f9fa;           /* Light background to separate sections */
+            padding: 80px 0;
+        }
+
+        .product-category-section .section-title h2 {
+        font-size: 36px;
+        margin-bottom: 10px;
+        text-transform: capitalize;
+    }
+
+    .product-category-section .section-title p {
+        color: #666;
+        margin-bottom: 40px;
+    }
+
+    .product-category-section .owl-carousel .owl-item img {
+        height: 280px;                 /* Consistent height – adjust as needed */
+        object-fit: cover;
+    }
+
+    .product-category-section .product-item {
+    margin-bottom: 30px;
+}
+
+.hover-btns {
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.product-item:hover .hover-btns {
+    opacity: 1;
+}
+
+@media (max-width: 991px) {
+    .product-category-section .section-title h2 {
+        font-size: 28px;
+    }
+}
+    </style>
+@endpush
 @section('content')
     <!-- Hero Section Begin -->
     <section class="hero-section">
@@ -78,8 +121,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-3">
-                    <div class="product-large set-bg" data-setbg="{{asset('frontend')}}/assets/img/products/women-large.jpg">
-                        <h2>Women’s</h2>
+                    <div class="product-large set-bg"
+                        data-setbg="{{asset('frontend')}}/assets/img/products/women-large.jpg">
+                        <h2>Today's Deal</h2>
                         <a href="#">Discover More</a>
                     </div>
                 </div>
@@ -190,12 +234,308 @@
     </section>
     <!-- Women Banner Section End -->
 
+    <!-- Women's Collection - Slider with ~4 items visible -->
+    <section class="product-category-section spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        <h2>Women's Collection</h2>
+                        <p>Discover the latest trends and timeless styles</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-10 offset-1">
+                    <div class="category-product-slider owl-carousel">
+
+                        <!-- Product 1 -->
+                        <div class="product-item">
+                            <div class="pi-pic">
+                                <img src="{{ asset('frontend/assets/img/products/women-1.jpg') }}" alt="">
+                                <div class="sale">Sale</div>
+                                <div class="icon">
+                                    <i class="icon_heart_alt"></i>
+                                </div>
+                                <ul class="hover-btns">
+                                    <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                    <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                    <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="pi-text">
+                                <div class="catagory-name">Dresses</div>
+                                <a href="#">
+                                    <h5>Floral Midi Dress</h5>
+                                </a>
+                                <div class="product-price">
+                                    $48.00 <span>$68.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 2 -->
+                        <div class="product-item">
+                            <div class="pi-pic">
+                                <img src="{{ asset('frontend/assets/img/products/women-2.jpg') }}" alt="">
+                                <div class="icon">
+                                    <i class="icon_heart_alt"></i>
+                                </div>
+                                <ul class="hover-btns">
+                                    <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                    <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                    <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="pi-text">
+                                <div class="catagory-name">Tops</div>
+                                <a href="#">
+                                    <h5>Off-Shoulder Blouse</h5>
+                                </a>
+                                <div class="product-price">
+                                    $32.00
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 3 -->
+                        <div class="product-item">
+                            <div class="pi-pic">
+                                <img src="{{ asset('frontend/assets/img/products/women-3.jpg') }}" alt="">
+                                <div class="sale">Sale</div>
+                                <div class="icon">
+                                    <i class="icon_heart_alt"></i>
+                                </div>
+                                <ul class="hover-btns">
+                                    <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                    <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                    <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="pi-text">
+                                <div class="catagory-name">Jeans</div>
+                                <a href="#">
+                                    <h5>High-Waist Mom Jeans</h5>
+                                </a>
+                                <div class="product-price">
+                                    $45.00
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 4 -->
+                        <div class="product-item">
+                            <div class="pi-pic">
+                                <img src="{{ asset('frontend/assets/img/products/women-4.jpg') }}" alt="">
+                                <div class="icon">
+                                    <i class="icon_heart_alt"></i>
+                                </div>
+                                <ul class="hover-btns">
+                                    <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                    <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                    <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="pi-text">
+                                <div class="catagory-name">Jackets</div>
+                                <a href="#">
+                                    <h5>Denim Oversized Jacket</h5>
+                                </a>
+                                <div class="product-price">
+                                    $65.00 <span>$89.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Optional: add 2–6 more products so sliding feels natural -->
+                        <!-- Example extra product -->
+                        <div class="product-item">
+                            <div class="pi-pic">
+                                <img src="{{ asset('frontend/assets/img/products/women-1.jpg') }}" alt="">
+                                <div class="icon">
+                                    <i class="icon_heart_alt"></i>
+                                </div>
+                                <ul class="hover-btns">
+                                    <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                    <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                    <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="pi-text">
+                                <div class="catagory-name">Skirts</div>
+                                <a href="#">
+                                    <h5>Pleated Midi Skirt</h5>
+                                </a>
+                                <div class="product-price">
+                                    $42.00
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="#" class="primary-btn">Shop Women's Collection</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Men's Collection - same slider style -->
+    <section class="product-category-section spad bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        <h2>Men's Collection</h2>
+                        <p>Modern essentials and classic pieces</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-10 offset-1">
+                    <div class="category-product-slider owl-carousel">
+                    <!-- Product 1 -->
+                    <div class="product-item">
+                        <div class="pi-pic">
+                            <img src="{{ asset('frontend/assets/img/products/women-1.jpg') }}" alt="">
+                            <div class="sale">Sale</div>
+                            <div class="icon">
+                                <i class="icon_heart_alt"></i>
+                            </div>
+                            <ul class="hover-btns">
+                                <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="pi-text">
+                            <div class="catagory-name">Dresses</div>
+                            <a href="#">
+                                <h5>Floral Midi Dress</h5>
+                            </a>
+                            <div class="product-price">
+                                $48.00 <span>$68.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-item">
+                        <div class="pi-pic">
+                            <img src="{{ asset('frontend/assets/img/products/women-2.jpg') }}" alt="">
+                            <div class="icon">
+                                <i class="icon_heart_alt"></i>
+                            </div>
+                            <ul class="hover-btns">
+                                <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="pi-text">
+                            <div class="catagory-name">Tops</div>
+                            <a href="#">
+                                <h5>Off-Shoulder Blouse</h5>
+                            </a>
+                            <div class="product-price">
+                                $32.00
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="product-item">
+                        <div class="pi-pic">
+                            <img src="{{ asset('frontend/assets/img/products/women-3.jpg') }}" alt="">
+                            <div class="sale">Sale</div>
+                            <div class="icon">
+                                <i class="icon_heart_alt"></i>
+                            </div>
+                            <ul class="hover-btns">
+                                <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="pi-text">
+                            <div class="catagory-name">Jeans</div>
+                            <a href="#">
+                                <h5>High-Waist Mom Jeans</h5>
+                            </a>
+                            <div class="product-price">
+                                $45.00
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="product-item">
+                        <div class="pi-pic">
+                            <img src="{{ asset('frontend/assets/img/products/women-4.jpg') }}" alt="">
+                            <div class="icon">
+                                <i class="icon_heart_alt"></i>
+                            </div>
+                            <ul class="hover-btns">
+                                <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="pi-text">
+                            <div class="catagory-name">Jackets</div>
+                            <a href="#">
+                                <h5>Denim Oversized Jacket</h5>
+                            </a>
+                            <div class="product-price">
+                                $65.00 <span>$89.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optional: add 2–6 more products so sliding feels natural -->
+                    <!-- Example extra product -->
+                    <div class="product-item">
+                        <div class="pi-pic">
+                            <img src="{{ asset('frontend/assets/img/products/women-1.jpg') }}" alt="">
+                            <div class="icon">
+                                <i class="icon_heart_alt"></i>
+                            </div>
+                            <ul class="hover-btns">
+                                <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                                <li class="quick-view"><a href="#">+ Quick View</a></li>
+                                <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="pi-text">
+                            <div class="catagory-name">Skirts</div>
+                            <a href="#">
+                                <h5>Pleated Midi Skirt</h5>
+                            </a>
+                            <div class="product-price">
+                                $42.00
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="#" class="primary-btn">Shop Men's Collection</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Deal Of The Week Section Begin-->
     <section class="deal-of-week set-bg spad" data-setbg="{{asset('frontend')}}/assets/img/time-bg.jpg">
         <div class="container">
             <div class="col-lg-6 text-center">
                 <div class="section-title">
-                    <h2>Deal Of The Week</h2>
+                    <h2>Today's Campaign</h2>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed<br /> do ipsum dolor sit amet,
                         consectetur adipisicing elit </p>
                     <div class="product-price">
@@ -334,8 +674,9 @@
                     </div>
                 </div>
                 <div class="col-lg-3 offset-lg-1">
-                    <div class="product-large set-bg m-large" data-setbg="{{asset('frontend')}}/assets/img/products/man-large.jpg">
-                        <h2>Men’s</h2>
+                    <div class="product-large set-bg m-large"
+                        data-setbg="{{asset('frontend')}}/assets/img/products/man-large.jpg">
+                        <h2>Featured Products</h2>
                         <a href="#">Discover More</a>
                     </div>
                 </div>
@@ -535,3 +876,6 @@
     </div>
     <!-- Partner Logo Section End -->
 @endsection
+@push('js')
+
+@endpush

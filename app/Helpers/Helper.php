@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Save or update image with WebP conversion and compression
