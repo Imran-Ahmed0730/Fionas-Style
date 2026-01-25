@@ -117,9 +117,13 @@
                                                     <a href="{{route('admin.product.edit', $item->id)}}" data-bs-toggle="tooltip" title="Edit" class="btn btn-primary me-2"><i class="fa fa-pencil"></i></a>
                                                 @endcan
                                                 @can('Product Delete')
-                                                    <button type="button" class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete" data-id="{{$item->id}}" data-name="{{$item->name}}">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
+                                                    <form action="{{route('admin.product.delete'    )}}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="id" value="{{$item->id}}">
+                                                        <button type="submit" class="btn btn-danger btn-delete" data-bs-toggle="tooltip" title="Delete" data-id="{{$item->id}}" data-name="{{$item->name}}">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </form>
                                                 @endcan
                                             </div>
                                         </td>

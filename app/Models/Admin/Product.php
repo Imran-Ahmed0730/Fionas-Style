@@ -24,18 +24,10 @@ class Product extends Model
 
     public function getFinalPriceAttribute()
     {
-        // 1. Check for active campaign discount
-        $campaignProducts = CampaignProduct::where('product_id', $this->id)
-            ->with(['campaign'])
-            ->get();
-
-        $activeCampaignProduct = null;
-        foreach ($campaignProducts as $cp) {
-            if ($cp->campaign && $cp->campaign->is_active) {
-                $activeCampaignProduct = $cp;
-                break;
-            }
-        }
+        // 1. Check for active campaign discount using relationship (eager loading optimized)
+        $activeCampaignProduct = $this->campaignProducts->filter(function ($cp) {
+            return $cp->campaign && $cp->campaign->is_active;
+        })->first();
 
         if ($activeCampaignProduct) {
             if ($activeCampaignProduct->discount_type == 2) { // Percent
@@ -46,12 +38,8 @@ class Product extends Model
             }
         }
 
-        // 2. Check for product specific discount (if you have fields for that in products table)
-        // assuming no specific product discount logic requested other than campaign for now, 
-        // or if it exists it would be similar logic here.
-        // For now returning regular or buying price if no campaign.
-
-        return $this->regular_price;
+        // 2. Fallback to selling_price which might have individual product discount
+        return $this->selling_price;
     }
 
     public function category()

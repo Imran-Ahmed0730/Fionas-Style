@@ -8,7 +8,11 @@ Route::middleware('web')
     ->group(base_path('routes/admin.php'));
 
 Route::controller(FrontendController::class)->group(function () {
-   Route::get('/', 'index')->name('home');
+    Route::get('/', 'index')->name('home');
+    Route::get('/shop', 'shop')->name('shop');
+    Route::get('/category/{slug}', 'category')->name('category');
+    Route::get('/categories', 'allCategories')->name('categories');
+    Route::get('/lifestyle', 'lifestyle')->name('lifestyle');
 });
 
 Route::get('/dashboard', function () {
@@ -22,4 +26,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

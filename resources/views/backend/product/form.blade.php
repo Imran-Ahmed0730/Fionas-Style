@@ -550,7 +550,7 @@
                                                 <label for="thumbnail" class="form-label">Thumbnail</label>
                                                 <input type="file" name="thumbnail" id="thumbnail"
                                                     class="form-control @error('thumbnail') is-invalid @enderror"
-                                                    accept="image/jpeg, image/png, image/jpg, image/webp">
+                                                    accept="image/jpeg, image/png, image/jpg, image/webp" @isset($item) @else required @endisset>
                                                 <small class="text-muted">Recommended: 500x500px, Max: 2MB</small>
                                                 <div class="mt-2">
                                                     @isset($item)

@@ -5,18 +5,24 @@
             <div class="col-lg-3">
                 <div class="footer-left">
                     <div class="footer-logo">
-                        <a href="#"><img src="{{asset('frontend')}}/assets/img/footer-logo.png" alt=""></a>
+                        <a href="{{ route('home') }}">
+                            @if($settings->logo && file_exists(public_path($settings->logo)))
+                                <img src="{{asset($settings->logo)}}" alt="">
+                            @else
+                                <img src="{{asset('frontend')}}/assets/img/footer-logo.png" alt="">
+                            @endif
+                        </a>
                     </div>
                     <ul>
-                        <li>Address: 60-49 Road 11378 New York</li>
-                        <li>Phone: +65 11.188.888</li>
-                        <li>Email: hello.colorlib@gmail.com</li>
+                        <li>Address: {{ $settings->address }}</li>
+                        <li>Phone: {{ $settings->phone }}</li>
+                        <li>Email: {{ $settings->email }}</li>
                     </ul>
                     <div class="footer-social">
-                        <a href="#"><i class="fa fa-facebook"></i></a>
-                        <a href="#"><i class="fa fa-instagram"></i></a>
-                        <a href="#"><i class="fa fa-twitter"></i></a>
-                        <a href="#"><i class="fa fa-pinterest"></i></a>
+                        <a href="{{ $settings->facebook_url }}"><i class="fa fa-facebook"></i></a>
+                        <a href="{{ $settings->instagram_url }}"><i class="fa fa-instagram"></i></a>
+                        <a href="{{ $settings->x_url }}"><i class="fa fa-twitter"></i></a>
+                        <a href="{{ $settings->pinterest_url }}"><i class="fa fa-pinterest"></i></a>
                     </div>
                 </div>
             </div>
@@ -59,9 +65,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="copyright-text">
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        {!! $settings->copyright_text !!}
                     </div>
                     <div class="payment-pic">
                         <img src="{{asset('frontend')}}/assets/img/payment-method.png" alt="">

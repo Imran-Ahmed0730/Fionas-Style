@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->app->bind("App\Interfaces\CategoryInterface", "App\Repositories\CategoryRepository");
+
+        view()->composer('frontend.include.header', \App\View\Composers\CategoryComposer::class);
+        view()->composer(['frontend.include.header', 'frontend.include.footer'], \App\View\Composers\SettingComposer::class);
     }
 }

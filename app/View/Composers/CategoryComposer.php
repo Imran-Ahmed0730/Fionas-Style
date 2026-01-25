@@ -13,14 +13,13 @@ class CategoryComposer
     {
         $categories = Cache::remember('main_categories', 3600, function () {
             return
-                Category::where('parent_id', null)
-                ->where('status', 1)
-                ->orderBy('priority', 'asc')
-                ->limit(10)
-                ->get(['id', 'name', 'slug', 'icon'])
-                ;
+                Category::where('status', 1)
+                    ->orderBy('priority', 'asc')
+                    ->limit(10)
+                    ->get(['id', 'name', 'slug'])
+            ;
         });
 
-        $view->with('mainCategories', $categories);
+        $view->with('categories', $categories);
     }
 }

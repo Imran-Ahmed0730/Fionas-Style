@@ -1,45 +1,24 @@
 <!-- Header Section Begin -->
-@php
-use Illuminate\Support\Facades\Cache;
-$logo = Cache::remember('logo', 300, function (){
-    return getSetting('site_logo');
-});
-
-$email = Cache::remember('email', 300, function (){
-    return getSetting('email');
-});;
-$phone = Cache::remember('phone', 300, function (){
-    return getSetting('phone');
-});;
-@endphp
 <header class="header-section">
     <div class="header-top">
         <div class="container">
             <div class="ht-left">
                 <div class="mail-service">
                     <i class=" fa fa-envelope"></i>
-                    <a href="mailto:{{ $email }}">{{ $email }}</a>
+                    <a href="mailto:{{ $settings->email }}">{{ $settings->email }}</a>
                 </div>
                 <div class="phone-service">
                     <i class=" fa fa-phone"></i>
-                    <a href="tel:{{ $phone }}">{{ $phone }}</a>
+                    <a href="tel:{{ $settings->phone }}">{{ $settings->phone }}</a>
                 </div>
             </div>
             <div class="ht-right">
                 <a href="#" class="login-panel"><i class="fa fa-user"></i>Login</a>
-{{--                <div class="lan-selector">--}}
-{{--                    <select class="language_drop" name="countries" id="countries" style="width:300px;">--}}
-{{--                        <option value='yt' data-image="{{asset('frontend')}}/assets/img/flag-1.jpg" data-imagecss="flag yt"--}}
-{{--                                data-title="English">English</option>--}}
-{{--                        <option value='yu' data-image="{{asset('frontend')}}/assets/img/flag-2.jpg" data-imagecss="flag yu"--}}
-{{--                                data-title="Bangladesh">German </option>--}}
-{{--                    </select>--}}
-{{--                </div>--}}
                 <div class="top-social">
-                    <a href="{{ getSetting('facebook_url') }}"><i class="ti-facebook"></i></a>
-                    <a href="{{ getSetting('x_url') }}"><i class="ti-twitter-alt"></i></a>
-                    <a href="{{ getSetting('linkedin_url') }}"><i class="ti-linkedin"></i></a>
-                    <a href="{{ getSetting('pinterest_url') }}"><i class="ti-pinterest"></i></a>
+                    <a href="{{ $settings->facebook_url }}"><i class="ti-facebook"></i></a>
+                    <a href="{{ $settings->x_url }}"><i class="ti-twitter-alt"></i></a>
+                    <a href="{{ $settings->linkedin_url }}"><i class="ti-linkedin"></i></a>
+                    <a href="{{ $settings->pinterest_url }}"><i class="ti-pinterest"></i></a>
                 </div>
             </div>
         </div>
@@ -50,8 +29,8 @@ $phone = Cache::remember('phone', 300, function (){
                 <div class="col-lg-2 col-md-2">
                     <div class="logo">
                         <a href="{{ route('home') }}">
-                            @if($logo && file_exists($logo))
-                                <img src="{{asset($logo)}}" alt="" style="max-width: 60% !important;">
+                            @if($settings->logo && file_exists(public_path($settings->logo)))
+                                <img src="{{asset($settings->logo)}}" alt="" style="max-width: 60% !important;">
                             @endif
                         </a>
                     </div>
@@ -82,30 +61,34 @@ $phone = Cache::remember('phone', 300, function (){
                                 <div class="select-items">
                                     <table>
                                         <tbody>
-                                        <tr>
-                                            <td class="si-pic"><img src="{{asset('frontend')}}/assets/img/select-product-1.jpg" alt=""></td>
-                                            <td class="si-text">
-                                                <div class="product-selected">
-                                                    <p>$60.00 x 1</p>
-                                                    <h6>Kabino Bedside Table</h6>
-                                                </div>
-                                            </td>
-                                            <td class="si-close">
-                                                <i class="ti-close"></i>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="si-pic"><img src="{{asset('frontend')}}/assets/img/select-product-2.jpg" alt=""></td>
-                                            <td class="si-text">
-                                                <div class="product-selected">
-                                                    <p>$60.00 x 1</p>
-                                                    <h6>Kabino Bedside Table</h6>
-                                                </div>
-                                            </td>
-                                            <td class="si-close">
-                                                <i class="ti-close"></i>
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td class="si-pic"><img
+                                                        src="{{asset('frontend')}}/assets/img/select-product-1.jpg"
+                                                        alt=""></td>
+                                                <td class="si-text">
+                                                    <div class="product-selected">
+                                                        <p>$60.00 x 1</p>
+                                                        <h6>Kabino Bedside Table</h6>
+                                                    </div>
+                                                </td>
+                                                <td class="si-close">
+                                                    <i class="ti-close"></i>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="si-pic"><img
+                                                        src="{{asset('frontend')}}/assets/img/select-product-2.jpg"
+                                                        alt=""></td>
+                                                <td class="si-text">
+                                                    <div class="product-selected">
+                                                        <p>$60.00 x 1</p>
+                                                        <h6>Kabino Bedside Table</h6>
+                                                    </div>
+                                                </td>
+                                                <td class="si-close">
+                                                    <i class="ti-close"></i>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -130,33 +113,31 @@ $phone = Cache::remember('phone', 300, function (){
             <div class="nav-depart">
                 <div class="depart-btn">
                     <i class="ti-menu"></i>
-                    <span>All departments</span>
+                    <span>Top Categories</span>
                     <ul class="depart-hover">
-                        <li class="active"><a href="#">Women’s Clothing</a></li>
-                        <li><a href="#">Men’s Clothing</a></li>
-                        <li><a href="#">Underwear</a></li>
-                        <li><a href="#">Kid's Clothing</a></li>
-                        <li><a href="#">Brand Fashion</a></li>
-                        <li><a href="#">Accessories/Shoes</a></li>
-                        <li><a href="#">Luxury Brands</a></li>
-                        <li><a href="#">Brand Outdoor Apparel</a></li>
+                        @foreach($categories as $category)
+                            <li><a href="{{ route('category', $category->slug) }}">{{ $category->name }}</a></li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
             <nav class="nav-menu mobile-menu">
                 <ul>
-                    <li class="active"><a href="./index.html">Home</a></li>
-                    <li><a href="./shop.html">Shop</a></li>
-                    <li><a href="#">Collection</a>
+                    <li class="active"><a href="{{ route('home') }}">Home</a></li>
+                    <li><a href="{{ route('shop') }}">Shop</a></li>
+                    <!-- <li><a href="{{ route('lifestyle') }}">Lifestyle</a></li> -->
+                    <li><a href="{{ route('categories') }}">Categories</a></li>
+                    <!-- <li><a href="#">Collection</a>
                         <ul class="dropdown">
                             <li><a href="#">Men's</a></li>
                             <li><a href="#">Women's</a></li>
                             <li><a href="#">Kid's</a></li>
                         </ul>
-                    </li>
+                    </li> -->
                     <li><a href="./blog.html">Blog</a></li>
+                    <li><a href="./blog.html">About Us</a></li>
                     <li><a href="./contact.html">Contact</a></li>
-                    <li><a href="#">Pages</a>
+                    <!-- <li><a href="#">Pages</a>
                         <ul class="dropdown">
                             <li><a href="./blog-details.html">Blog Details</a></li>
                             <li><a href="./shopping-cart.html">Shopping Cart</a></li>
@@ -165,7 +146,7 @@ $phone = Cache::remember('phone', 300, function (){
                             <li><a href="./register.html">Register</a></li>
                             <li><a href="./login.html">Login</a></li>
                         </ul>
-                    </li>
+                    </li> -->
                 </ul>
             </nav>
             <div id="mobile-menu-wrap"></div>
