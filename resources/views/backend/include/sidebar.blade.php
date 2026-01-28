@@ -1,6 +1,6 @@
 @php
-    $route = Route::currentRouteName();
-    $url = URL::current();
+$route = Route::currentRouteName();
+$url = URL::current();
 @endphp
 
 <!-- Sidebar -->
@@ -533,6 +533,13 @@
                         </div>
                     </li>
                 @endcanany
+                @can('Subscriber View')
+                <li class="nav-item {{$route == 'admin.subscriber.index' ? 'active' : ''}}">
+                    <a href="{{route('admin.subscriber.index')}}"><i class="fas fa-envelope"></i>
+                        <p>Subscribers</p>
+                    </a>
+                </li>
+                @endcan
 
                 @canany(['Role Add', 'Role View', 'Permission Add', 'Permission View'])
                     <li class="nav-item {{Str::contains($route, 'role') || Str::contains($route, 'permission') ? 'active' : ''}}">

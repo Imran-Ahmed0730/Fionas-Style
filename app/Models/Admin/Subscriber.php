@@ -2,21 +2,12 @@
 
 namespace App\Models\Admin;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Traits\HasActiveScope;
+use Illuminate\Database\Eloquent\Model;
 
-class Blog extends Model
+class Subscriber extends Model
 {
-    use HasActiveScope;
     protected $guarded = ['id'];
-
-    public function category()
-    {
-        return $this->belongsTo(BlogCategory::class)->withDefault([
-            'name' => 'N/A',
-        ]);
-    }
 
     public function createdDate(): Attribute
     {

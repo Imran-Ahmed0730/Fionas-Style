@@ -15,7 +15,7 @@ class FooterComposer
         });
 
         $view->with([
-            'footerAbout' => $settings['footer_about'] ?? '',
+            'footerAbout' => $settings['short_bio'] ?? '',
             'footerCopyright' => $settings['footer_copyright'] ?? '',
             'footerLogo' => $settings['site_footer_logo'] ?? null,
             'paymentMethods' => $settings['payment_methods'] ?? '',

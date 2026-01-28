@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\View\Composers\CategoryComposer;
+use App\View\Composers\SettingComposer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind("App\Interfaces\CategoryInterface", "App\Repositories\CategoryRepository");
 
-        view()->composer('frontend.include.header', \App\View\Composers\CategoryComposer::class);
-        view()->composer(['frontend.include.header', 'frontend.include.footer'], \App\View\Composers\SettingComposer::class);
+        view()->composer('frontend.include.header', CategoryComposer::class);
+        view()->composer(['frontend.include.header', 'frontend.include.footer'], SettingComposer::class);
     }
 }

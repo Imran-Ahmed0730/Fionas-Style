@@ -52,6 +52,7 @@
                                     <th>Name</th>
                                     <th>Priority</th>
                                     <th style="width: 150px">Home Include Status</th>
+                                    <th style="width: 50px">Featured Status</th>
                                     <th style="width: 50px">Status</th>
                                     <th></th>
                                 </tr>
@@ -80,6 +81,17 @@
                                                 </div>
                                             @else
                                                 <span class="p-2 badge text-bg-{{$item->included_to_home == 1 ? 'success': 'danger'}}">{{$item->included_to_home == 1 ? 'Yes':'No'}}</span>
+                                            @endcan
+                                        </td>
+                                        <td>
+                                            @can('Category Featured Status Change')
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input featured-toggle-switch" type="checkbox" role="switch"
+                                                           data-module="category" data-id="{{ $item->id }}"
+                                                        {{ $item->is_featured == 1 ? 'checked' : '' }}>                                                <label class="form-check-label" for="status"></label>
+                                                </div>
+                                            @else
+                                                <span class="p-2 badge text-bg-{{$item->is_featured == 1 ? 'success': 'danger'}}">{{$item->is_featured == 1 ? 'Yes':'No'}}</span>
                                             @endcan
                                         </td>
                                         <td class="">
@@ -170,6 +182,53 @@
                             },
                             error: function (error) {
                                 toastr.error('An error occurred while updating the status.');
+                                switchElement.prop('checked', !newStatus); // Revert the switch
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        switchElement.prop('checked', !newStatus); // Revert the switch on cancel
+                    }
+                });
+            });
+
+            $('.featured-toggle-switch').on('change', function (e) {
+                e.preventDefault();
+
+                let switchElement = $(this); // The clicked switch
+                let id = switchElement.data('id'); // Get the item ID from data-id
+                let newStatus = switchElement.prop('checked') ? 1 : 0; // Determine new status
+                let module = switchElement.data('module'); // Get the module from data-module
+
+                // SweetAlert confirmation
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `You are about to ${newStatus ? 'include' : 'remove'} this ${module}.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, change it!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Build the route dynamically with the ID
+                        let route = `{{ route('admin.category.featured.include', ['id' => ':id']) }}`;
+                        route = route.replace(':id', id);
+
+                        // Send AJAX request to update the status
+                        $.ajax({
+                            url: route, // Use the dynamically constructed route
+                            type: 'GET',
+                            success: function (response) {
+                                if (response.success) {
+                                    toastr.success(`The ${module} featured status has been successfully updated.`);
+                                } else {
+                                    toastr.error(`Failed to update the ${module} featured status.`);
+                                    // Optionally, revert the switch back to the original state
+                                    switchElement.prop('checked', !newStatus);
+                                }
+                            },
+                            error: function (error) {
+                                toastr.error('An error occurred while updating the featured status.');
                                 switchElement.prop('checked', !newStatus); // Revert the switch
                             }
                         });

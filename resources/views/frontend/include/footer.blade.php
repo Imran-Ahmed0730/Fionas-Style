@@ -52,9 +52,15 @@
                 <div class="newslatter-item">
                     <h5>Join Our Newsletter Now</h5>
                     <p>Get E-mail updates about our latest shop and special offers.</p>
-                    <form action="#" class="subscribe-form">
-                        <input type="text" placeholder="Enter Your Mail">
-                        <button type="button">Subscribe</button>
+                    <form action="{{ route('subscribe') }}" class="subscribe-form" method="POST">
+                        @csrf
+                        <input type="text" placeholder="Enter Your Mail" class="@error('email') is-invalid @enderror" name="email" required>
+                        <button type="submit">Subscribe</button>
+                        @error('email')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
                     </form>
                 </div>
             </div>

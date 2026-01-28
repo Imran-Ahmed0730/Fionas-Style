@@ -119,4 +119,10 @@ class CategoryController extends Controller implements HasMiddleware
         $this->categoryService->homeInclude($category);
         return response()->json(['success' => true, 'message' => 'Home inclusion updated successfully.']);
     }
+    public function featuredInclude($id)
+    {
+        $category = Category::findOrFail($id);
+        $this->categoryService->featuredInclude($category);
+        return response()->json(['success' => true, 'message' => 'Featured inclusion updated successfully.']);
+    }
 }

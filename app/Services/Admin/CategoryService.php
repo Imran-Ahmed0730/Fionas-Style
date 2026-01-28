@@ -88,6 +88,14 @@ class CategoryService
         ]);
     }
 
+    public function featuredInclude(Category $category): bool
+    {
+        $featured = $category->is_featured == 1 ? 0 : 1;
+        return $category->update([
+            'is_featured' => $featured,
+        ]);
+    }
+
     public function getActiveCategories()
     {
         return Category::active()->orderBy('name', 'asc')->get();

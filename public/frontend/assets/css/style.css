@@ -1461,11 +1461,11 @@ ol {
     object-fit: cover;
 }
 
-.single-latest-blog {
-    height: 250px;
-    overflow: hidden;
+.blog-thumbnail {
+    height: 280px;
 }
-.single-latest-blog img {
+
+.single-latest-blog .blog-thumbnail img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -1477,7 +1477,6 @@ ol {
 @media only screen and (max-width: 767px) {
     .product-item .pi-pic { height: 280px; }
     .single-banner { height: 200px; }
-    .single-latest-blog { height: 200px; }
 }
 .single-latest-blog .latest-text {
 	padding-top: 25px;
@@ -3976,7 +3975,7 @@ ol {
 
 @media only screen and (min-width: 1200px) {
 	.container {
-		max-width: 1200px;
+		max-width: 1190px;
 	}
 }
 

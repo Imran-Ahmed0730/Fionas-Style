@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\BlogCategoryController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\FaqCategoryController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\SubscriberController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'login'])->name('login');
@@ -87,6 +88,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/delete', 'destroy')->name('delete');
             Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
             Route::get('/include/home/{id}', 'homeInclude')->name('include.home');
+            Route::get('/featured/change/{id}', 'featuredInclude')->name('featured.include');
         });
 
         //brand module
@@ -246,6 +248,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::post('/delete', 'destroy')->name('delete');
                 Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
             });
+        });
+
+        Route::controller(SubscriberController::class)->prefix('subscriber')->name('subscriber.')->group(function () {
+            Route::get('/', 'index')->name('index');
         });
 
 

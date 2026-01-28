@@ -11,3 +11,8 @@
 <link rel="stylesheet" href="{{asset('frontend')}}/assets/css/jquery-ui.min.css" type="text/css">
 <link rel="stylesheet" href="{{asset('frontend')}}/assets/css/slicknav.min.css" type="text/css">
 <link rel="stylesheet" href="{{asset('frontend')}}/assets/css/style.css" type="text/css">
+
+{{--Laravel Project Style--}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+@stack('css')

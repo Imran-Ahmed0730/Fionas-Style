@@ -21,7 +21,7 @@ class SettingComposer
                 'instagram_url' => getSetting('instagram_url'),
                 'pinterest_url' => getSetting('pinterest_url'),
                 'youtube_url' => getSetting('youtube_url'),
-                'copyright_text' => getSetting('copyright_text'),
+                'copyright_text' => "&copy; {{ date('Y') }} <a href='{{ route('home') }}'>Fiona's Style</a>. All rights reserved. Developed By <a target='_blank' href='{{ getSetting('developed_by_url') }}'>{{getSetting('developed_by')}}</a>",
             ];
         });
 
