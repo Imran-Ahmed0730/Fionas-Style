@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id');
+            $table->string('attr_name');
             $table->string('name');
             $table->string('sku')->nullable();
             $table->string('image')->nullable();
             $table->decimal('regular_price', 8,2);
-            $table->decimal('final_price', 8,2);
+            $table->decimal('selling_price', 8,2);
             $table->integer('stock_qty')->default(0);
             $table->timestamps();
         });

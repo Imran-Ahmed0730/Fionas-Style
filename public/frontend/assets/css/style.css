@@ -574,8 +574,14 @@ ol {
 	padding-bottom: 20px;
 }
 
+.inner-header .nav-right li.cart-icon .cart-hover .select-items table tr td.si-pic{
+	height: 80px;
+}
+
 .inner-header .nav-right li.cart-icon .cart-hover .select-items table tr td.si-pic img {
 	border: 1px solid #ebebeb;
+	height: 100%;
+	object-fit: cover;
 }
 
 .inner-header .nav-right li.cart-icon .cart-hover .select-items table tr td.si-text {
@@ -1465,6 +1471,60 @@ ol {
     height: 280px;
 }
 
+/* Blog Category Badge Styles */
+.blog-thumb-container {
+	position: relative;
+	overflow: hidden;
+	border-radius: 5px;
+}
+
+.blog-thumbnail {
+	width: 100%;
+	height: 280px;
+	object-fit: cover;
+	transition: transform 0.3s ease;
+}
+
+.blog-category-badge {
+	position: absolute;
+	top: 15px;
+	left: 15px;
+	color: white;
+	padding: 5px 12px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	z-index: 2;
+	transition: all 0.3s ease;
+}
+
+/* Hover effects */
+.single-latest-blog:hover .blog-thumbnail {
+	transform: scale(1.05);
+}
+
+.single-latest-blog:hover .blog-category-badge {
+	transform: translateY(-3px);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.blog-thumbnail {
+		height: 200px;
+	}
+
+	.blog-category-badge {
+		top: 10px;
+		left: 10px;
+		font-size: 11px;
+		padding: 4px 10px;
+	}
+}
+
+
 .single-latest-blog .blog-thumbnail img {
     width: 100%;
     height: 100%;
@@ -2259,7 +2319,7 @@ ol {
 	font-weight: 700;
 }
 
-.product-details .pd-desc h4 span {
+.product-details .pd-desc h4 span:not(#pd-final-price) {
 	font-size: 18px;
 	font-weight: 400;
 	color: #b7b7b7;

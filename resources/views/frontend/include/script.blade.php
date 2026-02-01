@@ -24,12 +24,15 @@
     }
 </script>
 
-{{-- Flash Messages Data --}}
 <div id="flash-messages" data-success="{{ session('success') }}" data-error="{{ session('error') }}"
     data-info="{{ session('info') }}" data-warning="{{ session('warning') }}" style="display: none;">
 </div>
 
 <script>
+    const formatPrice = (price) => {
+        return parseFloat(price).toFixed(2);
+    };
+
     $(document).ready(function () {
         const flashMessages = $('#flash-messages');
         const success = flashMessages.data('success');
@@ -40,7 +43,419 @@
         if (success) toastr.success(success);
         if (error) toastr.error(error);
         if (info) toastr.info(info);
+
         if (warning) toastr.warning(warning);
+
+        // Global Quick View Trigger
+        $(document).on('click', '.btn-quick-view', function (e) {
+            e.preventDefault();
+            let productId = $(this).data('id');
+            let modal = $('#quickViewModal');
+            let content = $('#quick-view-content');
+
+            // Show loading state
+            content.html(`
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            `);
+            modal.modal('show');
+
+            $.ajax({
+                url: `/product/quick-view/${productId}`,
+                method: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        content.html(response.html);
+                    } else {
+                        toastr.error('Failed to load product details');
+                        modal.modal('hide');
+                    }
+                },
+                error: function () {
+                    toastr.error('An error occurred while fetching product details');
+                    modal.modal('hide');
+                }
+            });
+        });
     });
 </script>
-@stack('js')
+<!-- <script>
+    $(document).ready(function () {
+        $('.wishlist-btn').click(function () {
+            let user = '{{Auth::user()->customer->id ?? null}}';
+            if (!user) {
+                window.location.href = '{{route('customer.sign-in')}}';
+            }
+            else {
+                let productId = $(this).data('id');
+                $.ajax({
+                    method: 'post',
+                    url: '{{route('customer.wishlist.store')}}',
+                    data: {
+                        product_id: productId
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            $('.wishlist_count').text(data.count)
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: data.success,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                toast: true,
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: data.error,
+                            });
+                        }
+                    },
+                    error: function (data) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: data.error,
+                        });
+                    }
+                });
+            }
+        });
+        $('.compare-btn').click(function () {
+            let productId = $(this).data('id');
+            $.ajax({
+                method: 'get',
+                url: '{{route('compare.add')}}',
+                data: {
+                    id: productId
+                },
+                success: function (data) {
+                    if (data.success) {
+                        $('.compare_count').text(data.compare_count)
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: data.success,
+                            showConfirmButton: false,
+                            timer: 1500,
+                            toast: true,
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: data.error,
+                        });
+                    }
+                },
+                error: function (data) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.error,
+                    });
+                }
+            });
+        });
+    });
+</script> -->
+{{--cart script--}}
+<!-- <script> -->
+
+@stack ('js')
+<script>
+    function DisplayCountOfCheckedItems() {
+        let checkedCount = $('.item-checkbox:checked').length; // Count checked checkboxes
+        let totalCartItems = $('.cart_item_wrapper .cart_item').length;
+        if (totalCartItems == 0 || checkedCount != totalCartItems) {
+            $('#totalItemsCheckbox').attr('checked', false);
+        }
+        else {
+            $('#totalItemsCheckbox').attr('checked', true);
+        }
+
+        $('.item_for_checkout ').text(checkedCount)
+
+        let subtotal = 0;
+        let tax = 0;
+        let shipping = 0;
+        let freeShipping = true;
+
+        // Loop through each item
+        $('.cart_item_wrapper .cart_item').each(function () {
+            const checkbox = $(this).find('.item-checkbox');
+
+            if (checkbox.is(':checked')) {
+                const itemTotal = parseFloat($(this).find('.item-total').text().replace(/,/g, '')) || 0;
+                const itemTax = parseFloat($(this).find('.tax').val()) || 0;
+                const itemShipping = parseFloat($(this).find('.shipping-cost').val()) || 0;
+                // Fix: Added dot for class selector
+                const isFreeShipping = parseInt($(this).find('.free-shipping').val()) === 1;
+
+                subtotal += itemTotal;
+                tax += itemTax;
+                shipping += itemShipping;
+
+                if (!isFreeShipping) {
+                    freeShipping = false;
+                }
+            }
+        });
+
+        if (freeShipping) {
+            shipping = 0;
+        }
+        let grandTotal = (subtotal + tax + shipping);
+
+        // Optional: round subtotal after summing
+        $('#subtotal').text(subtotal.toFixed(2));
+        $('#shippingCost').text(shipping.toFixed(2));
+        $('#tax').text(tax.toFixed(2));
+        $('#grandTotal').text(grandTotal.toFixed(2));
+    }
+
+    function addToCart(slug, variant, quantity) {
+        $.ajax({
+            method: 'GET',
+            url: '{{route("cart.add")}}',
+            data: {
+                slug: slug,
+                variant: variant,
+                quantity: quantity ?? 1
+            },
+            success: function (data) {
+                if (data.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.error,
+                    });
+                } else {
+
+                    let html = '';
+                    let currencySymbol = '{{ $currency["symbol"] ?? "৳" }}';
+
+                    $.each(data, function (key, product) {
+                        // Removed translation logic as backend no longer provides it
+                        let productName = product.name;
+
+                        html += `
+                            <div data-sku="${product.id}" class="d-flex gap-3 align-items-center justify-content-start cart_item cart-item-${product.id}">
+                                <div class="cart_product_image">
+                                    <picture>
+                                        <img src="{{asset('/')}}${product.attributes.image}" alt="${productName}" style="width: 50px; height: 50px; object-fit: cover;">
+                                    </picture>
+                                </div>
+                                <div class="cart_product_info w-100">
+                                    <div class="cart_item_info">
+                                        <h6 class="product-name" style="font-size: 14px; margin: 0;">${productName.substr(0, 30)}${productName.length > 30 ? '...' : ''}</h6>
+                                        <p class="d-none">Price: ${currencySymbol}<span class="item-price">${formatPrice((product.price))}</span></p>
+                                        <p class="d-flex justify-content-between" style="font-size: 12px; margin: 0;">
+                                            <span>Price: <span class="quan_price">(${product.quantity} X ${formatPrice((product.price))})</span></span>
+                                            <span> ${currencySymbol}<span class="item-total">${(product.quantity * formatPrice(product.price)).toFixed(2)}</span></span>
+                                        </p>`;
+
+                        if (product.attributes.variant) {
+                            // Simplified variant display if structure matches "Color-Size"
+                            html += `<p style="font-size: 11px; color: #888; margin: 0;">${product.attributes.variant}</p>`;
+                        }
+
+                        html += `</div>
+                                    <div class="d-flex justify-content-between align-items-center mt-1">
+                                        <div class="quantity_controls d-flex">
+                                            <button class="btn btn-sm btn-outline-secondary btn_decrease py-0 px-2">-</button>
+                                            <input type="text" class="quantity form-control form-control-sm mx-1 text-center" value="${product.quantity}" readonly style="width: 40px; height: 25px;">
+                                            <button class="btn btn-sm btn-outline-secondary btn_increase py-0 px-2">+</button>
+                                        </div>
+                                        <button class="btn btn-sm text-danger btn_remove remove-from-cart p-0"><i class="fa fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-2">`;
+                    });
+
+                    $('#offCanvasCartContainer').html(html);
+
+                    // Note: updateCartTotal() and updateTotalItems() need to be defined or checked if they exist in main.js
+                    // If they are specific template functions, ensure they don't crash.
+                    if (typeof updateCartTotal === "function") updateCartTotal();
+                    if (typeof updateTotalItems === "function") updateTotalItems();
+
+                    DisplayCountOfCheckedItems();
+
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Product added to your cart",
+                        showConfirmButton: false,
+                        timer: 1500,
+                        toast: true,
+                    });
+                }
+            },
+        });
+    }
+
+    function cartUpdate(sku, quantity, quantityInput, cartItem) {
+        $.ajax({
+            method: 'POST',
+            url: '{{route("cart.update")}}',
+            data: {
+                sku: sku,
+                quantity: quantity,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function (data) {
+                if (data.success) {
+                    $('.cart-item-' + sku + ' .quantity').val(quantity);
+                    $('.cart-item-' + sku + ' .tax').val(data.tax);
+                    $('.cart-item-' + sku + ' .shipping-cost').val(data.shipping_cost);
+
+                    updateItemTotal(cartItem);
+
+                    // Recalculate everything
+                    DisplayCountOfCheckedItems();
+
+                    // Specific logic for Checkout page (if on it)
+                    if (typeof calculateGrandTotal === "function") {
+                        calculateGrandTotal();
+                    }
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.error,
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'There was an issue updating the cart.',
+                });
+            }
+        });
+    }
+
+    function updateItemTotal(cartItem) {
+        let $cartItem = $(cartItem);
+        // Ensure we are selecting the right container if cartItem is the button
+        if (!$cartItem.hasClass('cart_item')) {
+            $cartItem = $cartItem.closest('.cart_item');
+        }
+
+        let $quantityInput = $cartItem.find('.quantity');
+        let price = parseFloat($cartItem.find('.item-price').text()) || 0; // Ensure .item-price exists in DOM
+
+        // If price not found in text (hidden), try value input if exists
+        if (price === 0 && $cartItem.find('.price').length > 0) {
+            price = parseFloat($cartItem.find('.price').val());
+        }
+
+        let quantity = parseInt($quantityInput.val()) || 1;
+        let itemTotal = price * quantity;
+
+        $cartItem.find('.quan_price').text(` (${quantity} X ${price.toFixed(2)})`);
+        $cartItem.find('.item-total').text(itemTotal.toFixed(2));
+    }
+
+    $(document).ready(function () {
+        $(document).on('click', '.add-to-cart, .buy_it_btn', function () {
+            let slug = $(this).data('slug');
+            let container = $(this).closest('.product-details');
+            let variant = container.find('#variant_name').val() || null;
+            let quantity = container.find('#product_qty').val() || container.find('.qty').val() || container.find('.qv-qty').val() || 1;
+
+            addToCart(slug, variant, quantity);
+
+            if ($(this).hasClass('buy_it_btn')) {
+                setTimeout(() => {
+                    window.location.href = '{{ route("checkout.index") }}';
+                }, 1000);
+            }
+        });
+
+
+        $(document).on('click', '.btn_increase', function (e) {
+            e.preventDefault();
+            let cartItem = $(this).closest('.cart_item');
+            let sku = cartItem.data('sku');
+            let quantityInput = $(this).siblings('.quantity');
+            let quantity = parseInt(quantityInput.val()) || 0;
+            quantity += 1;
+
+            cartUpdate(sku, quantity, quantityInput, cartItem);
+        })
+
+        $(document).on('click', '.btn_decrease', function (e) {
+            e.preventDefault();
+            let cartItem = $(this).closest('.cart_item');
+            let sku = cartItem.data('sku');
+            let quantityInput = $(this).siblings('.quantity');
+            let quantity = parseInt(quantityInput.val()) || 0;
+            if (quantity > 1) {
+                quantity -= 1;
+                cartUpdate(sku, quantity, quantityInput, cartItem);
+            }
+        })
+
+        $(document).on('click', '.remove-from-cart', function (e) {
+            e.preventDefault();
+            let cartItem = $(this).closest('.cart_item');
+            let sku = cartItem.data('sku');
+
+            $.ajax({
+                method: 'GET',
+                url: '{{route("cart.remove")}}',
+                data: {
+                    sku: sku,
+                },
+                success: function (data) {
+                    if (data.success) {
+                        $('.cart-item-' + sku).remove();
+                        DisplayCountOfCheckedItems();
+
+                        if (typeof updateCartTotal === "function") updateCartTotal();
+                        if (typeof updateTotalItems === "function") updateTotalItems();
+
+                        // Redirect logic if cart empty on checkout page
+                        if ($('.cart_item').length === 0 && window.location.pathname.includes('checkout')) {
+                            window.location.href = '{{ route("home") }}';
+                        }
+
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Product removed from your cart",
+                            showConfirmButton: false,
+                            timer: 1500,
+                            toast: true,
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: data.error,
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'There was an issue in removing the product.',
+                    });
+                }
+            });
+        });
+    });
+</script>

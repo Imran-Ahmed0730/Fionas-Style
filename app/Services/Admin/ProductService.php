@@ -18,9 +18,9 @@ class ProductService
     public function getProductAttributes()
     {
         $data['categories'] = $this->getActiveCategories();
-        $data['brands']     = $this->getActiveBrands();
-        $data['units']      = $this->getActiveUnits();
-        $data['colors']     = $this->getColors();
+        $data['brands'] = $this->getActiveBrands();
+        $data['units'] = $this->getActiveUnits();
+        $data['colors'] = $this->getColors();
         $data['attributes'] = $this->getActiveAttributes();
         return $data;
     }
@@ -82,13 +82,14 @@ class ProductService
         // Store variants
         if (count($variants) > 0) {
             foreach ($variants as $v) {
-                $v['final_price'] = $data['discount_type'] == 1 ? $v['price'] - $v['price']*$data['discount']/100 : $v['price'] - $data['discount'];
+                $v['selling_price'] = $data['discount_type'] == 1 ? $v['price'] - $data['discount'] : $v['price'] - ($v['price'] * $data['discount'] / 100);
                 $variantData = [
                     'product_id' => $product->id,
                     'name' => $v['name'],
+                    'attr_name' => $v['name'], // Store variant name as attr_name
                     'sku' => $v['sku'] ?? null,
                     'regular_price' => $v['price'],
-                    'final_price' => $v['final_price'] ,
+                    'selling_price' => $v['selling_price'],
                     'stock_qty' => 0,
                 ];
 
@@ -164,8 +165,10 @@ class ProductService
             foreach ($data['existing_variant'] as $v) {
                 $variant = ProductVariant::find($v['id']);
                 if ($variant) {
+                    $sellingPrice = $data['discount_type'] == 1 ? $v['price'] - $data['discount'] : $v['price'] - ($v['price'] * $data['discount'] / 100);
                     $variant->update([
                         'regular_price' => $v['price'],
+                        'selling_price' => $sellingPrice,
                         'sku' => $v['sku'] ?? $variant->sku,
                     ]);
                 }
@@ -175,14 +178,15 @@ class ProductService
         // Handle new variants if added during update
         if (count($newVariants) > 0) {
             foreach ($newVariants as $v) {
-                $v['final_price'] = $data['discount_type'] == 1 ? $v['price'] - $v['price'] * $data['discount'] / 100 : $v['price'] - $data['discount'];
+                $v['selling_price'] = $data['discount_type'] == 1 ? $v['price'] - $data['discount'] : $v['price'] - ($v['price'] * $data['discount'] / 100);
 
                 $variantData = [
                     'product_id' => $product->id,
                     'name' => $v['name'],
+                    'attr_name' => $v['name'], // Store variant name as attr_name
                     'sku' => $v['sku'] ?? null,
                     'regular_price' => $v['price'],
-                    'final_price' => $v['final_price'],
+                    'selling_price' => $v['selling_price'],
                     'stock_qty' => $v['stock_qty'] ?? 0,
                 ];
                 if (isset($v['image'])) {
@@ -228,7 +232,7 @@ class ProductService
         }
 
         $product->stocks()->delete();
-        
+
         return $product->delete();
     }
 

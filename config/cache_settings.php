@@ -10,7 +10,11 @@ return [
     |
     */
 
-    'short' => 600,    // 10 minutes
-    'medium' => 3600,  // 1 hour
-    'long' => 86400,   // 24 hours
+    // 'short' => 600,    // 10 minutes
+    // 'medium' => 3600,  // 1 hour
+    // 'long' => 86400,
+
+    'short' => 1,    // 10 minutes
+    'medium' => 1,  // 1 hour
+    'long' => 1,   // 24 hours
 ];

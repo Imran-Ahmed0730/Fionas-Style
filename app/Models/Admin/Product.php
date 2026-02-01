@@ -24,7 +24,7 @@ class Product extends Model
 
     public function getFinalPriceAttribute()
     {
-        // 1. Check for active campaign discount using relationship (eager loading optimized)
+        // 1. Check for active campaign discount using relationship
         $activeCampaignProduct = $this->campaignProducts->filter(function ($cp) {
             return $cp->campaign && $cp->campaign->is_active;
         })->first();
@@ -38,8 +38,18 @@ class Product extends Model
             }
         }
 
-        // 2. Fallback to selling_price which might have individual product discount
-        return $this->selling_price;
+        // 2. Check for Product Level Discount
+        if ($this->discount > 0) {
+            if ($this->discount_type == 2) { // Percentage
+                $discountAmount = $this->regular_price * ($this->discount / 100);
+                return max(0, $this->regular_price - $discountAmount);
+            } else { // Flat
+                return max(0, $this->regular_price - $this->discount);
+            }
+        }
+
+        // 3. Fallback to selling_price if set, otherwise regular_price
+        return ($this->selling_price > 0 && $this->selling_price < $this->regular_price) ? $this->selling_price : $this->regular_price;
     }
 
     public function category()

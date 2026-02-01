@@ -5,7 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\View\Composers\CategoryComposer;
 use App\View\Composers\SettingComposer;
-
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\View;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -21,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useBootstrapFour();
         $this->app->bind("App\Interfaces\CategoryInterface", "App\Repositories\CategoryRepository");
 
         view()->composer('frontend.include.header', CategoryComposer::class);
