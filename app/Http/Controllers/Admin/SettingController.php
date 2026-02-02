@@ -89,6 +89,7 @@ class SettingController extends Controller implements HasMiddleware
             'logos-favicon' => 'Settings Logo & Favicon',
             'social-media' => 'Settings Social Media',
             'store' => 'Settings Store',
+            'order' => 'Settings Order',
         ];
 
         // Check permissions
@@ -104,6 +105,7 @@ class SettingController extends Controller implements HasMiddleware
             'social-media' => 'social_media',
             'activation' => 'activation',
             'store' => 'store',
+            'order' => 'order',
         ];
 
         // Get view or redirect to default

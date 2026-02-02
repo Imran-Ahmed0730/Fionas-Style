@@ -2,157 +2,74 @@
 
 namespace App\Services\Frontend;
 
+use App\Models\Admin\Coupon;
 use App\Models\Admin\Product;
-use App\Models\Admin\ProductVariant;
-use Cart;
+use App\Models\Admin\State;
+use App\Models\Admin\Order;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class CartService
 {
     /**
-     * Add item to cart
+     * Add or update product in cart
      */
-    public function addToCart($request)
+    public function addToCart($productId, $quantity = 1, $variantId = null)
     {
-        $product = Product::where('slug', $request->slug)->firstOrFail();
-        $regular_price = $product->regular_price;
-        $final_price = $product->final_price;
+        $product = Product::active()->findOrFail($productId);
 
-        // Validate Variant
-        $variant = null;
-        if (isset($request->variant) && !empty($request->variant)) {
-            $variant = ProductVariant::where('product_id', $product->id)
-                ->where('name', $request->variant)->first();
+        $price = $product->price;
+        $sku = $product->slug;
+        $name = $product->name;
+        $attributes = [
+            'productId' => $product->id,
+            'image' => $product->thumbnail,
+            'tax' => 0,
+            'shipping_cost' => $product->shipping_cost ?? 0,
+            'variant_id' => $variantId,
+        ];
 
+        if ($variantId) {
+            $variant = $product->variants()->find($variantId);
             if ($variant) {
-                $regular_price = $variant->regular_price;
-                $final_price = $variant->final_price;
-
-                if ($variant->stock_qty < ($request->quantity ?? $product->min_buying_qty)) {
-                    return ['error' => 'Product variant out of stock'];
-                }
-            } else {
-                return ['error' => 'Variant not found'];
-            }
-        } elseif ($product->stock_qty < ($request->quantity ?? $product->min_buying_qty)) {
-            // Fallback to product level stock check if implementation uses it
-            return ['error' => 'Product out of stock'];
-        }
-
-        // Tax Calculation
-        // Assuming getSetting() helper exists
-        $tax = 0;
-        if (function_exists('getSetting')) {
-            $tax = $final_price * ($product->tax ?? getSetting('product_tax'))  / 100 * ($request->quantity ?? 1);
-            if (getSetting('tax_calculation') != 1 && $product->tax_inclusion == 2) {
-                $tax = $final_price * $product->tax / 100 * ($request->quantity ?? 1);
+                $price = $variant->price;
+                $sku .= '-' . $variant->id;
+                $attributes['variant_name'] = $variant->name;
             }
         }
 
-        $min_payable = 0;
-        if ($product->cod_available == 0) {
-            $min_payable = $final_price * ($request->quantity ?? 1);
-        }
+        $tax_percentage = getSetting('tax_percentage', 0);
+        $tax = ($price * $tax_percentage / 100) * $quantity;
+        $attributes['tax'] = $tax;
 
-        $shipping_cost = 0;
-        if (function_exists('getProductShippingCost')) {
-            $shipping_cost = getProductShippingCost($product, $request->quantity ?? 1);
-        }
+        \Cart::add([
+            'id' => $sku,
+            'name' => $name,
+            'price' => $price,
+            'quantity' => $quantity,
+            'attributes' => $attributes
+        ]);
 
-        $cartItem = Cart::get($variant ? $variant->sku : $product->sku);
-
-        if ($cartItem) {
-            $quantity = $cartItem->quantity + ($request->quantity ?? 1);
-
-            // Re-validate stock for updated quantity
-            if ($variant) {
-                if ($variant->stock_qty < $quantity) {
-                    return ['error' => 'Product variant out of stock for requested quantity'];
-                }
-            } elseif ($product->stock_qty < $quantity) {
-                return ['error' => 'Product out of stock for requested quantity'];
-            }
-
-            Cart::update($variant ? $variant->sku : $product->sku, [
-                'quantity' => [
-                    'relative' => false,
-                    'value' => $quantity
-                ],
-                'attributes' => [
-                    'image' => $cartItem->attributes['image'],
-                    'productId' => $cartItem->attributes['productId'],
-                    'variant' => $cartItem->attributes['variant'],
-                    'variant_attr' => $cartItem->attributes['variant_attr'], // This is important for front-end list
-                    'tax' => $tax, // Note: tax logic might need to recalculate for total qty, but reference updates partial
-                    'min_payable' => $min_payable ?? 0,
-                    'shipping_cost' => $shipping_cost,
-                    'free_shipping' => $cartItem->attributes['free_shipping'],
-                    'check_for_order_placement' => $cartItem->attributes['check_for_order_placement'],
-                ]
-            ]);
-        } else {
-            Cart::add(
-                $variant ? $variant->sku : $product->sku,
-                $product->name,
-                $final_price,
-                $request->quantity ?? $product->min_buying_qty ?? 1,
-                [
-                    'image' => $variant && $variant->image ? $variant->image : $product->thumbnail,
-                    'productId' => $product->id,
-                    'slug' => $product->slug,
-                    'variant' => $request->variant, // Just the name e.g. "Color-Size"
-                    'variant_attr' => $variant ? $variant->attr_name : null, // Display friendlier parts if needed
-                    'tax' => $tax,
-                    'min_payable' => $min_payable ?? 0,
-                    'shipping_cost' => $shipping_cost,
-                    'free_shipping' => $product->shipping_cost > 0 ? 0 : 1,
-                    'check_for_order_placement' => 1,
-                ]
-            );
-        }
-
-        return Cart::getContent();
+        return $this->getCartData();
     }
 
     /**
-     * Update cart item
+     * Update cart item quantity
      */
-    public function updateCart($request)
+    public function updateQuantity($sku, $quantity)
     {
-        $quantity = $request->quantity ?? 1;
-        $sku = $request->sku;
-
-        $cartItem = Cart::get($sku);
-
+        $cartItem = \Cart::get($sku);
         if (!$cartItem) {
-            return ['error' => 'Cart item not found'];
+            return ['success' => false, 'message' => 'Item not found in cart'];
         }
 
-        $product = Product::find($cartItem->attributes['productId']);
-
-        if (!$product) {
-            return ['error' => 'Product not found'];
-        }
-
-        // Validate Stock
-        if ($cartItem->attributes['variant']) {
-            $variant = ProductVariant::where('product_id', $product->id)
-                ->where('name', $cartItem->attributes['variant'])->first();
-            if ($variant && $variant->stock_qty < $quantity) {
-                return ['error' => 'Product variant out of stock'];
-            }
-        } elseif ($product->stock_qty < $quantity) {
-            return ['error' => 'Product out of stock'];
-        }
-
+        $product = Product::find($cartItem->attributes->productId);
         $shipping_cost = $product->shipping_cost ?? 0;
 
-        $tax = 0;
-        if (function_exists('getSetting')) {
-            $tax = $cartItem->price * ($product->tax ?? 0) / 100 * $quantity;
-        }
+        $tax_percentage = getSetting('tax_percentage', 0);
+        $tax = ($cartItem->price * $tax_percentage / 100) * $quantity;
 
-        Cart::update($sku, [
+        \Cart::update($sku, [
             'quantity' => [
                 'relative' => false,
                 'value' => $quantity
@@ -160,11 +77,174 @@ class CartService
             'attributes' => array_merge($cartItem->attributes->toArray(), [
                 'tax' => $tax,
                 'shipping_cost' => $shipping_cost,
-                // keep other attributes
             ])
         ]);
 
-        return ['success' => true, 'tax' => $tax, 'shipping_cost' => $shipping_cost];
+        return $this->getCartData();
+    }
+
+    /**
+     * Get consistent cart data
+     */
+    public function getCartData()
+    {
+        $items = \Cart::getContent();
+        $subtotal = 0;
+        $tax = 0;
+
+        foreach ($items as $item) {
+            $subtotal += ($item->price * $item->quantity);
+            $tax += $item->attributes->tax;
+        }
+
+        $sessionStateId = request('state_id') ?? Session::get('shipping_state_id');
+        $shipping = $this->calculateShipping($sessionStateId);
+
+        $couponCode = request('coupon_code') ?? Session::get('applied_coupon');
+        $discountData = $this->getCouponDiscount($couponCode, $subtotal, $items);
+        $couponDiscount = $discountData['discount'];
+
+        return [
+            'success' => true,
+            'items' => $items,
+            'total_quantity' => \Cart::getTotalQuantity(),
+            'subtotal' => $subtotal,
+            'tax' => $tax,
+            'shipping_cost' => $shipping,
+            'discount' => 0, // General discount if any
+            'coupon_discount' => $couponDiscount,
+            'coupon_code' => $couponCode,
+            'coupon_error' => $discountData['error'] ?? null,
+            'grand_total' => max(0, ($subtotal + $tax + $shipping) - $couponDiscount)
+        ];
+    }
+
+    /**
+     * Calculate shipping cost based on settings and location
+     */
+    public function calculateShipping($stateId = null)
+    {
+        $shippingMethod = getSetting('shipping_method', 'location_wise');
+        $totalShipping = 0;
+        $items = \Cart::getContent();
+
+        if (count($items) == 0)
+            return 0;
+
+        $subtotal = 0;
+        foreach ($items as $item) {
+            $subtotal += ($item->price * $item->quantity);
+        }
+
+        $freeDeliveryThreshold = (float) getSetting('free_delivery_threshold', 0);
+        if ($freeDeliveryThreshold > 0 && $subtotal >= $freeDeliveryThreshold) {
+            return 0;
+        }
+
+        if ($shippingMethod == 'product_wise') {
+            foreach ($items as $item) {
+                $product = Product::find($item->attributes->productId);
+                if ($product && $product->shipping_cost > 0) {
+                    $totalShipping += $product->shipping_cost * $item->quantity;
+                }
+            }
+        } elseif ($shippingMethod == 'flat_rate') {
+            $totalShipping = (float) getSetting('flat_rate_shipping_cost', 100);
+        } else {
+            // Location wise
+            if (!$stateId) {
+                return (float) getSetting('shipping_cost_inside_dhaka', 60);
+            }
+
+            $state = State::find($stateId);
+            $insideDhaka = $state && str_contains(strtolower($state->name), 'dhaka');
+
+            if ($insideDhaka) {
+                $totalShipping = (float) getSetting('shipping_cost_inside_dhaka', 60);
+            } else {
+                $totalShipping = (float) getSetting('shipping_cost_outside_dhaka', 120);
+            }
+        }
+
+        return $totalShipping;
+    }
+
+    /**
+     * Calculate coupon discount
+     */
+    public function getCouponDiscount($code, $subtotal, $items = null)
+    {
+        if (empty($code))
+            return ['discount' => 0];
+
+        $coupon = Coupon::where('code', $code)
+            ->where('status', 1)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->first();
+
+        if (!$coupon) {
+            return ['discount' => 0, 'error' => 'Invalid or expired coupon code'];
+        }
+
+        // Check Total Use Limit
+        if ($coupon->total_use_limit > 0) {
+            $usedCount = Order::where('coupon_id', $coupon->id)->count();
+            if ($usedCount >= $coupon->total_use_limit) {
+                return ['discount' => 0, 'error' => 'Coupon use limit reached'];
+            }
+        }
+
+        // Check Per User Limit
+        if ($coupon->use_limit_per_user > 0) {
+            if (!Auth::check()) {
+                return ['discount' => 0, 'error' => 'Please login to use this coupon'];
+            }
+            $userUsedCount = Order::where('coupon_id', $coupon->id)
+                ->where('user_id', Auth::id())
+                ->count();
+            if ($userUsedCount >= $coupon->use_limit_per_user) {
+                return ['discount' => 0, 'error' => 'You have reached the use limit for this coupon'];
+            }
+        }
+
+        // Check Applicable For specific customer
+        if ($coupon->applicable_for > 0) {
+            if (!Auth::check() || Auth::user()->customer_id != $coupon->applicable_for) {
+                return ['discount' => 0, 'error' => 'This coupon is not applicable for your account'];
+            }
+        }
+
+        // Check Applicable Products
+        $applicableSubtotal = $subtotal;
+        $applicableProducts = json_decode($coupon->applicable_products, true);
+
+        if (!empty($applicableProducts) && is_array($applicableProducts)) {
+            $applicableSubtotal = 0;
+            $items = $items ?? \Cart::getContent();
+            foreach ($items as $item) {
+                if (in_array($item->attributes->productId, $applicableProducts)) {
+                    $applicableSubtotal += ($item->price * $item->quantity);
+                }
+            }
+            if ($applicableSubtotal <= 0) {
+                return ['discount' => 0, 'error' => 'This coupon is not applicable for the products in your cart'];
+            }
+        }
+
+        // Check minimum purchase price
+        if ($coupon->min_purchase_price > 0 && $applicableSubtotal < $coupon->min_purchase_price) {
+            return ['discount' => 0, 'error' => 'Minimum purchase of ' . $coupon->min_purchase_price . ' required for this coupon'];
+        }
+
+        $discount = 0;
+        if ($coupon->discount_type == 2) { // Percent
+            $discount = ($applicableSubtotal * $coupon->discount) / 100;
+        } else { // Flat
+            $discount = $coupon->discount;
+        }
+
+        return ['discount' => $discount, 'coupon' => $coupon];
     }
 
     /**
@@ -172,24 +252,7 @@ class CartService
      */
     public function removeFromCart($sku)
     {
-        Cart::remove($sku);
-        return Cart::get($sku) == null;
-    }
-
-    /**
-     * Update Checked Status (for checkout selection)
-     */
-    public function updateCheckStatus($sku, $status)
-    {
-        $cartItem = Cart::get($sku);
-        if ($cartItem) {
-            Cart::update($sku, [
-                'attributes' => array_merge($cartItem->attributes->toArray(), [
-                    'check_for_order_placement' => $status
-                ])
-            ]);
-            return true;
-        }
-        return false;
+        \Cart::remove($sku);
+        return $this->getCartData();
     }
 }

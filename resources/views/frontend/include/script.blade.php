@@ -30,7 +30,8 @@
 
 <script>
     const formatPrice = (price) => {
-        return parseFloat(price).toFixed(2);
+        let val = parseFloat(price);
+        return isNaN(val) ? "0.00" : val.toFixed(2);
     };
 
     $(document).ready(function () {
@@ -168,8 +169,6 @@
 </script> -->
 {{--cart script--}}
 <!-- <script> -->
-
-@stack ('js')
 <script>
     function DisplayCountOfCheckedItems() {
         let checkedCount = $('.item-checkbox:checked').length; // Count checked checkboxes
@@ -221,6 +220,94 @@
         $('#grandTotal').text(grandTotal.toFixed(2));
     }
 
+    function updateCartUI(data) {
+        let items = data.items;
+        let totalQuantity = data.total_quantity;
+        let subtotal = data.subtotal;
+        let currencySymbol = '{{ $currency["symbol"] ?? "৳" }}';
+        let assetBaseUrl = '{{ asset("/") }}';
+        let defaultImage = assetBaseUrl + 'backend/assets/img/default-150x150.png';
+
+        // Update Off-Canvas Cart
+        let offCanvasHtml = '';
+        if (!items || Object.keys(items).length === 0) {
+            offCanvasHtml = '<div class="text-center py-5"><h5>Your cart is empty</h5></div>';
+        } else {
+            $.each(items, function (key, product) {
+                let productName = product.name;
+                let image = product.attributes.image ? assetBaseUrl + product.attributes.image : defaultImage;
+
+                offCanvasHtml += `
+                    <div data-sku="${product.id}" class="d-flex gap-3 align-items-center justify-content-start cart_item cart-item-${product.id}">
+                        <div class="cart_product_image">
+                            <picture>
+                                <img src="${image}" alt="${productName}" style="width: 50px; height: 50px; object-fit: cover;">
+                            </picture>
+                        </div>
+                        <div class="cart_product_info w-100">
+                            <div class="cart_item_info">
+                                <h6 class="product-name" style="font-size: 14px; margin: 0;">${productName.substr(0, 30)}${productName.length > 30 ? '...' : ''}</h6>
+                                <p class="d-flex justify-content-between" style="font-size: 12px; margin: 0;">
+                                    <span>Price: <span class="quan_price">(${product.quantity} X ${formatPrice(product.price)})</span></span>
+                                    <span> ${currencySymbol}<span class="item-total">${(product.quantity * parseFloat(product.price)).toFixed(2)}</span></span>
+                                </p>
+                                ${product.attributes.variant ? `<p style="font-size: 11px; color: #888; margin: 0;">${product.attributes.variant}</p>` : ''}
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-1">
+                                <div class="quantity_controls d-flex">
+                                    <button class="btn btn-sm btn-outline-secondary btn_decrease py-0 px-2">-</button>
+                                    <input type="text" class="quantity form-control form-control-sm mx-1 text-center" value="${product.quantity}" readonly style="width: 40px; height: 25px;">
+                                    <button class="btn btn-sm btn-outline-secondary btn_increase py-0 px-2">+</button>
+                                </div>
+                                <button class="btn btn-sm text-danger btn_remove remove-from-cart p-0" data-sku="${product.id}"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-2">`;
+            });
+        }
+        $('#offCanvasCartContainer').html(offCanvasHtml);
+
+        // Update Header Cart
+        let headerHtml = '';
+        if (!items || Object.keys(items).length === 0) {
+            headerHtml = '<tr><td colspan="3" class="text-center py-3">Your cart is empty</td></tr>';
+        } else {
+            $.each(items, function (key, product) {
+                let productName = product.name;
+                let image = product.attributes.image ? assetBaseUrl + product.attributes.image : defaultImage;
+
+                headerHtml += `
+                    <tr class="cart_item cart-item-${product.id}" data-sku="${product.id}">
+                        <td class="si-pic">
+                            <img src="${image}" alt="${productName}" style="width: 70px; height: 70px; object-fit: cover;">
+                        </td>
+                        <td class="si-text">
+                            <div class="product-selected">
+                                <p>${currencySymbol}${formatPrice(product.price)} x ${product.quantity}</p>
+                                <h6>${productName}</h6>
+                                ${product.attributes.variant ? `<p><small>${product.attributes.variant}</small></p>` : ''}
+                            </div>
+                        </td>
+                        <td class="si-close">
+                            <i class="ti-close remove-from-cart" data-sku="${product.id}"></i>
+                        </td>
+                    </tr>`;
+            });
+        }
+        $('#headerCartItems').html(headerHtml);
+
+        // Update Totals
+        $('#cartTotalQuantity').text(totalQuantity || 0);
+        $('.headerSubTotal').text(formatPrice(subtotal || 0));
+        $('.navbarTotalPrice').text(formatPrice(subtotal || 0));
+
+        // Call any page-specific update functions
+        if (typeof updateCartTotal === "function") updateCartTotal();
+        if (typeof updateTotalItems === "function") updateTotalItems();
+        DisplayCountOfCheckedItems();
+    }
+
     function addToCart(slug, variant, quantity) {
         $.ajax({
             method: 'GET',
@@ -238,57 +325,7 @@
                         text: data.error,
                     });
                 } else {
-
-                    let html = '';
-                    let currencySymbol = '{{ $currency["symbol"] ?? "৳" }}';
-
-                    $.each(data, function (key, product) {
-                        // Removed translation logic as backend no longer provides it
-                        let productName = product.name;
-
-                        html += `
-                            <div data-sku="${product.id}" class="d-flex gap-3 align-items-center justify-content-start cart_item cart-item-${product.id}">
-                                <div class="cart_product_image">
-                                    <picture>
-                                        <img src="{{asset('/')}}${product.attributes.image}" alt="${productName}" style="width: 50px; height: 50px; object-fit: cover;">
-                                    </picture>
-                                </div>
-                                <div class="cart_product_info w-100">
-                                    <div class="cart_item_info">
-                                        <h6 class="product-name" style="font-size: 14px; margin: 0;">${productName.substr(0, 30)}${productName.length > 30 ? '...' : ''}</h6>
-                                        <p class="d-none">Price: ${currencySymbol}<span class="item-price">${formatPrice((product.price))}</span></p>
-                                        <p class="d-flex justify-content-between" style="font-size: 12px; margin: 0;">
-                                            <span>Price: <span class="quan_price">(${product.quantity} X ${formatPrice((product.price))})</span></span>
-                                            <span> ${currencySymbol}<span class="item-total">${(product.quantity * formatPrice(product.price)).toFixed(2)}</span></span>
-                                        </p>`;
-
-                        if (product.attributes.variant) {
-                            // Simplified variant display if structure matches "Color-Size"
-                            html += `<p style="font-size: 11px; color: #888; margin: 0;">${product.attributes.variant}</p>`;
-                        }
-
-                        html += `</div>
-                                    <div class="d-flex justify-content-between align-items-center mt-1">
-                                        <div class="quantity_controls d-flex">
-                                            <button class="btn btn-sm btn-outline-secondary btn_decrease py-0 px-2">-</button>
-                                            <input type="text" class="quantity form-control form-control-sm mx-1 text-center" value="${product.quantity}" readonly style="width: 40px; height: 25px;">
-                                            <button class="btn btn-sm btn-outline-secondary btn_increase py-0 px-2">+</button>
-                                        </div>
-                                        <button class="btn btn-sm text-danger btn_remove remove-from-cart p-0"><i class="fa fa-trash"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="my-2">`;
-                    });
-
-                    $('#offCanvasCartContainer').html(html);
-
-                    // Note: updateCartTotal() and updateTotalItems() need to be defined or checked if they exist in main.js
-                    // If they are specific template functions, ensure they don't crash.
-                    if (typeof updateCartTotal === "function") updateCartTotal();
-                    if (typeof updateTotalItems === "function") updateTotalItems();
-
-                    DisplayCountOfCheckedItems();
+                    updateCartUI(data);
 
                     Swal.fire({
                         position: "top-end",
@@ -319,16 +356,13 @@
                     $('.cart-item-' + sku + ' .shipping-cost').val(data.shipping_cost);
 
                     updateItemTotal(cartItem);
-
-                    // Recalculate everything
-                    DisplayCountOfCheckedItems();
+                    updateCartUI(data);
 
                     // Specific logic for Checkout page (if on it)
                     if (typeof calculateGrandTotal === "function") {
                         calculateGrandTotal();
                     }
-                }
-                else {
+                } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
@@ -410,8 +444,11 @@
 
         $(document).on('click', '.remove-from-cart', function (e) {
             e.preventDefault();
+            let sku = $(this).data('sku');
             let cartItem = $(this).closest('.cart_item');
-            let sku = cartItem.data('sku');
+            if (!sku) {
+                sku = cartItem.data('sku');
+            }
 
             $.ajax({
                 method: 'GET',
@@ -422,10 +459,7 @@
                 success: function (data) {
                     if (data.success) {
                         $('.cart-item-' + sku).remove();
-                        DisplayCountOfCheckedItems();
-
-                        if (typeof updateCartTotal === "function") updateCartTotal();
-                        if (typeof updateTotalItems === "function") updateTotalItems();
+                        updateCartUI(data);
 
                         // Redirect logic if cart empty on checkout page
                         if ($('.cart_item').length === 0 && window.location.pathname.includes('checkout')) {
@@ -459,3 +493,4 @@
         });
     });
 </script>
+@stack('js')

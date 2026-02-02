@@ -239,7 +239,7 @@ class ProductService
         }
 
         // Find the matching variant (REGEX WORD BOUNDARY MATCHING)
-        $variant = $product->variants->first(function ($v) use ($expectedParts) {
+        $variant = $product->variants->filter(function ($v) use ($expectedParts) {
             $variantName = $v->name ?? '';
 
             // Check if ALL expected parts exist as WHOLE WORDS in the variant name
@@ -257,7 +257,7 @@ class ProductService
             }
 
             return true;
-        });
+        })->first();
 
         if (!$variant) {
             \Illuminate\Support\Facades\Log::warning('Variant Not Found:', [
@@ -283,7 +283,7 @@ class ProductService
                 'id' => $variant->id,
                 'name' => $variant->name,
                 'attr_name' => $variant->attr_name,
-                'price' => number_format( $final_price, 2, '.', ''),
+                'price' => number_format($final_price, 2, '.', ''),
                 'regular_price' => number_format($regular_price, 2, '.', ''),
                 'stock' => $variant->stock_qty ?? 0,
                 'image' => $variant->image ? asset($variant->image) : asset($product->thumbnail)
@@ -355,5 +355,111 @@ class ProductService
         $product->total_stock = $product->variants->sum('stock_qty') ?: $product->stock_qty;
 
         return $product;
+    }
+
+    public function getSearchProducts(Request $request)
+    {
+        $search = $request->search;
+        $type = $request->type ?? 'product'; // product, category, brand, tag
+
+        $category = $request->category;
+
+        // Use a cache key that includes the search term, type, and category
+        $cacheKey = 'search_products_' . md5($search . $type . $category);
+
+        // Fetch products based on type and search term
+        $products = Cache::remember($cacheKey, config('cache_settings.short'), function () use ($search, $type, $category) {
+            $query = Product::active()
+                ->with(['category', 'brand', 'campaignProducts.campaign']);
+
+            if (!empty($search)) {
+                if ($type == 'brand') {
+                    $query->whereHas('brand', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%");
+                    });
+                } elseif ($type == 'category') {
+                    $query->whereHas('category', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%");
+                    });
+                } elseif ($type == 'tag') {
+                    $query->where('tags', 'LIKE', "%{$search}%");
+                } else { // Default to product name search
+                    $query->where('name', 'LIKE', "%{$search}%");
+                }
+            }
+
+            if (!empty($category)) {
+                $query->whereHas('category', function ($q) use ($category) {
+                    $q->where('slug', $category)->orWhere('id', $category);
+                });
+            }
+
+            return $query->latest()->get();
+        });
+
+        // 2. Filter Collection in PHP (for advanced filters like price range)
+        $filtered = $products->filter(function ($product) use ($request) {
+
+            // Filter by category slug if provided in sidebar
+            if ($request->filled('category')) {
+                if ($product->category->slug !== $request->category && $product->category->id != $request->category) {
+                    return false;
+                }
+            }
+
+            // Filter by Brand
+            if ($request->has('brand') && !empty($request->brand)) {
+                $brands = is_array($request->brand) ? $request->brand : explode(',', $request->brand);
+                if (!in_array($product->brand->slug, $brands) && !in_array($product->brand->id, $brands)) {
+                    return false;
+                }
+            }
+
+            // Filter by Price Range
+            if ($request->filled('min_price') && $request->filled('max_price')) {
+                $min = (float) $request->min_price;
+                $max = (float) $request->max_price;
+                $price = (float) $product->final_price;
+
+                if ($price < $min || $price > $max) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        // 3. Sorting
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'price_asc':
+                    $filtered = $filtered->sortBy('final_price');
+                    break;
+                case 'price_desc':
+                    $filtered = $filtered->sortByDesc('final_price');
+                    break;
+                case 'latest':
+                default:
+                    $filtered = $filtered->sortByDesc('created_at');
+                    break;
+            }
+        } else {
+            $filtered = $filtered->sortByDesc('created_at');
+        }
+
+        // 4. Manual Pagination
+        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1;
+        $perPage = 12;
+        $currentPageItems = $filtered->slice(($currentPage - 1) * $perPage, $perPage)->all();
+
+        $paginatedItems = new \Illuminate\Pagination\LengthAwarePaginator(
+            $currentPageItems,
+            $filtered->count(),
+            $perPage,
+            $currentPage,
+            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath()]
+        );
+
+        return $paginatedItems->appends($request->all());
     }
 }

@@ -6,7 +6,7 @@
         @endif
         <div class="icon"><i class="icon_heart_alt"></i></div>
         <ul>
-            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+            <li class="w-icon active"><a href="javascript:void(0)" class="{{ $product->variants->isNotEmpty() ? 'btn-quick-view' : 'add-to-cart' }}" data-slug="{{ $product->slug }}" data-id="{{ $product->id }}"><i class="icon_bag_alt"></i></a></li>
             <li class="quick-view">
                 <a href="javascript:void(0)" class="btn-quick-view" data-id="{{ $product->id }}">
                     + Quick View
@@ -19,7 +19,7 @@
     <div class="pi-text">
         <div class="catagory-name">{{ $product->category->name }}</div>
         <a href="{{ route('product.show', $product->slug) }}">
-            <h5>{{ $product->name }}</h5>
+            <h5>{{ Str::limit($product->name, 20, '...') }}</h5>
         </a>
         <div class="product-price">
             ৳{{ number_format($product->final_price, 2) }}

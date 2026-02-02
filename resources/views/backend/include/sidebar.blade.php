@@ -615,7 +615,7 @@ $url = URL::current();
                     <h4 class="text-section">Settings</h4>
                 </li>
 
-                @canany(['Settings Add', 'Settings View', 'Settings Site', 'Settings Social Media', 'Settings Logo & Favicon', 'Settings Contact', 'Settings Store', 'Settings Activation'])
+                @canany(['Settings Add', 'Settings View', 'Settings Site', 'Settings Social Media', 'Settings Logo & Favicon', 'Settings Contact', 'Settings Store', 'Settings Order', 'Settings Activation'])
                     <li class="nav-item {{Str::contains($route, 'setting') ? 'active' : ''}}">
                         <a data-bs-toggle="collapse" href="#setting">
                             <i class="fas fa-cogs"></i>
@@ -663,6 +663,13 @@ $url = URL::current();
                                     <li class="{{Str::contains($url, 'contact') ? 'active' : ''}}">
                                         <a href="{{route('admin.setting.edit', 'contact')}}">
                                             <span class="sub-item">Contact Info</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('Settings Order')
+                                    <li class="{{Str::contains($url, 'order') ? 'active' : ''}}">
+                                        <a href="{{route('admin.setting.edit', 'order')}}">
+                                            <span class="sub-item">Order Setting</span>
                                         </a>
                                     </li>
                                 @endcan

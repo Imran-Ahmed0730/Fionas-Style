@@ -48,4 +48,34 @@ class CategoryService
                 ->get();
         });
     }
+    public function getCategoryBySlug($slug)
+    {
+        return Cache::remember('category_' . $slug, config('cache_settings.long'), function () use ($slug) {
+            return Category::active()
+                ->where('slug', $slug)
+                ->with([
+                    'subcategories' => function ($query) {
+                        $query->active()
+                            ->orderBy('priority', 'asc');
+                    }
+                ])
+                ->firstOrFail();
+        });
+    }
+    public function getAllCategories()
+    {
+        return Cache::remember('all_categories_page', config('cache_settings.long'), function () {
+            return Category::active()
+                ->where('id', '!=', 1)
+                ->where('parent_id', 0)
+                ->with([
+                    'subcategories' => function ($q) {
+                        $q->active()->withCount('products');
+                    }
+                ])
+                ->withCount('products')
+                ->orderBy('priority', 'asc')
+                ->get();
+        });
+    }
 }

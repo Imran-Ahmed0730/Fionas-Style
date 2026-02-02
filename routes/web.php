@@ -30,6 +30,7 @@ Route::controller(CategoryController::class)->group(function () {
 
 Route::controller(ProductController::class)->group(function () {
     Route::get('/shop', 'index')->name('shop');
+    Route::get('/search', 'search')->name('search');
     Route::get('/product/{slug}', 'show')->name('product.show');
     Route::get('/product/quick-view/{id}', 'quickView')->name('product.quickView');
     Route::get('/get-variant', 'getVariant')->name('product.getVariant');
@@ -46,7 +47,7 @@ Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(f
     Route::get('/add', 'cartAdd')->name('add');
     Route::post('/update', 'update')->name('update');
     Route::get('/remove', 'cartRemove')->name('remove');
-    Route::post('/update-check-status', 'updateCheckedStatus')->name('update.check.status');
+
 });
 
 Route::post('/subscribe', [SubscriberController::class, 'store'])->name('subscribe');
@@ -59,8 +60,10 @@ Route::controller(CompareController::class)->prefix('compare')->name('compare.')
 
 Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/', 'index')->name('index');
-    Route::get('/add', 'add')->name('add');
-    Route::get('/remove', 'remove')->name('remove');
+    Route::get('/get-states', 'getStates')->name('get.states');
+    Route::get('/get-cities', 'getCities')->name('get.cities');
+    Route::post('/apply-coupon', 'applyCoupon')->name('apply.coupon');
+    Route::get('/remove-coupon', 'removeCoupon')->name('remove.coupon');
 });
 
 Route::get('/dashboard', function () {

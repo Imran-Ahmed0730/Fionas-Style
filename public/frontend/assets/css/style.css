@@ -99,7 +99,7 @@ a:hover,
 a:focus {
 	text-decoration: none;
 	outline: none;
-	color: #fff;
+	/* color: #fff; */
 }
 
 ul,
@@ -352,6 +352,10 @@ ol {
 	padding-top: 15px;
 	padding-bottom: 15px;
 	padding-right: 20px;
+}
+
+.header-top .ht-left .mail-service a, .header-top .ht-left .phone-service a {
+	color: #252525;
 }
 
 .header-top .ht-left .mail-service i {
@@ -3038,7 +3042,8 @@ ol {
 	color: #d85d5c;
 }
 
-.checkout-form input {
+.checkout-form input,
+.checkout-form textarea {
 	width: 100%;
 	height: 46px;
 	border: 2px solid #ebebeb;

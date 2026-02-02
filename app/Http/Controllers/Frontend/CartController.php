@@ -22,13 +22,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        // $cache_duration = config('custom.cache_duration', 60); 
-        // Logic from reference: cache translations.
-        // For now returning simple view
-
-        $data['items'] = Cart::getContent();
-        $data['items'] = Cart::getContent();
-
+        $data = $this->cartService->getCartData();
         return view('frontend.cart.index', $data);
     }
 
@@ -65,26 +59,14 @@ class CartController extends Controller
      */
     public function cartRemove(Request $request)
     {
-        $success = $this->cartService->removeFromCart($request->sku);
+        $result = $this->cartService->removeFromCart($request->sku);
 
-        if ($success) {
-            return response()->json(['success' => 'Product removed from cart']);
-        } else {
-            return response()->json(['error' => 'Product not removed from cart']);
-        }
-    }
-
-    /**
-     * Update Item Checked Status
-     */
-    public function updateCheckedStatus(Request $request)
-    {
-        $success = $this->cartService->updateCheckStatus($request->sku, $request->check_status);
-
-        if ($success) {
-            return response()->json(['success' => true, 'message' => 'Status updated successfully']);
+        if (isset($result['error'])) {
+            return response()->json(['error' => $result['error']]);
         }
 
-        return response()->json(['success' => false, 'message' => 'Item not found'], 404);
+        return response()->json($result);
     }
+
+
 }

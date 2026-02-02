@@ -36,14 +36,25 @@
                     </div>
                 </div>
                 <div class="col-lg-7 col-md-7">
-                    <div class="advanced-search">
-                        //TODO implement the search functionality
-                        <button type="button" class="category-btn">All Categories</button>
-                        <div class="input-group">
-                            <input type="text" placeholder="What do you need?">
-                            <button type="button"><i class="ti-search"></i></button>
+                    <form action="{{ route('search') }}" method="GET">
+                        <div class="advanced-search">
+                            <select name="type" class="category-btn">
+                                <option value="product" {{ request('type') == 'product' ? 'selected' : '' }}>All Products
+                                </option>
+                                <option value="category" {{ request('type') == 'category' ? 'selected' : '' }}>All Categories
+                                </option>
+                                <option value="brand" {{ request('type') == 'brand' ? 'selected' : '' }}>All Brands
+                                </option>
+                                <option value="tag" {{ request('type') == 'tag' ? 'selected' : '' }}> Tags
+                                </option>
+                            </select>
+                            <div class="input-group">
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    placeholder="What do you need?">
+                                <button type="submit"><i class="ti-search"></i></button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="col-lg-3 text-right col-md-3">
                     <ul class="nav-right">
@@ -57,28 +68,32 @@
                         <li class="cart-icon">
                             <a href="#">
                                 <i class="icon_bag_alt"></i>
-                                <span >{{Cart::getTotalQuantity()}}</span>
+                                <span id="cartTotalQuantity">{{Cart::getTotalQuantity()}}</span>
                             </a>
                             <div class="cart-hover">
                                 <div class="select-items">
                                     <table>
-                                        <tbody>
-                                            //TODO update the cart on update for remove with subtotal, cart products quantity
+                                        <tbody id="headerCartItems">
                                             @forelse(Cart::getContent() as $cartItem)
-                                                <tr class="cart-item cart-item-{{ $cartItem->id }}" data-sku="{{ $cartItem->id }}">
+                                                <tr class="cart_item cart-item-{{ $cartItem->id }}"
+                                                    data-sku="{{ $cartItem->id }}">
                                                     <td class="si-pic"><img
-                                                            src="{{ $cartItem->attributes['image'] && file_exists($cartItem->attributes['image']) ? asset($cartItem->attributes['image']) : asset('backend/assets/img/default-150x150.png') }}" alt="{{ $cartItem->name }}"></td>
+                                                            src="{{ $cartItem->attributes['image'] && file_exists($cartItem->attributes['image']) ? asset($cartItem->attributes['image']) : asset('backend/assets/img/default-150x150.png') }}"
+                                                            alt="{{ $cartItem->name }}"></td>
                                                     <td class="si-text">
                                                         <div class="product-selected">
-                                                            <p>${{ $cartItem->price }} x 1</p>
+                                                            <p>{{ $currency['symbol'] ?? '৳' }}{{ $cartItem->price }} x
+                                                                {{ $cartItem->quantity }}
+                                                            </p>
                                                             <h6>{{ $cartItem->name }}</h6>
                                                             @if($cartItem->attributes->variant)
                                                                 <p><small>{{ $cartItem->attributes->variant }}</small></p>
                                                             @endif
                                                         </div>
                                                     </td>
-                                                    <td class="si-close ">
-                                                        <i class="ti-close remove-from-cart"></i> //TODO fix cart remove function
+                                                    <td class="si-close">
+                                                        <i class="ti-close remove-from-cart"
+                                                            data-sku="{{ $cartItem->id }}"></i>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -88,7 +103,8 @@
                                 </div>
                                 <div class="select-total">
                                     <span>total:</span>
-                                    <h5>$ <span class="total_price">120.00</span></h5>
+                                    <h5>{{ $currency['symbol'] ?? '৳' }} <span
+                                            class="total_price headerSubTotal">{{Cart::getSubTotal()}}</span></h5>
                                 </div>
                                 <div class="select-button">
                                     <a href="{{ route('cart.index') }}" class="primary-btn view-card">VIEW CART</a>
@@ -96,7 +112,8 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="cart-price">$ <span id="navbarTotalPrice" class="total_price">{{Cart::getSubTotal()}}</span></li>
+                        <li class="cart-price">{{ $currency['symbol'] ?? '৳' }} <span id="navbarTotalPrice"
+                                class="total_price navbarTotalPrice">{{Cart::getSubTotal()}}</span></li>
                     </ul>
                 </div>
             </div>
@@ -117,12 +134,18 @@
             </div>
             <nav class="nav-menu mobile-menu">
                 <ul>
-                    <li class="{{ request()->routeIs('home') ? 'active' : '' }}"><a href="{{ route('home') }}">Home</a></li>
-                    <li class="{{ request()->routeIs('shop') ? 'active' : '' }}"><a href="{{ route('shop') }}">Shop</a></li>
-                    <li class="{{ request()->routeIs('categories') ? 'active' : '' }}"><a href="{{ route('categories') }}">Categories</a></li>
-                    <li class="{{ request()->routeIs('blog.index') ? 'active' : '' }}"><a href="{{ route('blog.index') }}">Blog</a></li>
-                    <li class="{{ request()->routeIs('page.about') ? 'active' : '' }}"><a href="{{ route('page.about') }}">About Us</a></li>
-                    <li class="{{ request()->routeIs('contact') ? 'active' : '' }}"><a href="{{ route('contact') }}">Contact</a></li>
+                    <li class="{{ request()->routeIs('home') ? 'active' : '' }}"><a href="{{ route('home') }}">Home</a>
+                    </li>
+                    <li class="{{ request()->routeIs('shop') ? 'active' : '' }}"><a href="{{ route('shop') }}">Shop</a>
+                    </li>
+                    <li class="{{ request()->routeIs('categories') ? 'active' : '' }}"><a
+                            href="{{ route('categories') }}">Categories</a></li>
+                    <li class="{{ request()->routeIs('blog.index') ? 'active' : '' }}"><a
+                            href="{{ route('blog.index') }}">Blog</a></li>
+                    <li class="{{ request()->routeIs('page.about') ? 'active' : '' }}"><a
+                            href="{{ route('page.about') }}">About Us</a></li>
+                    <li class="{{ request()->routeIs('contact') ? 'active' : '' }}"><a
+                            href="{{ route('contact') }}">Contact</a></li>
                 </ul>
             </nav>
             <div id="mobile-menu-wrap"></div>

@@ -111,4 +111,10 @@ class ProductController extends Controller
 
         return view('frontend.product.details', $data);
     }
+    public function search(Request $request)
+    {
+        $data['items'] = $this->productService->getSearchProducts($request);
+        $data['sidebar'] = $this->productService->getShopSidebarData();
+        return view('frontend.search.index', $data);
+    }
 }
