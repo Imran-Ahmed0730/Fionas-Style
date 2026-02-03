@@ -16,9 +16,9 @@ class SettingUpdateRequest extends FormRequest
     {
         // For simple store/creation of settings (less used, mostly seed or manual db, but controller has a store method)
         if ($this->routeIs('admin.setting.store')) {
-             return [
+            return [
                 'key' => 'required|unique:settings',
-             ];
+            ];
         }
 
         $section = $this->getSection(url()->previous());
@@ -65,9 +65,10 @@ class SettingUpdateRequest extends FormRequest
 
             case 'activation':
                 return [
-                    'user_verification' => 'required|in:0,1',
+                    'user_verification' => 'required|in:0,1,2',
                     'free_delivery_above' => 'required|integer|min:0',
-                    'guest_account' => 'required|min:0,1',
+                    'guest_account' => 'required|in:0,1',
+                    'development_mode' => 'nullable|in:0,1',
                 ];
 
             case 'store':

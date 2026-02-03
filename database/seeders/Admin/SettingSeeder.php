@@ -19,6 +19,7 @@ class SettingSeeder extends Seeder
             ['key' => 'closed_on', 'value' => json_encode(["1", "2"])],
             ['key' => 'closing_time', 'value' => "06:00 PM"],
             ['key' => 'developed_by', 'value' => "Imran Ahmed"],
+            ['key' => 'development_mode', 'value' => "0"],
             ['key' => 'developed_by_url', 'value' => "https://www.devimranahmed.com"],
             ['key' => 'email', 'value' => "info@ecom.com"],
             ['key' => 'facebook_url', 'value' => "https://www.facebook.com"],

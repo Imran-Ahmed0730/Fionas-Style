@@ -57,10 +57,10 @@
                     </form>
                 </div>
                 <div class="col-lg-3 text-right col-md-3">
+                    <!-- //TODO implement wishlist -->
                     <ul class="nav-right">
                         <li class="heart-icon">
                             <a href="#">
-                                //TODO implement wishlist
                                 <i class="icon_heart_alt"></i>
                                 <span>1</span>
                             </a>
