@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
@@ -45,7 +44,7 @@ class CartController extends Controller
      */
     public function update(Request $request)
     {
-        $result = $this->cartService->updateCart($request);
+        $result = $this->cartService->updateQuantity($request->sku, $request->quantity);
 
         if (isset($result['error'])) {
             return response()->json(['error' => $result['error']], 404); // Or 400

@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
@@ -27,6 +26,8 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\FaqCategoryController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\SubscriberController;
+use App\Http\Controllers\Admin\AccountHeadController;
+use App\Http\Controllers\Admin\AccountLedgerController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'login'])->name('login');
@@ -125,11 +126,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         //attribute module
         Route::resource('attribute', AttributeController::class)->except('show', 'destroy', 'update');
         Route::prefix('attribute')->name('attribute.')->group(function () {
+            // Attribute
             Route::controller(AttributeController::class)->group(function () {
                 Route::post('/update', 'update')->name('update');
                 Route::post('/delete', 'destroy')->name('delete');
                 Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
             });
+            // Attribute Value
             Route::controller(AttributeValueController::class)->prefix('value')->name('value.')->group(function () {
                 Route::post('/store', 'store')->name('store');
                 Route::get('/{id}', 'edit')->name('edit');
@@ -253,6 +256,38 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::controller(SubscriberController::class)->prefix('subscriber')->name('subscriber.')->group(function () {
             Route::get('/', 'index')->name('index');
         });
+
+        // Account Head module
+        Route::resource('account-head', AccountHeadController::class)->except('show', 'create', 'edit', 'update', 'destroy');
+        Route::controller(AccountHeadController::class)->prefix('account-head')->name('account-head.')->group(function () {
+            Route::post('/update', 'update')->name('update');
+            Route::post('/delete', 'destroy')->name('delete');
+            Route::get('/status/change/{id}', 'status')->name('status.change');
+        });
+
+        // Account Report module
+        Route::prefix('account-report')->name('account-report.')->group(function () {
+            Route::get('/balance-sheet', [AccountLedgerController::class, 'balanceSheet'])->name('balance-sheet');
+            Route::get('/cashbook', [AccountLedgerController::class, 'cashbook'])->name('cashbook');
+            Route::get('/sales-report', [AccountLedgerController::class, 'salesReport'])->name('sales-report');
+        });
+
+        // Payment Method module
+        Route::resource('payment-method', \App\Http\Controllers\Admin\PaymentMethodController::class)->except('show');
+        Route::controller(\App\Http\Controllers\Admin\PaymentMethodController::class)->prefix('payment-method')->name('payment-method.')->group(function () {
+            Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+        });
+
+        // Order module
+        Route::controller(\App\Http\Controllers\Admin\OrderController::class)->prefix('order')->name('order.')->group(function () {
+            Route::get('/online', 'onlineOrders')->name('online');
+            Route::get('/pos', 'posOrders')->name('pos');
+            Route::get('/{id}', 'show')->name('show');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::post('/add-payment/{id}', 'addPayment')->name('add-payment');
+        });
+
 
 
     });

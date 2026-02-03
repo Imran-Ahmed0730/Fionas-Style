@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('type')->default(1)->comment('1=>Online, 2=>Offline');
+            $table->tinyInteger('type')->default(1)->comment('1=>Online, 2=>POS');
             $table->string('invoice_no')->unique()->nullable();
             $table->integer('customer_id')->nullable();
             $table->string('name');
@@ -29,10 +29,8 @@ return new class extends Migration {
             $table->integer('coupon_id')->nullable();
             $table->decimal('coupon_discount', 15, 2)->default(0);
             $table->decimal('grand_total', 15, 2);
+            $table->bigInteger('payment_method_id')->nullable();
             $table->string('payment_status')->default('0')->comment('0=unpaid, 1=paid, 2=partial, 3=refunded');
-            $table->string('payment_method')->nullable();
-            $table->string('account_number')->nullable();
-            $table->string('transaction_id')->nullable()->unique();
             $table->integer('country_id')->nullable();
             $table->integer('state_id')->nullable();
             $table->integer('city_id')->nullable();
@@ -42,7 +40,7 @@ return new class extends Migration {
             $table->date('shipped_at')->nullable();
             $table->date('delivered_at')->nullable();
             $table->date('cancelled_at')->nullable();
-            $table->smallInteger('status')->default(0)->comment('0=pending, 1=confirmed, 2=processing, 3=shipped, 4=delivered, 5=cancelled');
+            $table->smallInteger('status')->default(0)->comment('0=pending, 1=confirmed, 2=processing, 3=shipped, 4=delivered, 5=cancelled, 6=hold');
             $table->bigInteger('created_by');
             $table->bigInteger('updated_by')->nullable();
             $table->timestamps();

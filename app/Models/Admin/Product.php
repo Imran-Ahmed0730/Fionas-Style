@@ -85,7 +85,7 @@ class Product extends Model
 
     public function stocks()
     {
-        return $this->hasMany(ProductStock::class, 'product_name', 'name');
+        return $this->hasMany(ProductStock::class, 'product_id', 'id');
     }
 
     public function campaignProducts()

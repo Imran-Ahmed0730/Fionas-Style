@@ -84,3 +84,17 @@ function getSetting($key, $default = '')
     $setting = Setting::where('key', $key)->first();
     return $setting?->value ?? $default;
 }
+
+/**
+ * Get currency settings
+ *
+ * @return array
+ */
+function getCurrency()
+{
+    return [
+        'name' => getSetting('currency_name', 'USD'),
+        'symbol' => getSetting('currency_symbol', '$'),
+        'position' => getSetting('currency_position', 'left'),
+    ];
+}

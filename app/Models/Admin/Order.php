@@ -9,37 +9,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'type',
-        'invoice_no',
-        'customer_id',
-        'name',
-        'email',
-        'phone',
-        'subtotal',
-        'tax',
-        'shipping_cost',
-        'free_shipping',
-        'discount',
-        'discount_type',
-        'coupon_id',
-        'coupon_discount',
-        'grand_total',
-        'payment_status',
-        'payment_method',
-        'country_id',
-        'state_id',
-        'city_id',
-        'address',
-        'note',
-        'confirmed_at',
-        'shipped_at',
-        'delivered_at',
-        'cancelled_at',
-        'status',
-        'created_by',
-        'updated_by',
-    ];
+    protected $guarded = ['id'];
 
     protected $casts = [
         'confirmed_at' => 'date',
@@ -53,9 +23,9 @@ class Order extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function coupon()
+    public function appliedCoupon()
     {
-        return $this->belongsTo(Coupon::class);
+        return $this->belongsTo(Coupon::class, 'coupon_id');
     }
 
     public function items()
@@ -76,5 +46,15 @@ class Order extends Model
     public function city()
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function orderPayments()
+    {
+        return $this->hasMany(OrderPayment::class, 'order_id');
+    }
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
     }
 }

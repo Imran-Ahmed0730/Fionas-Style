@@ -19,8 +19,8 @@ use Database\Seeders\Admin\BlogCategorySeeder;
 use Database\Seeders\Admin\BlogSeeder;
 use Database\Seeders\Admin\FaqCategorySeeder;
 use Database\Seeders\Admin\FaqSeeder;
-
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\AccountHeadSeeder;
+use Database\Seeders\Admin\PaymentMethodSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -41,5 +41,7 @@ class DatabaseSeeder extends Seeder
         // $this->call([SupplierSeeder::class]);
         // $this->call([BlogCategorySeeder::class]);
         // $this->call([FaqCategorySeeder::class]);
+        $this->call([AccountHeadSeeder::class]);
+        $this->call([PaymentMethodSeeder::class]);
     }
 }

@@ -21,7 +21,7 @@ class CouponRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'title'                 => 'required|string|max:255',
             'description'           => 'nullable|string',
             'code'                  => 'required|string|max:255|unique:coupons,code,' . $this->id,
@@ -33,9 +33,13 @@ class CouponRequest extends FormRequest
             'applicable_for'        => 'required|integer',
             'applicable_products'   => 'nullable|array',
             'applicable_products.*' => 'required|integer|exists:products,id',
-            'start_date'            => 'required|date|before:end_date|after_or_equal:today',
+            'start_date'            => 'required|date|before:end_date',
             'end_date'              => 'required|date|after:start_date|after_or_equal:today',
             'status'                => 'required|in:0,1',
         ];
+        if(!$this->id){
+            $rules['start_date'] = 'required|date|after_or_equal:today';
+        }
+        return $rules;
     }
 }

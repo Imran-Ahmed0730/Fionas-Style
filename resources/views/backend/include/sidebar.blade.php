@@ -1,6 +1,6 @@
 @php
-$route = Route::currentRouteName();
-$url = URL::current();
+    $route = Route::currentRouteName();
+    $url = URL::current();
 @endphp
 
 <!-- Sidebar -->
@@ -10,19 +10,10 @@ $url = URL::current();
         <div class="logo-header" data-background-color="dark">
             <a href="{{route('admin.dashboard')}}" class="logo">
                 @if(getSetting('site_logo') != null)
-                    <img
-                        src="{{asset(getSetting('site_logo'))}}"
-                        alt="navbar brand"
-                        class="navbar-brand"
-                        height="70"
-                    />
+                    <img src="{{asset(getSetting('site_logo'))}}" alt="navbar brand" class="navbar-brand" height="70" />
                 @else
-                    <img
-                        src="{{asset('backend')}}/assets/img/kaiadmin/logo_light.svg"
-                        alt="navbar brand"
-                        class="navbar-brand"
-                        height="70"
-                    />
+                    <img src="{{asset('backend')}}/assets/img/kaiadmin/logo_light.svg" alt="navbar brand"
+                        class="navbar-brand" height="70" />
                 @endif
 
             </a>
@@ -115,14 +106,16 @@ $url = URL::current();
                 @endcanany
 
                 @canany(['Category Add', 'Category View'])
-                    <li class="nav-item {{Str::contains($route, 'category') && !Str::contains($route, 'blog') && !Str::contains($route, 'faq') ? 'active' : ''}}">
-                         {{-- Note: Added check to prevent active state on blog/faq categories --}}
+                    <li
+                        class="nav-item {{Str::contains($route, 'category') && !Str::contains($route, 'blog') && !Str::contains($route, 'faq') ? 'active' : ''}}">
+                        {{-- Note: Added check to prevent active state on blog/faq categories --}}
                         <a data-bs-toggle="collapse" href="#category">
                             <i class="fas fa-layer-group"></i>
                             <p>Categories</p>
                             <span class="caret"></span>
                         </a>
-                        <div class="collapse {{Str::contains($route, 'category') && !Str::contains($route, 'blog') && !Str::contains($route, 'faq') ? 'show' : ''}}" id="category">
+                        <div class="collapse {{Str::contains($route, 'category') && !Str::contains($route, 'blog') && !Str::contains($route, 'faq') ? 'show' : ''}}"
+                            id="category">
                             <ul class="nav nav-collapse">
                                 @can('Category Add')
                                     <li class="{{$route == 'admin.category.create' ? 'active' : ''}}">
@@ -171,7 +164,7 @@ $url = URL::current();
                     </li>
                 @endcanany
 
-                 @canany(['Attribute Add', 'Attribute View'])
+                @canany(['Attribute Add', 'Attribute View'])
                     <li class="nav-item {{Str::contains($route, 'attribute') ? 'active' : ''}}">
                         <a data-bs-toggle="collapse" href="#attribute">
                             <i class="fa-solid fa-network-wired"></i>
@@ -281,6 +274,56 @@ $url = URL::current();
                             </ul>
                         </div>
                     </li>
+                @endcanany
+
+
+                {{-- SALES SECTION --}}
+                @canany(['Order View', 'Payment Method View'])
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">Sales</h4>
+                </li>
+
+                @canany(['Order Online View', 'Order POS View'])
+                    <li
+                        class="nav-item {{Str::contains($route, 'order') && !Str::contains($route, 'setting') ? 'active' : ''}}">
+                        <a data-bs-toggle="collapse" href="#orders">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Orders</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse {{Str::contains($route, 'order') && !Str::contains($route, 'setting') ? 'show' : ''}}"
+                            id="orders">
+                            <ul class="nav nav-collapse">
+                                @can('Order Online View')
+                                    <li class="{{$route == 'admin.order.online' ? 'active' : ''}}">
+                                        <a href="{{route('admin.order.online')}}">
+                                            <span class="sub-item">Online Orders</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('Order POS View')
+                                    <li class="{{$route == 'admin.order.pos' ? 'active' : ''}}">
+                                        <a href="{{route('admin.order.pos')}}">
+                                            <span class="sub-item">POS Orders</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </div>
+                    </li>
+                    @endcan
+
+                    @can('Payment Method View')
+                        <li class="nav-item {{Str::contains($route, 'payment-method') ? 'active' : ''}}">
+                            <a href="{{route('admin.payment-method.index')}}">
+                                <i class="fas fa-credit-card"></i>
+                                <p>Payment Methods</p>
+                            </a>
+                        </li>
+                    @endcan
                 @endcanany
 
 
@@ -498,6 +541,61 @@ $url = URL::current();
                 @endcanany
 
 
+                {{-- ACCOUNTS SECTION --}}
+                @canany(['Account Head View', 'Account Balance Sheet View', 'Account Cashbook View', 'Sales Report View'])
+                    <li class="nav-section">
+                        <span class="sidebar-mini-icon">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </span>
+                        <h4 class="text-section">Accounts</h4>
+                    </li>
+
+                    @can('Account Head View')
+                        <li class="nav-item {{Str::contains($route, 'account-head') ? 'active' : ''}}">
+                            <a href="{{route('admin.account-head.index')}}">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <p>Account Heads</p>
+                            </a>
+                        </li>
+                    @endcan
+
+                    @canany(['Account Balance Sheet View', 'Account Cashbook View', 'Sales Report View'])
+                        <li class="nav-item {{Str::contains($route, 'account-report') ? 'active' : ''}}">
+                            <a data-bs-toggle="collapse" href="#account_report">
+                                <i class="fas fa-chart-line"></i>
+                                <p>Account Reports</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse {{Str::contains($route, 'account-report') ? 'show' : ''}}" id="account_report">
+                                <ul class="nav nav-collapse">
+                                    @can('Account Balance Sheet View')
+                                        <li class="{{$route == 'admin.account-report.balance-sheet' ? 'active' : ''}}">
+                                            <a href="{{route('admin.account-report.balance-sheet')}}">
+                                                <span class="sub-item">Balance Sheet</span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    @can('Account Cashbook View')
+                                        <li class="{{$route == 'admin.account-report.cashbook' ? 'active' : ''}}">
+                                            <a href="{{route('admin.account-report.cashbook')}}">
+                                                <span class="sub-item">Cashbook</span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    @can('Sales Report View')
+                                        <li class="{{$route == 'admin.account-report.sales-report' ? 'active' : ''}}">
+                                            <a href="{{route('admin.account-report.sales-report')}}">
+                                                <span class="sub-item">Sales Report</span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                </ul>
+                            </div>
+                        </li>
+                    @endcanany
+                @endcanany
+
+
                 {{-- USERS SECTION --}}
                 <li class="nav-section">
                     <span class="sidebar-mini-icon">
@@ -506,7 +604,7 @@ $url = URL::current();
                     <h4 class="text-section">User Management</h4>
                 </li>
 
-                 @canany(['Staff Create', 'Staff View'])
+                @canany(['Staff Create', 'Staff View'])
                     <li class="nav-item {{Str::contains($route, 'staff') ? 'active' : ''}}">
                         <a data-bs-toggle="collapse" href="#staff">
                             <i class="fas fa-user-friends"></i>
@@ -534,21 +632,23 @@ $url = URL::current();
                     </li>
                 @endcanany
                 @can('Subscriber View')
-                <li class="nav-item {{$route == 'admin.subscriber.index' ? 'active' : ''}}">
-                    <a href="{{route('admin.subscriber.index')}}"><i class="fas fa-envelope"></i>
-                        <p>Subscribers</p>
-                    </a>
-                </li>
+                    <li class="nav-item {{$route == 'admin.subscriber.index' ? 'active' : ''}}">
+                        <a href="{{route('admin.subscriber.index')}}"><i class="fas fa-envelope"></i>
+                            <p>Subscribers</p>
+                        </a>
+                    </li>
                 @endcan
 
                 @canany(['Role Add', 'Role View', 'Permission Add', 'Permission View'])
-                    <li class="nav-item {{Str::contains($route, 'role') || Str::contains($route, 'permission') ? 'active' : ''}}">
+                    <li
+                        class="nav-item {{Str::contains($route, 'role') || Str::contains($route, 'permission') ? 'active' : ''}}">
                         <a data-bs-toggle="collapse" href="#role-permission">
                             <i class="fas fa-users-cog"></i>
                             <p>Roles & Permissions</p>
                             <span class="caret"></span>
                         </a>
-                        <div class="collapse {{Str::contains($route, 'role') || Str::contains($route, 'permission') ? 'show' : ''}}" id="role-permission">
+                        <div class="collapse {{Str::contains($route, 'role') || Str::contains($route, 'permission') ? 'show' : ''}}"
+                            id="role-permission">
                             <ul class="nav nav-collapse">
                                 @canany(['Role Add', 'Role View'])
                                     <li>
@@ -582,7 +682,8 @@ $url = URL::current();
                                             <span class="sub-item">Permission</span>
                                             <span class="caret"></span>
                                         </a>
-                                        <div class="collapse {{Str::contains($route, 'permission') ? 'show' : ''}}" id="permission">
+                                        <div class="collapse {{Str::contains($route, 'permission') ? 'show' : ''}}"
+                                            id="permission">
                                             <ul class="nav nav-collapse subnav">
                                                 @can('Permission Add')
                                                     <li class="{{$route == 'admin.permission.create' ? 'active' : ''}}">
@@ -606,6 +707,7 @@ $url = URL::current();
                         </div>
                     </li>
                 @endcanany
+
 
                 {{-- SETTINGS SECTION --}}
                 <li class="nav-section">

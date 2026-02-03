@@ -8,45 +8,46 @@ use App\Models\Admin\State;
 use App\Models\Admin\Order;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use Cart;
 
 class CartService
 {
     /**
      * Add or update product in cart
      */
-    public function addToCart($productId, $quantity = 1, $variantId = null)
+    public function addToCart($request)
     {
-        $product = Product::active()->findOrFail($productId);
+        $product = Product::active()->where('slug', $request->slug)->firstOrFail();
 
-        $price = $product->price;
-        $sku = $product->slug;
+        $price = $product->final_price;
+        $sku = $product->sku;
         $name = $product->name;
         $attributes = [
             'productId' => $product->id,
             'image' => $product->thumbnail,
             'tax' => 0,
             'shipping_cost' => $product->shipping_cost ?? 0,
-            'variant_id' => $variantId,
+            'variant' => $request->variant,
         ];
 
-        if ($variantId) {
-            $variant = $product->variants()->find($variantId);
+        if ($request->variant) {
+            $variant = $product->variants()->where('name', $request->variant)->first();
             if ($variant) {
-                $price = $variant->price;
-                $sku .= '-' . $variant->id;
+                $price = $variant->final_price;
+                $sku = $variant->sku;
                 $attributes['variant_name'] = $variant->name;
             }
         }
 
         $tax_percentage = getSetting('tax_percentage', 0);
-        $tax = ($price * $tax_percentage / 100) * $quantity;
+        $tax = ($price * $tax_percentage / 100) * $request->quantity;
         $attributes['tax'] = $tax;
 
-        \Cart::add([
+        Cart::add([
             'id' => $sku,
             'name' => $name,
             'price' => $price,
-            'quantity' => $quantity,
+            'quantity' => $request->quantity,
             'attributes' => $attributes
         ]);
 
@@ -58,7 +59,7 @@ class CartService
      */
     public function updateQuantity($sku, $quantity)
     {
-        $cartItem = \Cart::get($sku);
+        $cartItem = Cart::get($sku);
         if (!$cartItem) {
             return ['success' => false, 'message' => 'Item not found in cart'];
         }
@@ -69,7 +70,7 @@ class CartService
         $tax_percentage = getSetting('tax_percentage', 0);
         $tax = ($cartItem->price * $tax_percentage / 100) * $quantity;
 
-        \Cart::update($sku, [
+        Cart::update($sku, [
             'quantity' => [
                 'relative' => false,
                 'value' => $quantity
@@ -88,7 +89,7 @@ class CartService
      */
     public function getCartData()
     {
-        $items = \Cart::getContent();
+        $items = Cart::getContent();
         $subtotal = 0;
         $tax = 0;
 
@@ -107,15 +108,15 @@ class CartService
         return [
             'success' => true,
             'items' => $items,
-            'total_quantity' => \Cart::getTotalQuantity(),
+            'total_quantity' => Cart::getTotalQuantity(),
             'subtotal' => $subtotal,
             'tax' => $tax,
             'shipping_cost' => $shipping,
-            'discount' => 0, // General discount if any
+            'discount' => $couponDiscount,
             'coupon_discount' => $couponDiscount,
             'coupon_code' => $couponCode,
             'coupon_error' => $discountData['error'] ?? null,
-            'grand_total' => max(0, ($subtotal + $tax + $shipping) - $couponDiscount)
+            'grand_total' => ceil(max(0, ($subtotal + $tax + $shipping) - $couponDiscount))
         ];
     }
 
@@ -126,7 +127,7 @@ class CartService
     {
         $shippingMethod = getSetting('shipping_method', 'location_wise');
         $totalShipping = 0;
-        $items = \Cart::getContent();
+        $items = Cart::getContent();
 
         if (count($items) == 0)
             return 0;
@@ -201,7 +202,7 @@ class CartService
                 return ['discount' => 0, 'error' => 'Please login to use this coupon'];
             }
             $userUsedCount = Order::where('coupon_id', $coupon->id)
-                ->where('user_id', Auth::id())
+                ->where('customer_id', Auth::id())
                 ->count();
             if ($userUsedCount >= $coupon->use_limit_per_user) {
                 return ['discount' => 0, 'error' => 'You have reached the use limit for this coupon'];
@@ -221,7 +222,7 @@ class CartService
 
         if (!empty($applicableProducts) && is_array($applicableProducts)) {
             $applicableSubtotal = 0;
-            $items = $items ?? \Cart::getContent();
+            $items = $items ?? Cart::getContent();
             foreach ($items as $item) {
                 if (in_array($item->attributes->productId, $applicableProducts)) {
                     $applicableSubtotal += ($item->price * $item->quantity);
@@ -252,7 +253,7 @@ class CartService
      */
     public function removeFromCart($sku)
     {
-        \Cart::remove($sku);
+        Cart::remove($sku);
         return $this->getCartData();
     }
 }

@@ -6,18 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Country;
 use App\Models\Admin\State;
 use App\Models\Admin\City;
+use App\Models\Admin\Order;
 use App\Services\Frontend\CartService;
+use App\Services\Frontend\OrderService;
+use App\Http\Requests\Frontend\OrderRequest;
 use Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
     protected $cartService;
+    protected $orderService;
 
-    public function __construct(CartService $cartService)
+    public function __construct(CartService $cartService, OrderService $orderService)
     {
         $this->cartService = $cartService;
+        $this->orderService = $orderService;
     }
 
     public function index()
@@ -38,11 +44,57 @@ class CheckoutController extends Controller
         $data['grand_total'] = $summary['grand_total'];
 
         $data['countries'] = Country::active()->orderBy('name', 'asc')->get();
-        // Assuming Bangladesh is common, get its states as default or let AJAX handle it
-        $bd = Country::where('name', 'Bangladesh')->first();
-        $data['states'] = $bd ? State::where('country_id', $bd->id)->orderBy('name', 'asc')->get() : [];
+
+        // Handle pre-selected country/state/city from old input or auth guest/customer
+        $selectedCountry = old('country_id') ?? (auth()->user() && auth()->user()->customer ? auth()->user()->customer->country_id : null);
+        $selectedState = old('state_id') ?? (auth()->user() && auth()->user()->customer ? auth()->user()->customer->state_id : null);
+
+        if ($selectedCountry) {
+            $data['states'] = State::where('country_id', $selectedCountry)->orderBy('name', 'asc')->get();
+        } else {
+            // Default to Bangladesh if no selection exists
+            $bd = Country::where('name', 'Bangladesh')->first();
+            $data['states'] = $bd ? State::where('country_id', $bd->id)->orderBy('name', 'asc')->get() : [];
+        }
+
+        $data['cities'] = $selectedState ? City::where('state_id', $selectedState)->orderBy('name', 'asc')->get() : [];
+
+        // Add currency for the view
+        $data['currency'] = getCurrency();
 
         return view('frontend.checkout.index', $data);
+    }
+
+    /**
+     * Handle order placement
+     */
+    public function placeOrder(OrderRequest $request)
+    {
+        try {
+            if (\Cart::getTotalQuantity() == 0) {
+                return redirect()->route('shop')->with('warning', 'Your cart is empty');
+            }
+
+            $cartSummary = $this->cartService->getCartData();
+            $order = $this->orderService->placeOrder($request->validated(), $cartSummary);
+
+            return redirect()->route('checkout.summary', $order->invoice_no)->with('success', 'Order placed successfully!');
+
+        } catch (\Exception $e) {
+            Log::error('Order Placement Error: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Show order summary page
+     */
+    public function orderSummary($invoice)
+    {
+        $order = Order::with(['items.product', 'items.variant', 'country', 'state', 'city'])->where('invoice_no', $invoice)->firstOrFail();
+        $data['order'] = $order;
+        $data['currency'] = getCurrency();
+        return view('frontend.checkout.summary', $data);
     }
 
     public function getStates(Request $request)

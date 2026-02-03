@@ -83,147 +83,41 @@
         });
     });
 </script>
-<!-- <script>
-    $(document).ready(function () {
-        $('.wishlist-btn').click(function () {
-            let user = '{{Auth::user()->customer->id ?? null}}';
-            if (!user) {
-                window.location.href = '{{route('customer.sign-in')}}';
-            }
-            else {
-                let productId = $(this).data('id');
-                $.ajax({
-                    method: 'post',
-                    url: '{{route('customer.wishlist.store')}}',
-                    data: {
-                        product_id: productId
-                    },
-                    success: function (data) {
-                        if (data.success) {
-                            $('.wishlist_count').text(data.count)
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: data.success,
-                                showConfirmButton: false,
-                                timer: 1500,
-                                toast: true,
-                            });
-                        }
-                        else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: data.error,
-                            });
-                        }
-                    },
-                    error: function (data) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: data.error,
-                        });
-                    }
-                });
-            }
-        });
-        $('.compare-btn').click(function () {
-            let productId = $(this).data('id');
-            $.ajax({
-                method: 'get',
-                url: '{{route('compare.add')}}',
-                data: {
-                    id: productId
-                },
-                success: function (data) {
-                    if (data.success) {
-                        $('.compare_count').text(data.compare_count)
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "success",
-                            title: data.success,
-                            showConfirmButton: false,
-                            timer: 1500,
-                            toast: true,
-                        });
-                    }
-                    else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: data.error,
-                        });
-                    }
-                },
-                error: function (data) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: data.error,
-                    });
-                }
-            });
-        });
-    });
-</script> -->
+
 {{--cart script--}}
-<!-- <script> -->
 <script>
     function DisplayCountOfCheckedItems() {
-        let checkedCount = $('.item-checkbox:checked').length; // Count checked checkboxes
         let totalCartItems = $('.cart_item_wrapper .cart_item').length;
-        if (totalCartItems == 0 || checkedCount != totalCartItems) {
-            $('#totalItemsCheckbox').attr('checked', false);
-        }
-        else {
-            $('#totalItemsCheckbox').attr('checked', true);
-        }
-
-        $('.item_for_checkout ').text(checkedCount)
+        $('.item_for_checkout').text(totalCartItems);
 
         let subtotal = 0;
         let tax = 0;
         let shipping = 0;
         let freeShipping = true;
 
-        // Loop through each item
+        // Loop through each item in the main cart table
         $('.cart_item_wrapper .cart_item').each(function () {
-            const checkbox = $(this).find('.item-checkbox');
+            const itemTotal = parseFloat($(this).find('.item-total').text().replace(/,/g, '')) || 0;
+            const itemTax = parseFloat($(this).find('.tax').val()) || 0;
+            const itemShipping = parseFloat($(this).find('.shipping-cost').val()) || 0;
+            const isFreeShipping = parseInt($(this).find('.free-shipping').val()) === 1;
 
-            if (checkbox.is(':checked')) {
-                const itemTotal = parseFloat($(this).find('.item-total').text().replace(/,/g, '')) || 0;
-                const itemTax = parseFloat($(this).find('.tax').val()) || 0;
-                const itemShipping = parseFloat($(this).find('.shipping-cost').val()) || 0;
-                // Fix: Added dot for class selector
-                const isFreeShipping = parseInt($(this).find('.free-shipping').val()) === 1;
-
-                subtotal += itemTotal;
-                tax += itemTax;
+            subtotal += itemTotal;
+            tax += itemTax;
+            if (!isFreeShipping) {
                 shipping += itemShipping;
-
-                if (!isFreeShipping) {
-                    freeShipping = false;
-                }
+                freeShipping = false;
             }
         });
 
-        if (freeShipping) {
-            shipping = 0;
-        }
-        let grandTotal = (subtotal + tax + shipping);
-
-        // Optional: round subtotal after summing
-        $('#subtotal').text(subtotal.toFixed(2));
-        $('#shippingCost').text(shipping.toFixed(2));
-        $('#tax').text(tax.toFixed(2));
-        $('#grandTotal').text(grandTotal.toFixed(2));
+        // Values are generally overridden by updateCartUI's data-driven approach
     }
 
     function updateCartUI(data) {
         let items = data.items;
         let totalQuantity = data.total_quantity;
         let subtotal = data.subtotal;
+        let tax = data.tax;
         let currencySymbol = '{{ $currency["symbol"] ?? "৳" }}';
         let assetBaseUrl = '{{ asset("/") }}';
         let defaultImage = assetBaseUrl + 'backend/assets/img/default-150x150.png';
@@ -301,6 +195,20 @@
         $('#cartTotalQuantity').text(totalQuantity || 0);
         $('.headerSubTotal').text(formatPrice(subtotal || 0));
         $('.navbarTotalPrice').text(formatPrice(subtotal || 0));
+
+        // Update Main Cart Page Totals if present
+        $('#subtotal').text(formatPrice(subtotal || 0));
+        $('#tax').text(formatPrice(tax || 0));
+        $('#shippingCost').text(formatPrice(data.shipping_cost || 0));
+        $('#couponDiscount').text(formatPrice(data.coupon_discount || 0));
+        $('#grandTotal').text(formatPrice(data.grand_total || 0));
+
+        // Toggle Coupon Line Visibility
+        if (data.coupon_discount > 0) {
+            $('#couponDiscountRow').show();
+        } else {
+            $('#couponDiscountRow').hide();
+        }
 
         // Call any page-specific update functions
         if (typeof updateCartTotal === "function") updateCartTotal();
@@ -382,19 +290,12 @@
 
     function updateItemTotal(cartItem) {
         let $cartItem = $(cartItem);
-        // Ensure we are selecting the right container if cartItem is the button
         if (!$cartItem.hasClass('cart_item')) {
             $cartItem = $cartItem.closest('.cart_item');
         }
 
         let $quantityInput = $cartItem.find('.quantity');
-        let price = parseFloat($cartItem.find('.item-price').text()) || 0; // Ensure .item-price exists in DOM
-
-        // If price not found in text (hidden), try value input if exists
-        if (price === 0 && $cartItem.find('.price').length > 0) {
-            price = parseFloat($cartItem.find('.price').val());
-        }
-
+        let price = parseFloat($cartItem.find('.price').val()) || parseFloat($cartItem.find('.item-price').text()) || 0;
         let quantity = parseInt($quantityInput.val()) || 1;
         let itemTotal = price * quantity;
 
@@ -406,6 +307,10 @@
         $(document).on('click', '.add-to-cart, .buy_it_btn', function () {
             let slug = $(this).data('slug');
             let container = $(this).closest('.product-details');
+            if (container.length === 0) {
+                // Try to find if it's in a quick view modal or similar
+                container = $(this).parent().parent(); 
+            }
             let variant = container.find('#variant_name').val() || null;
             let quantity = container.find('#product_qty').val() || container.find('.qty').val() || container.find('.qv-qty').val() || 1;
 
@@ -418,50 +323,46 @@
             }
         });
 
-
         $(document).on('click', '.btn_increase', function (e) {
             e.preventDefault();
             let cartItem = $(this).closest('.cart_item');
             let sku = cartItem.data('sku');
             let quantityInput = $(this).siblings('.quantity');
+            if (quantityInput.length === 0) quantityInput = $(this).parent().find('.quantity');
             let quantity = parseInt(quantityInput.val()) || 0;
             quantity += 1;
 
             cartUpdate(sku, quantity, quantityInput, cartItem);
-        })
+        });
 
         $(document).on('click', '.btn_decrease', function (e) {
             e.preventDefault();
             let cartItem = $(this).closest('.cart_item');
             let sku = cartItem.data('sku');
             let quantityInput = $(this).siblings('.quantity');
+            if (quantityInput.length === 0) quantityInput = $(this).parent().find('.quantity');
             let quantity = parseInt(quantityInput.val()) || 0;
             if (quantity > 1) {
                 quantity -= 1;
                 cartUpdate(sku, quantity, quantityInput, cartItem);
             }
-        })
+        });
 
         $(document).on('click', '.remove-from-cart', function (e) {
             e.preventDefault();
             let sku = $(this).data('sku');
             let cartItem = $(this).closest('.cart_item');
-            if (!sku) {
-                sku = cartItem.data('sku');
-            }
+            if (!sku) sku = cartItem.data('sku');
 
             $.ajax({
                 method: 'GET',
                 url: '{{route("cart.remove")}}',
-                data: {
-                    sku: sku,
-                },
+                data: { sku: sku },
                 success: function (data) {
                     if (data.success) {
                         $('.cart-item-' + sku).remove();
                         updateCartUI(data);
 
-                        // Redirect logic if cart empty on checkout page
                         if ($('.cart_item').length === 0 && window.location.pathname.includes('checkout')) {
                             window.location.href = '{{ route("home") }}';
                         }
@@ -475,19 +376,11 @@
                             toast: true,
                         });
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: data.error,
-                        });
+                        Swal.fire({ icon: 'error', title: 'Error!', text: data.error });
                     }
                 },
                 error: function () {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'There was an issue in removing the product.',
-                    });
+                    Swal.fire({ icon: 'error', title: 'Error!', text: 'There was an issue in removing the product.' });
                 }
             });
         });

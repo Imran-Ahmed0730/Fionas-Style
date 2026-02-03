@@ -132,6 +132,9 @@
                                     <li class="subtotal">Subtotal <span>{{ $currency['symbol'] ?? '$' }}<span id="subtotal">{{ number_format($subtotal, 2) }}</span></span></li>
                                     <li class="subtotal">Tax <span>{{ $currency['symbol'] ?? '$' }}<span id="tax">{{ number_format($tax, 2) }}</span></span></li>
                                     <li class="subtotal">Shipping <span>{{ $currency['symbol'] ?? '$' }}<span id="shippingCost">{{ number_format($shipping_cost, 2) }}</span></span></li>
+                                    <li class="subtotal" id="couponDiscountRow" style="{{ ($coupon_discount ?? 0) > 0 ? '' : 'display: none;' }}">
+                                        Coupon Discount <span>{{ $currency['symbol'] ?? '$' }}<span id="couponDiscount">{{ number_format($coupon_discount ?? 0, 2) }}</span></span>
+                                    </li>
                                     <li class="cart-total">Total <span>{{ $currency['symbol'] ?? '$' }}<span id="grandTotal">{{ number_format($grand_total, 2) }}</span></span></li>
                                 </ul>
                                 <a href="{{ route('checkout.index') }}" class="proceed-btn">PROCEED TO CHECK OUT</a>

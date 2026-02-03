@@ -64,6 +64,8 @@ Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout
     Route::get('/get-cities', 'getCities')->name('get.cities');
     Route::post('/apply-coupon', 'applyCoupon')->name('apply.coupon');
     Route::get('/remove-coupon', 'removeCoupon')->name('remove.coupon');
+    Route::post('/place-order', 'placeOrder')->name('place.order');
+    Route::get('/summary/{invoice}', 'orderSummary')->name('summary');
 });
 
 Route::get('/dashboard', function () {
@@ -72,6 +74,7 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
+        // Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
         Route::patch('/update', 'update')->name('update');
         Route::delete('/destroy', 'destroy')->name('destroy');
     });
