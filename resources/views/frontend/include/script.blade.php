@@ -309,7 +309,7 @@
             let container = $(this).closest('.product-details');
             if (container.length === 0) {
                 // Try to find if it's in a quick view modal or similar
-                container = $(this).parent().parent(); 
+                container = $(this).parent().parent();
             }
             let variant = container.find('#variant_name').val() || null;
             let quantity = container.find('#product_qty').val() || container.find('.qty').val() || container.find('.qv-qty').val() || 1;
@@ -384,6 +384,97 @@
                 }
             });
         });
+
+        // Back to top button logic
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 300) {
+                $('.back-to-top-btn').fadeIn();
+            } else {
+                $('.back-to-top-btn').fadeOut();
+            }
+        });
+
+        $('#back-to-top').click(function (e) {
+            e.preventDefault();
+            $('html, body').animate({ scrollTop: 0 }, 800);
+        });
+
+        // Wishlist logic
+        $(document).on('click', '.add-to-wishlist', function (e) {
+            e.preventDefault();
+            let productId = $(this).data('id');
+            let icon = $(this).find('i');
+
+            @auth
+                $.ajax({
+                    method: 'POST',
+                    url: '{{ route("customer.wishlist.store") }}',
+                    data: {
+                        product_id: productId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#wishlistCount').text(response.count);
+                            icon.removeClass('icon_heart_alt').addClass('icon_heart');
+                            toastr.success(response.message);
+                        } else {
+                            toastr.info(response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error('Something went wrong!');
+                    }
+                });
+            @else
+                window.location.href = '{{ route("login") }}';
+            @endauth
+        });
+
+        // Smart Sticky Header Logic
+        var lastScrollTop = 0;
+        var stickyTarget = $('.sticky-wrapper');
+
+        if (stickyTarget.length) {
+            var stickyTop = stickyTarget.offset().top;
+            var stickyHeight = stickyTarget.outerHeight();
+
+            $(window).resize(function () {
+                if (!stickyTarget.hasClass('sticky-nav')) {
+                    stickyTop = stickyTarget.offset().top;
+                }
+            });
+
+            $(window).scroll(function (event) {
+                var st = $(this).scrollTop();
+
+                // Apply Sticky
+                if (st >= stickyTop) {
+                    if (!stickyTarget.hasClass('sticky-nav')) {
+                        stickyTarget.addClass('sticky-nav');
+                        stickyTarget.after('<div class="nav-placeholder" style="height:' + stickyTarget.outerHeight() + 'px"></div>');
+                    }
+                } else {
+                    if (stickyTarget.hasClass('sticky-nav')) {
+                        stickyTarget.removeClass('sticky-nav');
+                        $('.nav-placeholder').remove();
+                    }
+                }
+
+                // Hide/Show Logic
+                if (stickyTarget.hasClass('sticky-nav')) {
+                    if (st > lastScrollTop && st > stickyTop + stickyHeight) {
+                        stickyTarget.addClass('nav-hidden');
+                    } else {
+                        stickyTarget.removeClass('nav-hidden');
+                    }
+                } else {
+                    stickyTarget.removeClass('nav-hidden');
+                }
+
+                lastScrollTop = st;
+            });
+        }
     });
 </script>
 @stack('js')

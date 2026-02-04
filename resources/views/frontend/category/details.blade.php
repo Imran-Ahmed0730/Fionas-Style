@@ -1,5 +1,9 @@
 @extends('frontend.master')
 @section('title', $item->name)
+@section('meta_title', $item->name)
+@section('meta_description', $item->description ?? getSetting('meta_description'))
+@section('meta_keywords', $item->name . ', ' . getSetting('meta_keywords'))
+@section('meta_image', $item->icon ? asset($item->icon) : asset(getSetting('site_logo')))
 @push('css')
     <style>
         .category-header {

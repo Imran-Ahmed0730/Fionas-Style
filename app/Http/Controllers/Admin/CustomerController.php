@@ -35,7 +35,8 @@ class CustomerController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $data['items'] = Customer::latest()->get();
+        $data['items'] = Customer::with('user')->latest()->get();
+        $data['countries'] = \App\Models\Admin\Country::active()->get();
         return view('backend.customer.index', $data);
     }
 
@@ -152,6 +153,18 @@ class CustomerController extends Controller implements HasMiddleware
             'success' => true,
             'message' => 'Customer status updated successfully'
         ]);
+    }
+
+    public function getStates($countryId)
+    {
+        $states = \App\Models\Admin\State::where('country_id', $countryId)->get();
+        return response()->json($states);
+    }
+
+    public function getCities($stateId)
+    {
+        $cities = \App\Models\Admin\City::where('state_id', $stateId)->get();
+        return response()->json($cities);
     }
 }
 

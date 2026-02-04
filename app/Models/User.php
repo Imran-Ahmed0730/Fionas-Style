@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Admin\Customer;
 
 class User extends Authenticatable
 {
@@ -57,5 +58,9 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         \App\Jobs\SendPasswordResetMailJob::dispatch($this, $token);
+    }
+
+    public function customer() {
+        return $this->hasOne(Customer::class);
     }
 }

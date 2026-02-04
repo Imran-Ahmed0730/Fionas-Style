@@ -1,5 +1,8 @@
 @extends('frontend.master')
 @section('title', 'All Collections')
+@section('meta_title', 'All Collections')
+@section('meta_description', 'Explore our collections of products by category.')
+@section('meta_keywords', 'categories, collections, products')
 @push('css')
     <style>
         .all-categories-section {

@@ -271,7 +271,7 @@
                     @endif
 
                     <div class="qv-stock-info {{ $product->total_stock > 0 ? 'in-stock' : 'out-of-stock' }}">
-                        <i class="fa {{ $product->total_stock > 0 ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
+                        <i class="{{ $product->total_stock > 0 ? 'ti-check' : 'ti-close' }}"></i>
                         <span id="qv-stock-text">{{ $product->total_stock > 0 ? 'In Stock' : 'Out of Stock' }}</span>
                     </div>
 
@@ -384,12 +384,12 @@
                         if (parseInt(response.variant.stock) > 0) {
                             $('#qv-stock-text').text('In Stock');
                             $('.qv-stock-info').removeClass('out-of-stock').addClass('in-stock');
-                            $('.qv-stock-info i').removeClass('fa-times-circle').addClass('fa-check-circle');
+                            $('.qv-stock-info i').removeClass('ti-close').addClass('ti-check');
                             $('.qv-add-to-cart').prop('disabled', false);
                         } else {
                             $('#qv-stock-text').text('Out of Stock');
                             $('.qv-stock-info').removeClass('in-stock').addClass('out-of-stock');
-                            $('.qv-stock-info i').removeClass('fa-check-circle').addClass('fa-times-circle');
+                            $('.qv-stock-info i').removeClass('ti-check').addClass('ti-close');
                             $('.qv-add-to-cart').prop('disabled', true);
                         }
                     } else {

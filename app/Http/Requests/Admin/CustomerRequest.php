@@ -25,11 +25,13 @@ class CustomerRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:users,email,' . $customerId,
+            'username' => 'required|string|max:255|unique:customers,username,' . $customerId,
+            'email' => 'nullable|email|unique:users,email,' . ($this->user_id ?? ''),
             'phone' => 'required|string|max:20|unique:customers,phone,' . $customerId,
             'address' => 'nullable|string',
-            'city' => 'nullable|string|max:255',
-            'state' => 'nullable|string|max:255',
+            'country_id' => 'nullable|integer',
+            'state_id' => 'nullable|integer',
+            'city_id' => 'nullable|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status' => 'required|in:0,1',
         ];

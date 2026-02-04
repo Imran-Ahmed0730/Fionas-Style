@@ -1,5 +1,9 @@
 @extends('frontend.master')
 @section('title', $item->name)
+@section('meta_title', $item->name)
+@section('meta_description', $item->short_description ?? Str::limit(strip_tags($item->description), 160))
+@section('meta_keywords', $item->tags ?? $item->category->name)
+@section('meta_image', asset($item->thumbnail))
 @push('css')
 
 @endpush
@@ -61,11 +65,11 @@
                                         <a href="#" class="heart-icon"><i class="icon_heart_alt"></i></a>
                                     </div>
                                     <div class="pd-rating">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-o"></i>
+                                        <i class="ti-star"></i>
+                                        <i class="ti-star"></i>
+                                        <i class="ti-star"></i>
+                                        <i class="ti-star"></i>
+                                        <i class="ti-star text-muted"></i>
                                         <span>(5)</span>
                                     </div>
                                     <div class="pd-desc">
@@ -142,8 +146,12 @@
                                                         <i class="ti-pinterest"></i>
                                                     </a>
 
-                                                    <a href="javascript:void(0)" onclick="shareProduct('whatsapp')" title="Share on WhatsApp">
+                                                    <a href="javascript:void(0)" onclick="shareProduct('instagram')" title="Share on Instagram">
                                                         <i class="ti-instagram"></i>
+                                                    </a>
+
+                                                    <a href="javascript:void(0)" onclick="shareProduct('whatsapp')" title="Share on WhatsApp">
+                                                        <i class="fa-brands fa-whatsapp"></i>
                                                     </a>
                                                 </div>
 
@@ -343,6 +351,7 @@
                 case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`; break;
                 case 'pinterest': shareUrl = `https://pinterest.com/pin/create/button/?url=${url}&description=${title}`; break;
                 case 'whatsapp': shareUrl = `https://wa.me/?text=${title}%20${url}`; break;
+                case 'instagram': shareUrl = `https://www.instagram.com/share/?url=${url}&title=${title}`; break;
             }
             window.open(shareUrl, 'shareWindow', 'width=600,height=500,scrollbars=yes');
         }

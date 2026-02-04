@@ -61,7 +61,7 @@ class CustomerService
             $data['image'] = saveImagePath($data['image'], $customer->image ?? null, 'customer');
         }
 
-        // Remove password fields
+        // Remove password fields if exists
         unset($data['password'], $data['password_confirmation']);
 
         return $customer->update($data);
@@ -69,6 +69,13 @@ class CustomerService
 
     public function destroy(Customer $customer): bool
     {
+        // Record deletion
+        \App\Models\Admin\DeletedCustomer::create([
+            'name' => $customer->user->name ?? 'Unknown',
+            'phone' => $customer->phone,
+            'email' => $customer->user->email ?? 'N/A',
+        ]);
+
         // Delete image if exists
         if ($customer->image && file_exists($customer->image)) {
             unlink($customer->image);

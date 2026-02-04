@@ -3,12 +3,22 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="{{ getSetting('meta_description') }}">
-    {{--
-    <meta name="keywords" content="Fashi, unica, creative, html">--}}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{getSetting('business_name')}} | @yield('title')</title>
+
+    <!-- SEO Meta Tags -->
+    <title>@yield('meta_title', getSetting('business_name')) | {{ getSetting('site_name') }}</title>
+    <meta name="description" content="@yield('meta_description', getSetting('meta_description'))">
+    <meta name="keywords" content="@yield('meta_keywords', getSetting('meta_keywords'))">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title"
+        content="@yield('meta_title', getSetting('business_name')) | {{ getSetting('site_name') }}">
+    <meta property="og:description" content="@yield('meta_description', getSetting('meta_description'))">
+    <meta property="og:image" content="@yield('meta_image', asset(getSetting('site_logo')))">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+
     <link rel="icon" href="{{ asset(getSetting('site_favicon')) }}" type="image/x-icon" />
     @include('frontend.include.style')
 </head>
@@ -47,6 +57,16 @@
             </div>
         </div>
     </div>
+    <!-- Back to Top Button -->
+    <a href="#" id="back-to-top" class="back-to-top-btn" title="Back to Top">
+        <i class="fa fa-angle-up"></i>
+    </a>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', getSetting('whatsapp')) }}" class="whatsapp-btn"
+        target="_blank" title="Contact us on WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
 </body>
 
 </html>

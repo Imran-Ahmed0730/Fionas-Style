@@ -77,7 +77,7 @@ class SettingUpdateRequest extends FormRequest
                     'shop_map_location' => 'nullable|string',
                     'opening_time' => 'nullable|date_format:H:i',
                     'closing_time' => 'nullable|date_format:H:i',
-                    'closed_on' => 'nullable|string|max:255',
+                    'closed_on' => 'nullable|array',
                 ];
 
             default:

@@ -4,16 +4,19 @@
         @if($product->final_price < $product->regular_price)
             <div class="sale">Sale</div>
         @endif
-        <div class="icon"><i class="icon_heart_alt"></i></div>
+        <div class="icon add-to-wishlist" data-id="{{ $product->id }}" style="cursor: pointer;"><i
+                class="icon_heart_alt"></i></div>
         <ul>
-            <li class="w-icon active"><a href="javascript:void(0)" class="{{ $product->variants->isNotEmpty() ? 'btn-quick-view' : 'add-to-cart' }}" data-slug="{{ $product->slug }}" data-id="{{ $product->id }}"><i class="icon_bag_alt"></i></a></li>
+            <li class="w-icon active"><a href="javascript:void(0)"
+                    class="{{ $product->variants->isNotEmpty() ? 'btn-quick-view' : 'add-to-cart' }}"
+                    data-slug="{{ $product->slug }}" data-id="{{ $product->id }}"><i class="icon_bag_alt"></i></a></li>
             <li class="quick-view">
                 <a href="javascript:void(0)" class="btn-quick-view" data-id="{{ $product->id }}">
                     + Quick View
                 </a>
             </li>
 
-            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+            <li class="w-icon"><a href="#"><i class="ti-loop"></i></a></li>
         </ul>
     </div>
     <div class="pi-text">

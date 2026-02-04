@@ -210,7 +210,10 @@ class ProductService
      */
     public function getVariant($request)
     {
-        $product = Product::with(['variants', 'campaignProducts.campaign'])->findOrFail($request->product_id);
+        $productId = $request->product_id;
+        $product = Cache::remember('product_variants_' . $productId, config('cache_settings.medium'), function () use ($productId) {
+            return Product::with(['variants', 'campaignProducts.campaign'])->findOrFail($productId);
+        });
 
         $colorName = $request->color_name;
         $attributes = (array) $request->input('specs', []);
@@ -310,51 +313,53 @@ class ProductService
      */
     public function getProductDetails($slug)
     {
-        $product = Product::active()->with([
-            'category',
-            'brand',
-            'gallery',
-            'variants',
-            'campaignProducts.campaign'
-        ])->where('slug', $slug)->firstOrFail();
+        return Cache::remember('product_details_' . $slug, config('cache_settings.medium'), function () use ($slug) {
+            $product = Product::active()->with([
+                'category',
+                'brand',
+                'gallery',
+                'variants',
+                'campaignProducts.campaign'
+            ])->where('slug', $slug)->firstOrFail();
 
-        // Pricing Logic now handled by Accessor
-        $product->calculated_final_price = $product->final_price;
-        $product->discount_amount = $product->regular_price - $product->final_price;
+            // Pricing Logic now handled by Accessor
+            $product->calculated_final_price = $product->final_price;
+            $product->discount_amount = $product->regular_price - $product->final_price;
 
-        // Improved Colors Mapping
-        $product->colors = collect();
-        if ($product->color) {
-            $colorNames = json_decode($product->color, true);
-            if (is_array($colorNames)) {
-                $product->colors = Color::whereIn('name', $colorNames)->get();
-            }
-        }
-
-        // Improved Attributes Mapping
-        $product->attributes_with_values = collect();
-        if ($product->attribute_values) {
-            $attributeData = json_decode($product->attribute_values, true);
-            if (is_array($attributeData)) {
-                $attrIds = array_keys($attributeData);
-                $attributeNames = Attribute::whereIn('id', $attrIds)->pluck('name', 'id');
-
-                $attributes_with_values = [];
-                foreach ($attributeData as $attrId => $values) {
-                    $attributes_with_values[] = (object) [
-                        'id' => $attrId,
-                        'name' => $attributeNames[$attrId] ?? 'Attribute',
-                        'values' => $values
-                    ];
+            // Improved Colors Mapping
+            $product->colors = collect();
+            if ($product->color) {
+                $colorNames = json_decode($product->color, true);
+                if (is_array($colorNames)) {
+                    $product->colors = Color::whereIn('name', $colorNames)->get();
                 }
-                $product->attributes_with_values = collect($attributes_with_values);
             }
-        }
 
-        // Total Stock Calculation
-        $product->total_stock = $product->variants->sum('stock_qty') ?: $product->stock_qty;
+            // Improved Attributes Mapping
+            $product->attributes_with_values = collect();
+            if ($product->attribute_values) {
+                $attributeData = json_decode($product->attribute_values, true);
+                if (is_array($attributeData)) {
+                    $attrIds = array_keys($attributeData);
+                    $attributeNames = Attribute::whereIn('id', $attrIds)->pluck('name', 'id');
 
-        return $product;
+                    $attributes_with_values = [];
+                    foreach ($attributeData as $attrId => $values) {
+                        $attributes_with_values[] = (object) [
+                            'id' => $attrId,
+                            'name' => $attributeNames[$attrId] ?? 'Attribute',
+                            'values' => $values
+                        ];
+                    }
+                    $product->attributes_with_values = collect($attributes_with_values);
+                }
+            }
+
+            // Total Stock Calculation
+            $product->total_stock = $product->variants->sum('stock_qty') ?: $product->stock_qty;
+
+            return $product;
+        });
     }
 
     public function getSearchProducts(Request $request)

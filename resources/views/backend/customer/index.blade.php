@@ -125,9 +125,15 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
+                            <input type="hidden" name="user_id" id="user_id">
                             <div class="col-md-6 mb-3">
                                 <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                                 <input type="text" name="name" id="name" class="form-control" placeholder="Enter name" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                                <input type="text" name="username" id="username" class="form-control" placeholder="Enter username" required>
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -142,18 +148,27 @@
                                 <small class="text-muted">Phone number will be used as password</small>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <textarea name="address" id="address" class="form-control" placeholder="Enter address" rows="2"></textarea>
+                                <label for="country_id" class="form-label">Country</label>
+                                <select name="country_id" id="country_id" class="form-control select2">
+                                    <option value="">Select Country</option>
+                                    @foreach($countries as $country)
+                                        <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                    @endforeach
+                                </select>
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="city" class="form-label">City</label>
-                                <input type="text" name="city" id="city" class="form-control" placeholder="Enter city">
+                                <label for="state_id" class="form-label">State</label>
+                                <select name="state_id" id="state_id" class="form-control select2">
+                                    <option value="">Select State</option>
+                                </select>
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="state" class="form-label">State</label>
-                                <input type="text" name="state" id="state" class="form-control" placeholder="Enter state">
+                                <label for="city_id" class="form-label">City</label>
+                                <select name="city_id" id="city_id" class="form-control select2">
+                                    <option value="">Select City</option>
+                                </select>
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -162,6 +177,11 @@
                                     <option value="1">Active</option>
                                     <option value="0">Inactive</option>
                                 </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea name="address" id="address" class="form-control" placeholder="Enter address" rows="2"></textarea>
                                 <div class="invalid-feedback"></div>
                             </div>
                         </div>
@@ -212,13 +232,23 @@
                         if (response.success) {
                             var customer = response.data;
                             $('#customer_id').val(customer.id);
+                            $('#user_id').val(customer.user_id);
                             $('#name').val(customer.user.name);
+                            $('#username').val(customer.username);
                             $('#email').val(customer.user.email);
                             $('#phone').val(customer.phone);
                             $('#address').val(customer.address);
-                            $('#city').val(customer.city);
-                            $('#state').val(customer.state);
                             $('#status').val(customer.status);
+
+                            // Load states and cities if exist
+                            if (customer.country_id) {
+                                $('#country_id').val(customer.country_id);
+                                loadStates(customer.country_id, customer.state_id, customer.city_id);
+                            } else {
+                                $('#country_id').val('');
+                                $('#state_id').empty().append('<option value="">Select State</option>');
+                                $('#city_id').empty().append('<option value="">Select City</option>');
+                            }
                         }
                     },
                     error: function(xhr) {
@@ -226,6 +256,59 @@
                     }
                 });
             });
+
+            // Location AJAX logic
+            $('#country_id').on('change', function() {
+                var countryId = $(this).val();
+                loadStates(countryId);
+            });
+
+            $('#state_id').on('change', function() {
+                var stateId = $(this).val();
+                loadCities(stateId);
+            });
+
+            function loadStates(countryId, stateId = null, cityId = null) {
+                if (countryId) {
+                    $.ajax({
+                        url: '{{ route("admin.customer.get-states", ":countryId") }}'.replace(':countryId', countryId),
+                        type: "GET",
+                        success: function(data) {
+                            $('#state_id').empty().append('<option value="">Select State</option>');
+                            $.each(data, function(key, value) {
+                                let selected = (stateId && stateId == value.id) ? 'selected' : '';
+                                $('#state_id').append('<option value="' + value.id + '" ' + selected + '>' + value.name + '</option>');
+                            });
+                            if (stateId) {
+                                loadCities(stateId, cityId);
+                            } else {
+                                $('#city_id').empty().append('<option value="">Select City</option>');
+                            }
+                        }
+                    });
+                } else {
+                    $('#state_id').empty().append('<option value="">Select State</option>');
+                    $('#city_id').empty().append('<option value="">Select City</option>');
+                }
+            }
+
+            function loadCities(stateId, cityId = null) {
+                if (stateId) {
+                    $.ajax({
+                        url: '{{ route("admin.customer.get-cities", ":stateId") }}'.replace(':stateId', stateId),
+                        type: "GET",
+                        success: function(data) {
+                            $('#city_id').empty().append('<option value="">Select City</option>');
+                            $.each(data, function(key, value) {
+                                let selected = (cityId && cityId == value.id) ? 'selected' : '';
+                                $('#city_id').append('<option value="' + value.id + '" ' + selected + '>' + value.name + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#city_id').empty().append('<option value="">Select City</option>');
+                }
+            }
 
             // Submit Customer Form
             $('#customerForm').submit(function(e) {
@@ -248,15 +331,18 @@
                     success: function(response) {
                         if (response.success) {
                             $('#customerModal').modal('hide');
-                            location.reload(); // Reload to show updated data
+                            location.reload();
                         }
                     },
                     error: function(xhr) {
                         if (xhr.status === 422) {
                             var errors = xhr.responseJSON.errors;
                             $.each(errors, function(key, value) {
-                                $('#' + key).addClass('is-invalid');
-                                $('#' + key).next('.invalid-feedback').text(value[0]).show();
+                                var input = $('#' + key);
+                                if (input.length) {
+                                    input.addClass('is-invalid');
+                                    input.closest('div').find('.invalid-feedback').text(value[0]).show();
+                                }
                             });
                         } else {
                             alert('Error: ' + (xhr.responseJSON?.message || 'Something went wrong'));

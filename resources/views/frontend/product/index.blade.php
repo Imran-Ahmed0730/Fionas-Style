@@ -1,5 +1,8 @@
 @extends('frontend.master')
 @section('title', 'Shop')
+@section('meta_title', 'Shop')
+@section('meta_description', 'Browse our wide range of products.')
+@section('meta_keywords', 'shop, products, ecommerce')
 
 @section('content')
     <!-- Breadcrumb Section Begin -->
@@ -46,7 +49,8 @@
                             </div>
                             <div class="col-lg-5 col-md-5 text-right">
                                 <p>Showing {{ $items->firstItem() ?? 0 }} - {{ $items->lastItem() ?? 0 }} Of
-                                    {{ $items->total() }} Product</p>
+                                    {{ $items->total() }} Product
+                                </p>
                             </div>
                         </div>
                     </div>

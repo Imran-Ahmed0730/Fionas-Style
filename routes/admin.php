@@ -174,6 +174,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/update', 'update')->name('update');
             Route::post('/delete', 'destroy')->name('delete');
             Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
+            Route::get('/get-states/{countryId}', 'getStates')->name('get-states');
+            Route::get('/get-cities/{stateId}', 'getCities')->name('get-cities');
         });
 
         //coupon module

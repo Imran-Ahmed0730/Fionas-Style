@@ -11,9 +11,10 @@ class CategoryComposer
 {
     public function compose(View $view)
     {
-        $categories = Cache::remember('main_categories', 3600, function () {
+        $categories = Cache::remember('main_categories', config('cache_settings.long'), function () {
             return
-                Category::where('status', 1)
+                Category::active()
+                    ->where('id', '!=', 1)
                     ->orderBy('priority', 'asc')
                     ->limit(10)
                     ->get(['id', 'name', 'slug'])

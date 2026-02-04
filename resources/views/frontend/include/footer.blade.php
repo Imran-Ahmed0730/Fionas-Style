@@ -19,10 +19,10 @@
                         <li>Email: {{ $settings->email }}</li>
                     </ul>
                     <div class="footer-social">
-                        <a href="{{ $settings->facebook_url }}"><i class="fa fa-facebook"></i></a>
-                        <a href="{{ $settings->instagram_url }}"><i class="fa fa-instagram"></i></a>
-                        <a href="{{ $settings->x_url }}"><i class="fa fa-twitter"></i></a>
-                        <a href="{{ $settings->pinterest_url }}"><i class="fa fa-pinterest"></i></a>
+                        <a href="{{ $settings->facebook_url }}"><i class="ti-facebook"></i></a>
+                        <a href="{{ $settings->instagram_url }}"><i class="ti-instagram"></i></a>
+                        <a href="{{ $settings->x_url }}"><i class="ti-twitter-alt"></i></a>
+                        <a href="{{ $settings->pinterest_url }}"><i class="ti-pinterest"></i></a>
                     </div>
                 </div>
             </div>
@@ -30,10 +30,11 @@
                 <div class="footer-widget">
                     <h5>Information</h5>
                     <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Checkout</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Serivius</a></li>
+                        <li><a href="{{ route('page.about') }}">About Us</a></li>
+                        <li><a href="{{ route('contact') }}">Contact</a></li>
+                        <li><a href="{{ route('faq') }}">FAQ</a></li>
+                        <li><a href="{{ route('page.privacy') }}">Privacy Policy</a></li>
+                        <li><a href="{{ route('page.terms') }}">Terms & Conditions</a></li>
                     </ul>
                 </div>
             </div>
@@ -42,9 +43,9 @@
                     <h5>My Account</h5>
                     <ul>
                         <li><a href="#">My Account</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Shopping Cart</a></li>
-                        <li><a href="#">Shop</a></li>
+                        <li><a href="{{ route('contact') }}">Contact</a></li>
+                        <li><a href="{{ route('cart.index') }}">Shopping Cart</a></li>
+                        <li><a href="{{ route('shop') }}">Shop</a></li>
                     </ul>
                 </div>
             </div>
@@ -54,7 +55,8 @@
                     <p>Get E-mail updates about our latest shop and special offers.</p>
                     <form action="{{ route('subscribe') }}" class="subscribe-form" method="POST">
                         @csrf
-                        <input type="text" placeholder="Enter Your Mail" class="@error('email') is-invalid @enderror" name="email" required>
+                        <input type="text" placeholder="Enter Your Mail" class="@error('email') is-invalid @enderror"
+                            name="email" required>
                         <button type="submit">Subscribe</button>
                         @error('email')
                             <span class="invalid-feedback" role="alert">

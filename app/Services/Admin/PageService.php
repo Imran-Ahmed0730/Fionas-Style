@@ -18,7 +18,7 @@ class PageService
     {
         $metaImage = $image ? saveImagePath($image, null, 'page') : null;
 
-        $data['slug'] = str()->slug($data['title']) . uniqid();
+        $data['slug'] = str()->slug($data['title']);
         $data['meta_image'] = $metaImage;
 
         return Page::create($data);

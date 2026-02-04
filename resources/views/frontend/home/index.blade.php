@@ -1,5 +1,8 @@
 @extends('frontend.master')
 @section('title', 'Home')
+@section('meta_title', 'Home')
+@section('meta_description', getSetting('meta_description'))
+@section('meta_keywords', getSetting('meta_keywords'))
 @push('css')
     <style>
         .product-category-section {

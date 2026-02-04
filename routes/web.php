@@ -8,7 +8,12 @@ use App\Http\Controllers\Frontend\CategoryController;
 use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Admin\SubscriberController;
+use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Support\Facades\Route;
+
+// Google Auth Routes
+Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
 
 Route::middleware('web')
     ->group(base_path('routes/admin.php'));
@@ -19,8 +24,12 @@ Route::middleware('web')
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
     Route::get('/lifestyle', 'lifestyle')->name('lifestyle');
-    Route::get('/about', 'about')->name('page.about');
+    Route::get('/about-us', 'aboutUs')->name('page.about');
+    Route::get('/faq', 'faq')->name('faq');
+    Route::get('/privacy-policy', 'privacyPolicy')->name('page.privacy');
+    Route::get('/terms-conditions', 'termsConditions')->name('page.terms');
     Route::get('/contact', 'contact')->name('contact');
+    Route::post('/contact', 'contactSubmit')->name('contact.submit');
 });
 
 Route::controller(CategoryController::class)->group(function () {
@@ -68,9 +77,11 @@ Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout
     Route::get('/summary/{invoice}', 'orderSummary')->name('summary');
 });
 
+/*
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+*/
 
 Route::middleware('auth')->group(function () {
     Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {

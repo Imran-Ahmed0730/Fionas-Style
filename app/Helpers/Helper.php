@@ -81,8 +81,10 @@ function deleteImage($imagePath)
  */
 function getSetting($key, $default = '')
 {
-    $setting = Setting::where('key', $key)->first();
-    return $setting?->value ?? $default;
+    return Cache::remember('setting_' . $key, config('cache_settings.long'), function () use ($key, $default) {
+        $setting = Setting::where('key', $key)->first();
+        return $setting?->value ?? $default;
+    });
 }
 
 /**
@@ -93,8 +95,8 @@ function getSetting($key, $default = '')
 function getCurrency()
 {
     return [
-        'name' => getSetting('currency_name', 'USD'),
-        'symbol' => getSetting('currency_symbol', '$'),
-        'position' => getSetting('currency_position', 'left'),
+        'name' => getSetting('currency_name', 'BDT'),
+        'symbol' => getSetting('currency_symbol', '৳'),
+        'position' => 'left',
     ];
 }
