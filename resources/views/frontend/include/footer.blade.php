@@ -42,10 +42,22 @@
                 <div class="footer-widget">
                     <h5>My Account</h5>
                     <ul>
-                        <li><a href="#">My Account</a></li>
+                        @auth
+                            @if (Auth::user()->customer())
+                                <li><a href="{{ route('customer.dashboard') }}">My Account</a></li>
+                            @else
+                                <li><a href="{{ route('login') }}">Login</a></li>
+
+                            @endif
+                        @else
+                            <li><a href="{{ route('login') }}">Login</a></li>
+                        @endauth
+
                         <li><a href="{{ route('contact') }}">Contact</a></li>
                         <li><a href="{{ route('cart.index') }}">Shopping Cart</a></li>
                         <li><a href="{{ route('shop') }}">Shop</a></li>
+                        <li><a href="{{ route('order.track') }}">Track Order</a></li>
+
                     </ul>
                 </div>
             </div>

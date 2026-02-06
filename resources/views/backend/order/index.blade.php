@@ -154,10 +154,15 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('admin.order.show', $item->id) }}"
-                                                        class="btn btn-sm btn-info" title="View Details">
+                                                    <div class="d-flex gap-2">
+                                                        <a href="{{ route('admin.order.show', $item->id) }}"
+                                                        class="btn btn-info" title="View Details">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
+                                                    <a href="{{ route('admin.order.invoice.print', $item->id) }}" class="btn  btn-outline-secondary ms-1" title="Print" target="_blank">
+                                                        <i class="fa fa-print"></i>
+                                                    </a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach

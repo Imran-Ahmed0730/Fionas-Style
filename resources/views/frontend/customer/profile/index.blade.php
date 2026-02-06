@@ -4,15 +4,6 @@
     <div class="profile-management">
         <h4 class="mb-4">Profile Management</h4>
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
-
         <form action="{{ route('customer.profile.update') }}" method="POST" enctype="multipart/form-data"
             class="profile-form">
             @csrf
@@ -40,10 +31,10 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <div class="form-group">
-                        <label for="email">Email Address <span class="text-danger">*</span></label>
+                        <label for="email">Email Address <small class="text-muted">(optional)</small></label>
                         <input type="email" name="email" id="email"
                             class="form-control @error('email') is-invalid @enderror"
-                            value="{{ old('email', $user->email) }}" required>
+                            value="{{ old('email', $user->email) }}">
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -63,7 +54,13 @@
                     <div class="form-group">
                         <label for="image">Profile Image</label>
                         <input type="file" name="image" id="image"
-                            class="form-control-file @error('image') is-invalid @enderror">
+                            class="form-control-file @error('image') is-invalid @enderror" accept="image/jpg,image/jpeg,image/png">
+                        <div class="mt-2">
+                            @php
+                                $preview = $customer && $customer->image ? asset($customer->image) : asset('backend/assets/img/profile.jpg');
+                            @endphp
+                            <img id="imagePreview" src="{{ $preview }}" alt="Profile Preview" class="img-thumbnail" style="max-width:120px; max-height:120px; object-fit:cover;" />
+                        </div>
                         @error('image')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
@@ -146,8 +143,13 @@
                 <div class="col-md-6 mb-3">
                     <div class="form-group">
                         <label for="password">New Password</label>
-                        <input type="password" name="password" id="password"
-                            class="form-control @error('password') is-invalid @enderror">
+                        <div class="input-group">
+                            <input type="password" name="password" id="password"
+                                class="form-control password-input @error('password') is-invalid @enderror">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary password-toggle" type="button" tabindex="-1"><i class="fa fa-eye"></i></button>
+                            </div>
+                        </div>
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -156,7 +158,12 @@
                 <div class="col-md-6 mb-3">
                     <div class="form-group">
                         <label for="password_confirmation">Confirm Password</label>
-                        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
+                        <div class="input-group">
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control password-input">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary password-toggle" type="button" tabindex="-1"><i class="fa fa-eye"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -169,7 +176,7 @@
 @endsection
 
 @push('js')
-<script>
+    <script>
     $(document).ready(function() {
         $('#country_id').on('change', function() {
             var countryId = $(this).val();
@@ -211,6 +218,31 @@
                 });
             } else {
                 $('#city_id').empty();
+            }
+        });
+
+        // Image preview for profile image
+        $('#image').on('change', function(e) {
+            var file = this.files && this.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(evt) {
+                $('#imagePreview').attr('src', evt.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Password visibility toggle
+        $('.password-toggle').on('click', function() {
+            var btn = $(this);
+            var input = btn.closest('.input-group').find('.password-input');
+            if (!input.length) return;
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                btn.find('i').removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                input.attr('type', 'password');
+                btn.find('i').removeClass('fa-eye-slash').addClass('fa-eye');
             }
         });
     });

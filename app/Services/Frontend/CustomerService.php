@@ -16,7 +16,7 @@ class CustomerService
 
         return [
             'total_orders' => Order::where('customer_id', $customer->id)->count(),
-            'pending_orders' => Order::where('customer_id', $customer->id)->where('status', 'pending')->count(),
+            'pending_orders' => Order::where('customer_id', $customer->id)->where('status', 0)->count(),
             'recent_orders' => Order::where('customer_id', $customer->id)->latest()->limit(5)->get(),
             'wishlist_count' => Wishlist::where('user_id', $user->id)->count(),
         ];
@@ -24,16 +24,23 @@ class CustomerService
 
     public function getOrders($perPage = 10)
     {
-        return Order::where('customer_id', Auth::user()->customer->id)
+        $customer = Auth::user();
+        $customerId = $customer ? $customer->id : null;
+
+        return Order::where('customer_id', $customerId)
+            ->with(['orderPayments'])
             ->latest()
             ->paginate($perPage);
     }
 
     public function getOrderDetails($invoice)
     {
-        return Order::where('customer_id', Auth::user()->customer->id)
+        $customer = Auth::user();
+        $customerId = $customer ? $customer->id : null;
+
+        return Order::where('customer_id', $customerId)
             ->where('invoice_no', $invoice)
-            ->with(['items.product', 'orderPayments'])
+            ->with(['items.product', 'orderPayments.paymentMethod', 'country', 'state', 'city'])
             ->firstOrFail();
     }
 

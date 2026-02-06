@@ -1,5 +1,44 @@
 @extends('frontend.master')
 @section('title', 'Order Summary')
+@push('css')
+<style>
+    .sm-padding td {
+        padding: 5px 0;
+    }
+    .badge {
+        padding: 8px 12px;
+        font-weight: 500;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+    }
+    .badge-warning { background-color: #ffc107; color: #000; }
+    .badge-info { background-color: #17a2b8; color: #fff; }
+    .badge-primary { background-color: #007bff; color: #fff; }
+    .badge-success { background-color: #28a745; color: #fff; }
+    .badge-danger { background-color: #dc3545; color: #fff; }
+    .badge-secondary { background-color: #6c757d; color: #fff; }
+
+    @media print {
+        .breacrumb-section, header, footer, .order-btn, .text-center.mt-5, #preloder, .quickViewModal {
+            display: none !important;
+        }
+        .checkout-section {
+            padding: 0 !important;
+        }
+        .card {
+            box-shadow: none !important;
+            border: none !important;
+        }
+    }
+</style>
+@endpush
 @section('content')
 
     <!-- Breadcrumb Section Begin -->
@@ -107,8 +146,8 @@
                                                 <tr>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="{{ asset($item->product->thumbnail ?? 'assets/frontend/img/placeholder.png') }}" 
-                                                                 alt="{{ $item->product_name }}" 
+                                                            <img src="{{ asset($item->product->thumbnail ?? 'assets/frontend/img/placeholder.png') }}"
+                                                                 alt="{{ $item->product_name }}"
                                                                  style="width: 50px; height: 50px; object-fit: cover; margin-right: 15px;">
                                                             <div>
                                                                 <div class="fw-bold">{{ $item->product_name }}</div>
@@ -156,7 +195,6 @@
 
                             <div class="text-center mt-5">
                                 <a href="{{ route('home') }}" class="site-btn mr-3">Continue Shopping</a>
-                                <button onclick="window.print()" class="site-btn bg-dark text-white border-dark">Print Invoice</button>
                             </div>
                         </div>
                     </div>
@@ -168,42 +206,4 @@
 
 @endsection
 
-@push('css')
-<style>
-    .sm-padding td {
-        padding: 5px 0;
-    }
-    .badge {
-        padding: 8px 12px;
-        font-weight: 500;
-        border-radius: 4px;
-        text-transform: uppercase;
-        font-size: 10px;
-        letter-spacing: 0.5px;
-        display: inline-block;
-        line-height: 1;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: baseline;
-    }
-    .badge-warning { background-color: #ffc107; color: #000; }
-    .badge-info { background-color: #17a2b8; color: #fff; }
-    .badge-primary { background-color: #007bff; color: #fff; }
-    .badge-success { background-color: #28a745; color: #fff; }
-    .badge-danger { background-color: #dc3545; color: #fff; }
-    .badge-secondary { background-color: #6c757d; color: #fff; }
-    
-    @media print {
-        .breacrumb-section, header, footer, .order-btn, .text-center.mt-5, #preloder, .quickViewModal {
-            display: none !important;
-        }
-        .checkout-section {
-            padding: 0 !important;
-        }
-        .card {
-            box-shadow: none !important;
-            border: none !important;
-        }
-    }
-</style>
-@endpush
+

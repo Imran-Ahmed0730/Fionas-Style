@@ -14,7 +14,12 @@
             </div>
             <div class="ht-right">
                 @auth
-                    <a href="{{ route('customer.dashboard') }}" class="login-panel"><i class="ti-user"></i>Dashboard</a>
+                    @if (Auth::user()->customer)
+                        <a href="{{ route('customer.dashboard') }}" class="login-panel"><i class="ti-user"></i>Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="login-panel"><i class="ti-user"></i>Login</a>
+                    @endif
+
                 @else
                     <a href="{{ route('login') }}" class="login-panel"><i class="ti-user"></i>Login</a>
                 @endauth
@@ -121,7 +126,7 @@
                                     </div>
                                     <div class="select-button">
                                         <a href="{{ route('cart.index') }}" class="primary-btn view-card">VIEW CART</a>
-                                        <a href="#" class="primary-btn checkout-btn">CHECK OUT</a>
+                                        <a href="{{ route('checkout.index') }}" class="primary-btn checkout-btn">CHECK OUT</a>
                                     </div>
                                 </div>
                             </li>

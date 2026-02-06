@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Frontend\Customer\ProfileUpdateRequest;
 use App\Services\Frontend\CustomerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,19 +20,19 @@ class CustomerController extends Controller
     public function dashboard()
     {
         $data = $this->customerService->getDashboardData();
-        return view('frontend.customer.dashboard', $data);
+        return view('frontend.customer.dashboard.index', $data);
     }
 
     public function orders()
     {
         $data['orders'] = $this->customerService->getOrders();
-        return view('frontend.customer.orders', $data);
+        return view('frontend.customer.order.index', $data);
     }
 
     public function orderDetails($invoice)
     {
         $data['order'] = $this->customerService->getOrderDetails($invoice);
-        return view('frontend.customer.order_details', $data);
+        return view('frontend.customer.order.details', $data);
     }
 
     public function profile()
@@ -39,23 +40,11 @@ class CustomerController extends Controller
         $data['user'] = Auth::user();
         $data['customer'] = $data['user']->customer;
         $data['countries'] = \App\Models\Admin\Country::active()->get();
-        return view('frontend.customer.profile', $data);
+        return view('frontend.customer.profile.index', $data);
     }
 
-    public function updateProfile(Request $request)
+    public function updateProfile(ProfileUpdateRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:customers,username,' . Auth::user()->customer->id,
-            'email' => 'nullable|email|unique:users,email,' . Auth::id(),
-            'phone' => 'required|string|max:20',
-            'address' => 'nullable|string',
-            'country_id' => 'nullable|integer',
-            'state_id' => 'nullable|integer',
-            'city_id' => 'nullable|integer',
-            'password' => 'nullable|min:8|confirmed',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
 
         $this->customerService->updateProfile($request->all());
 

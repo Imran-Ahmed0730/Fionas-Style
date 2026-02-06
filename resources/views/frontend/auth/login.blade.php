@@ -47,7 +47,7 @@
                                 @enderror
                             </div>
                             <div class="group-input gi-check">
-                                <div class="gi-item">
+                                <div class="gi-more">
                                     <label for="save-pass">
                                         Save Password
                                         <input type="checkbox" id="save-pass" name="remember">

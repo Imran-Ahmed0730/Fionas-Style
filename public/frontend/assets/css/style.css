@@ -1449,6 +1449,43 @@ ol {
     margin-right: 0;
 }
 
+/* Campaign Product Slider Styles */
+.campaign-carousel .owl-nav button[type=button] {
+    font-size: 30px;
+    position: absolute;
+    left: 40px;
+    top: 40%;
+    color: #171717;
+    opacity: 0.3;
+}
+
+.campaign-carousel .owl-nav button[type=button].owl-next {
+    left: auto;
+    right: 40px;
+    color: #171717;
+    opacity: 1;
+}
+
+.campaign-carousel .owl-dots {
+    text-align: center;
+    margin-top: 27px;
+}
+
+.campaign-carousel .owl-dots button {
+    width: 6px;
+    height: 6px;
+    background: #D8D9DA;
+    border-radius: 50%;
+    margin-right: 10px;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+.campaign-carousel .owl-dots button:last-child {
+    margin-right: 0;
+}
+
 
 /* Responsive Image Parent Fixes */
 .product-item .pi-pic {
@@ -3043,7 +3080,7 @@ ol {
 }
 
 .checkout-form input,
-.checkout-form textarea, 
+.checkout-form textarea,
 .checkout-form select {
 	width: 100%;
 	height: 46px;
@@ -4106,7 +4143,7 @@ ol {
 		margin-left: 0;
 		margin-right: 0;
 	}
-	.product-slider .owl-nav button[type=button], 
+	.product-slider .owl-nav button[type=button],
 	.category-product-slider .owl-nav button[type=button] {
 		display: none;
 	}

@@ -25,7 +25,7 @@
                         <div class="customer-profile-info text-center mb-4">
                             @php
                                 $customer = auth()->user()->customer;
-                                $profile_image = $customer && $customer->image ? asset($customer->image) : asset('frontend/img/user-default.png');
+                                $profile_image = $customer && $customer->image ? asset($customer->image) : asset('backend/assets/img/profile.jpg');
                             @endphp
                             <div class="profile-pic mb-3">
                                 <img src="{{ $profile_image }}" alt="{{ auth()->user()->name }}"

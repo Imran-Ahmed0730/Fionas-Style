@@ -21,7 +21,6 @@
             margin-bottom: 40px;
         }
 
-
         .product-category-section .product-item {
             margin-bottom: 30px;
         }
@@ -33,6 +32,195 @@
 
         .product-item:hover .hover-btns {
             opacity: 1;
+        }
+
+        .campaign-slider {
+            margin: 0 -15px;
+        }
+
+        .campaign-slider-section {
+            padding: 60px 0;
+        }
+
+        .campaign-slider {
+            margin: 0;
+        }
+
+        .campaign-slide {
+            background-size: cover;
+            background-position: center;
+            min-height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .campaign-slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1;
+        }
+
+        .campaign-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .campaign-inner {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .campaign-slide h2 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .campaign-slide p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .campaign-slide .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .campaign-slide .cd-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 70px;
+        }
+
+        .campaign-slide .cd-item span {
+            display: block;
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .campaign-slide .cd-item p {
+            font-size: 11px;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .campaign-slide .primary-btn {
+            padding: 12px 35px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Ensure countdown timer is visible */
+        .cd-item span, .cd-item p {
+            display: block !important;
+            opacity: 1 !important;
+        }
+
+        @media (max-width: 991px) {
+            .campaign-slide {
+                min-height: 380px;
+            }
+
+            .campaign-slide h2 {
+                font-size: 32px;
+            }
+
+            .campaign-slide p {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .campaign-slide .countdown-timer {
+                gap: 10px;
+            }
+
+            .campaign-slide .cd-item {
+                padding: 12px 15px;
+                min-width: 60px;
+            }
+
+            .campaign-slide .cd-item span {
+                font-size: 22px;
+            }
+
+            .campaign-slide .cd-item p {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .campaign-slider-section {
+                padding: 40px 0;
+            }
+
+            .campaign-slide {
+                min-height: 320px;
+                margin: 0 5px;
+            }
+
+            .campaign-slide h2 {
+                font-size: 24px;
+                margin-bottom: 10px;
+            }
+
+            .campaign-slide p {
+                font-size: 14px;
+                margin-bottom: 15px;
+            }
+
+            .campaign-content {
+                padding: 25px;
+            }
+
+            .campaign-slide .countdown-timer {
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+
+            .campaign-slide .cd-item {
+                padding: 10px 12px;
+                min-width: 50px;
+            }
+
+            .campaign-slide .cd-item span {
+                font-size: 18px;
+            }
+
+            .campaign-slide .cd-item p {
+                font-size: 9px;
+            }
+
+            .campaign-slide .primary-btn {
+                padding: 10px 25px;
+                font-size: 14px;
+            }
         }
 
         @media (max-width: 991px) {
@@ -48,7 +236,6 @@
             <section class="hero-section">
                 <div class="hero-items owl-carousel">
                     @foreach($sliders as $slider)
-
                         <div class="single-hero-items set-bg" data-setbg="{{ asset($slider->image) }}">
                             <div class="container">
                                 <div class="row">
@@ -61,9 +248,6 @@
                                         @endif
                                     </div>
                                 </div>
-                                <!-- <div class="off-card">
-                                    <h2>Sale <span>50%</span></h2>
-                                </div> -->
                             </div>
                         </div>
                     @endforeach
@@ -103,35 +287,35 @@
                         </div>
                         <div class="col-lg-8 offset-lg-1">
                             @php
-    $featuredCats = $featuredProducts->pluck('category')->unique('id');
+                                $featuredCats = $featuredProducts->pluck('category')->unique('id');
                             @endphp
-                        <div class="filter-control">
-                            <ul>
-                                <li class="active" data-filter="*"><a data-toggle="tab" href="#feat-all">All</a></li>
-                                @foreach($featuredCats as $cat)
-                                    <li data-filter=".{{ $cat->slug }}"><a data-toggle="tab" href="#feat-{{ $cat->id }}">{{ $cat->name }}</a></li>
-                                @endforeach
-                            </ul>
-                        </div>
-
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="feat-all" role="tabpanel">
-                                <div class="product-slider owl-carousel">
-                                    @foreach($featuredProducts as $product)
-                                        @include('frontend.product.partials.product_item', ['product' => $product])
+                            <div class="filter-control">
+                                <ul>
+                                    <li class="active" data-filter="*"><a data-toggle="tab" href="#feat-all">All</a></li>
+                                    @foreach($featuredCats as $cat)
+                                        <li data-filter=".{{ $cat->slug }}"><a data-toggle="tab" href="#feat-{{ $cat->id }}">{{ $cat->name }}</a></li>
                                     @endforeach
-                                </div>
+                                </ul>
                             </div>
-                            @foreach($featuredCats as $cat)
-                                <div class="tab-pane fade" id="feat-{{ $cat->id }}" role="tabpanel">
+
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="feat-all" role="tabpanel">
                                     <div class="product-slider owl-carousel">
-                                        @foreach($featuredProducts->where('category_id', $cat->id) as $product)
+                                        @foreach($featuredProducts as $product)
                                             @include('frontend.product.partials.product_item', ['product' => $product])
                                         @endforeach
                                     </div>
                                 </div>
-                            @endforeach
-                        </div>
+                                @foreach($featuredCats as $cat)
+                                    <div class="tab-pane fade" id="feat-{{ $cat->id }}" role="tabpanel">
+                                        <div class="product-slider owl-carousel">
+                                            @foreach($featuredProducts->where('category_id', $cat->id) as $product)
+                                                @include('frontend.product.partials.product_item', ['product' => $product])
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -139,7 +323,7 @@
             <!-- Featured Products Section End -->
 
             @php
-    $bgColors = ['', 'bg-light', ''];
+                $bgColors = ['', 'bg-light', ''];
             @endphp
 
             <!-- Category Sections Begin -->
@@ -172,92 +356,57 @@
             @endforeach
             <!-- Category Sections End -->
 
-            <!-- Today's Deal Section Begin -->
-            <section class="man-banner spad">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-lg-8">
-                            @php
-    $dealCats = $todaysDealProducts->pluck('category')->unique('id');
-                            @endphp
-                            <div class="filter-control">
-                                <ul>
-                                    <li class="active"><a data-toggle="tab" href="#deal-all">All</a></li>
-                                    @foreach($dealCats as $cat)
-                                        <li><a data-toggle="tab" href="#deal-{{ $cat->id }}">{{ $cat->name }}</a></li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                            <div class="tab-content">
-                                <div class="tab-pane fade show active" id="deal-all" role="tabpanel">
-                                    <div class="product-slider owl-carousel">
-                                        @foreach($todaysDealProducts as $product)
-                                            @include('frontend.product.partials.product_item', ['product' => $product])
-                                        @endforeach
-                                    </div>
-                                </div>
-                                @foreach($dealCats as $cat)
-                                    <div class="tab-pane fade" id="deal-{{ $cat->id }}" role="tabpanel">
-                                        <div class="product-slider owl-carousel">
-                                            @foreach($todaysDealProducts->where('category_id', $cat->id) as $product)
-                                                @include('frontend.product.partials.product_item', ['product' => $product])
-                                            @endforeach
+            @if($campaigns->count() > 0)
+                <!-- Campaign Slider Section Begin -->
+                <section class="campaign-slider-section spad">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="campaign-carousel owl-carousel">
+                                    @foreach ($campaigns as $campaign)
+                                        @php
+                                            $products = $campaign->campaignProducts->map->product->filter();
+                                            $firstProduct = $products->first();
+                                            $bgImage = $firstProduct && $firstProduct->thumbnail ? asset($firstProduct->thumbnail) : asset('frontend/assets/img/time-bg.jpg');
+                                            $endDate = $campaign->getCountdownEndDate();
+                                        @endphp
+                                        <div class="campaign-slide" style="background-image: url('{{ $bgImage }}')">
+                                            <div class="campaign-content">
+                                                <div class="campaign-inner">
+                                                    <h2>{{ $campaign->name }}</h2>
+                                                    <p>{{ $campaign->description ?? 'Explore our exclusive collection' }}</p>
+                                                    @if($endDate)
+                                                        <div class="countdown-timer" id="countdown-{{ $campaign->id }}"
+                                                             data-end-date="{{ $endDate }} 23:59:59">
+                                                            <div class="cd-item">
+                                                                <span class="days">00</span>
+                                                                <p>Days</p>
+                                                            </div>
+                                                            <div class="cd-item">
+                                                                <span class="hours">00</span>
+                                                                <p>Hrs</p>
+                                                            </div>
+                                                            <div class="cd-item">
+                                                                <span class="minutes">00</span>
+                                                                <p>Mins</p>
+                                                            </div>
+                                                            <div class="cd-item">
+                                                                <span class="seconds">00</span>
+                                                                <p>Secs</p>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                    <a href="{{ route('campaign.show', $campaign->slug) }}" class="primary-btn">Shop Campaign</a>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="col-lg-3 offset-lg-1">
-                            <div class="product-large set-bg m-large"
-                                data-setbg="{{ asset('frontend/assets/img/products/man-large.jpg') }}">
-                                <h2>Today's Deal</h2>
-                                <a href="#">Discover More</a>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-            <!-- Today's Deal Section End -->
-
-            @php
-    $specDeal = $todaysDealProducts->first();
-            @endphp
-            @if($specDeal)
-            <!-- Deal Of The Week Section Begin-->
-            <section class="deal-of-week set-bg spad" data-setbg="{{ asset('frontend/assets/img/time-bg.jpg') }}">
-                <div class="container">
-                    <div class="col-lg-6 text-center">
-                        <div class="section-title">
-                            <h2>Deal Of The Week</h2>
-                            <p>{{ $specDeal->short_description ?? Str::limit(strip_tags($specDeal->description), 100) }}</p>
-                            <div class="product-price">
-                                ৳{{ number_format($specDeal->final_price, 2) }}
-                                <span>/ {{ $specDeal->category->name }}</span>
-                            </div>
-                        </div>
-                        <div class="countdown-timer" id="countdown">
-                            <div class="cd-item">
-                                <span>0</span>
-                                <p>Days</p>
-                            </div>
-                            <div class="cd-item">
-                                <span>0</span>
-                                <p>Hrs</p>
-                            </div>
-                            <div class="cd-item">
-                                <span>0</span>
-                                <p>Mins</p>
-                            </div>
-                            <div class="cd-item">
-                                <span>0</span>
-                                <p>Secs</p>
-                            </div>
-                        </div>
-                        <a href="{{ route('product.show', $specDeal->slug) }}" class="primary-btn">Shop Now</a>
-                    </div>
-                </div>
-            </section>
-            <!-- Deal Of The Week Section End -->
+                </section>
+                <!-- Campaign Slider Section End -->
             @endif
 
             <!-- Latest Products Section Begin -->
@@ -357,10 +506,6 @@
                                                 <i class="fa fa-calendar-o"></i>
                                                 {{ $blog->created_date }}
                                             </div>
-                                            <!-- <div class="tag-item">
-                                                <i class="fa fa-comment-o"></i>
-                                                5
-                                            </div> -->
                                         </div>
                                         <a href="{{ route('blog.details', $blog->slug) }}">
                                             <h4>{{ $blog->title }}</h4>
@@ -421,9 +566,55 @@
                 </div>
             </div>
 @endsection
+
 @push('js')
     <script>
         $(document).ready(function() {
+            // Simple Countdown Timer Function (no jQuery.countdown dependency)
+            function updateCountdown($timer) {
+                const endDateStr = $timer.data('end-date');
+                if (!endDateStr) return;
+
+                const endDate = new Date(endDateStr);
+                const now = new Date();
+                const diff = endDate - now;
+
+                if (diff <= 0) {
+                    $timer.find('.days').text('00');
+                    $timer.find('.hours').text('00');
+                    $timer.find('.minutes').text('00');
+                    $timer.find('.seconds').text('00');
+                    $timer.find('.countdown-text').remove();
+                    $timer.before('<div class="countdown-expired">Expired</div>');
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                $timer.find('.days').text(days.toString().padStart(2, '0'));
+                $timer.find('.hours').text(hours.toString().padStart(2, '0'));
+                $timer.find('.minutes').text(minutes.toString().padStart(2, '0'));
+                $timer.find('.seconds').text(seconds.toString().padStart(2, '0'));
+            }
+
+            function initializeAllCountdowns() {
+                $('.countdown-timer').each(function() {
+                    const $timer = $(this);
+                    if ($timer.data('end-date')) {
+                        updateCountdown($timer);
+                    }
+                });
+            }
+
+            // Set up interval for countdown updates
+            setInterval(initializeAllCountdowns, 1000);
+
+            // Initialize all countdowns on page load
+            initializeAllCountdowns();
+
             // Ensure clicking the tab area triggers the switch
             $('.filter-control ul li').on('click', function (e) {
                 $(this).find('a').tab('show');
@@ -443,6 +634,144 @@
 
                 // Refresh carousels to fix visibility/layout issues
                 $(".owl-carousel").trigger('refresh.owl.carousel');
+            });
+
+            /*------------------
+                Hero Slider
+            --------------------*/
+            $(".hero-items").owlCarousel({
+                loop: true,
+                margin: 0,
+                nav: true,
+                items: 1,
+                dots: false,
+                animateOut: 'fadeOut',
+                animateIn: 'fadeIn',
+                navText: ['<i class="ti-angle-left"></i>', '<i class="ti-angle-right"></i>'],
+                smartSpeed: 1200,
+                autoHeight: false,
+                autoplay: true,
+            });
+
+            /*------------------
+                Campaign Carousel - Initialize First
+            --------------------*/
+            var campaignCarousel = $(".campaign-carousel").owlCarousel({
+                loop: true,
+                margin: 0,
+                nav: true,
+                dots: true,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplayHoverPause: true,
+                onInitialized: function(event) {
+                    // Initialize countdowns after carousel loads
+                    setTimeout(initializeAllCountdowns, 500);
+                },
+                onTranslated: function(event) {
+                    // Reinitialize countdowns when slide changes
+                    initializeAllCountdowns();
+                },
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    768: {
+                        items: 1
+                    },
+                    1000: {
+                        items: 1
+                    }
+                }
+            });
+
+            /*------------------
+                Product Slider
+            --------------------*/
+            $(".product-slider").owlCarousel({
+                loop: true,
+                margin: 25,
+                nav: true,
+                items: 4,
+                dots: true,
+                navText: ['<i class="ti-angle-left"></i>', '<i class="ti-angle-right"></i>'],
+                smartSpeed: 1200,
+                autoHeight: false,
+                autoplay: true,
+                responsive: {
+                    0: {
+                        items: 1,
+                    },
+                    576: {
+                        items: 2,
+                    },
+                    992: {
+                        items: 2,
+                    },
+                    1200: {
+                        items: 3,
+                    }
+                }
+            });
+
+            /*------------------
+                Category Product Slider
+            --------------------*/
+            $(".category-product-slider").owlCarousel({
+                loop: true,
+                margin: 25,
+                nav: true,
+                items: 4,
+                dots: true,
+                navText: ['<i class="ti-angle-left"></i>', '<i class="ti-angle-right"></i>'],
+                smartSpeed: 1200,
+                autoHeight: false,
+                autoplay: true,
+                responsive: {
+                    0: {
+                        items: 1,
+                    },
+                    576: {
+                        items: 2,
+                    },
+                    992: {
+                        items: 2,
+                    },
+                    1200: {
+                        items: 4,
+                    }
+                }
+            });
+
+            /*------------------
+                Logo Carousel
+            --------------------*/
+            $(".logo-carousel").owlCarousel({
+                loop: true,
+                margin: 30,
+                nav: false,
+                items: 5,
+                dots: false,
+                autoplay: true,
+                responsive: {
+                    0: {
+                        items: 2,
+                    },
+                    576: {
+                        items: 3,
+                    },
+                    992: {
+                        items: 4,
+                    },
+                    1200: {
+                        items: 5,
+                    }
+                }
+            });
+
+            // Additional initialization after page fully loads
+            $(window).on('load', function() {
+                setTimeout(initializeAllCountdowns, 1000);
             });
         });
     </script>

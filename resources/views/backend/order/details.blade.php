@@ -10,9 +10,20 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h4 class="card-title">Order Items</h4>
-                            <span class="badge bg-info">{{ $item->invoice_no }}</span>
+                            <div class="d-flex align-items-center">
+                                <a href="{{ route('admin.order.invoice', $item->id) }}" class="btn btn-sm btn-outline-primary me-2" target="_blank">
+                                    <i class="fa fa-file-invoice"></i> Invoice
+                                </a>
+                                <a href="{{ route('admin.order.invoice.download', $item->id) }}" class="btn btn-sm btn-outline-success me-2">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                                <a href="{{ route('admin.order.invoice.print', $item->id) }}" class="btn btn-sm btn-outline-secondary me-3" target="_blank">
+                                    <i class="fa fa-print"></i>
+                                </a>
+                                <span class="badge bg-info">{{ $item->invoice_no }}</span>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

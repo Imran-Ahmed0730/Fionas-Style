@@ -9,7 +9,9 @@ use App\Models\Admin\City;
 use App\Models\Admin\Country;
 use App\Models\Admin\State;
 use App\Services\Admin\OrderService;
+use App\Helpers\ImageHelper;
 use Illuminate\Http\Request;
+use Mpdf\Mpdf;
 
 class OrderController extends Controller
 {
@@ -85,5 +87,65 @@ class OrderController extends Controller
         $this->orderService->addPayment($id, $request->all());
 
         return back()->with('success', 'Payment added successfully');
+    }
+
+    /**
+     * Show printable invoice view in admin.
+     */
+    public function invoice($id)
+    {
+        $data['item'] = Order::with(['items.product', 'country', 'state', 'city'])->findOrFail($id);
+        $data['logo'] = ImageHelper::getLogoAsBase64();
+        return view('backend.order.invoice', $data);
+    }
+
+    /**
+     * Generate and download invoice PDF using mPDF.
+     */
+    public function downloadInvoice($id)
+    {
+        $order = Order::with(['items.product', 'country', 'state', 'city'])->findOrFail($id);
+
+        try {
+            $html = view('backend.order.invoice', ['item' => $order, 'logo' => ImageHelper::getLogoAsBase64()])->render();
+
+            $mpdf = new Mpdf();
+            $mpdf->WriteHTML($html);
+            $pdf = $mpdf->Output('', 'S');
+
+            $fileName = 'invoice_' . $order->invoice_no . '.pdf';
+
+            return response($pdf, 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+        } catch (\Throwable $e) {
+            \Log::error('Invoice PDF error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to generate PDF. Is mpdf/mpdf installed via Composer?');
+        }
+    }
+
+    /**
+     * Stream the invoice PDF inline for printing.
+     */
+    public function printInvoice($id)
+    {
+        $order = Order::with(['items.product', 'country', 'state', 'city'])->findOrFail($id);
+
+        try {
+            $html = view('backend.order.invoice', ['item' => $order, 'logo' => ImageHelper::getLogoAsBase64()])->render();
+
+            $mpdf = new Mpdf();
+            $mpdf->WriteHTML($html);
+            $pdf = $mpdf->Output('', 'S');
+
+            $fileName = 'invoice_' . $order->invoice_no . '.pdf';
+
+            return response($pdf, 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="' . $fileName . '"');
+        } catch (\Throwable $e) {
+            \Log::error('Invoice PDF stream error: ' . $e->getMessage());
+            return back()->with('error', 'Failed to generate PDF.');
+        }
     }
 }

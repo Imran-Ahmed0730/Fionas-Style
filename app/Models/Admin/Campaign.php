@@ -39,4 +39,21 @@ class Campaign extends Model
 
         return $now->betweenIncluded($start, $end);
     }
+
+    /**
+     * Get campaign end date for countdown
+     */
+    public function getCountdownEndDate()
+    {
+        if (empty($this->duration)) {
+            return null;
+        }
+
+        $dates = explode(' to ', $this->duration);
+        if (count($dates) != 2) {
+            return null;
+        }
+
+        return \Carbon\Carbon::parse($dates[1])->format('m/d/Y');
+    }
 }

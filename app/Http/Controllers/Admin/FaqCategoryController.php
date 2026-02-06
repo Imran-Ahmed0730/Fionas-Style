@@ -26,7 +26,7 @@ class FaqCategoryController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:FAQ Category Create', only: ['create', 'store']),
+            new Middleware('permission:FAQ Category Add', only: ['create', 'store']),
             new Middleware('permission:FAQ Category View', only: ['index']),
             new Middleware('permission:FAQ Category Update', only: ['edit', 'update']),
             new Middleware('permission:FAQ Category Delete', only: ['destroy']),

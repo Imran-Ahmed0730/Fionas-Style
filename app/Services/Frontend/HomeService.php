@@ -39,4 +39,19 @@ class HomeService
             return Brand::active()->orderBy('name', 'asc')->get();
         });
     }
+
+    /**
+     * Get active campaigns (ongoing)
+     */
+    public function getActiveCampaigns()
+    {
+        return Cache::remember('active_campaigns', config('cache_settings.short'), function () {
+            return \App\Models\Admin\Campaign::where('status', 1)
+                ->with(['campaignProducts.product.category', 'category'])
+                ->get()
+                ->filter(function ($c) {
+                    return $c->isActive;
+                })->values();
+        });
+    }
 }

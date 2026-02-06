@@ -36,7 +36,7 @@
                                 <label for="user_name">Full Name<span>*</span></label>
                                 <input type="text" id="user_name" name="name" placeholder="Full Name" class="@error('name') is-invalid @enderror"
                                     required
-                                    value="{{ old('name', auth()->user() && auth()->user()->customer ? auth()->user()->customer->name : '') }}">
+                                    value="{{ old('name', auth()->user() && auth()->user()->customer ? auth()->user()->name : '') }}">
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -49,7 +49,7 @@
                                     class="w-100 mb-3 @error('country_id') is-invalid @enderror" required>
                                     <option value="" selected disabled>Select Country</option>
                                     @foreach($countries as $country)
-                                        <option value="{{ $country['id'] }}" 
+                                        <option value="{{ $country['id'] }}"
                                             {{ old('country_id', auth()->user() && auth()->user()->customer ? auth()->user()->customer->country_id : '') == $country['id'] ? 'selected' : '' }}>
                                             {{ $country['name'] }}
                                         </option>
@@ -67,7 +67,7 @@
                                     class="w-100 mb-3 @error('state_id') is-invalid @enderror" required>
                                     <option value="" disabled selected>Select State</option>
                                     @foreach($states as $state)
-                                        <option value="{{ $state->id }}" 
+                                        <option value="{{ $state->id }}"
                                             {{ old('state_id', auth()->user() && auth()->user()->customer ? auth()->user()->customer->state_id : '') == $state->id ? 'selected' : '' }}>
                                             {{ $state->name }}
                                         </option>
@@ -84,7 +84,7 @@
                                 <select id="town" name="city" class="w-100 mb-3 @error('city') is-invalid @enderror" required>
                                     <option value="">Select City</option>
                                     @foreach($cities as $city)
-                                        <option value="{{ $city->id }}" 
+                                        <option value="{{ $city->id }}"
                                             {{ old('city', auth()->user() && auth()->user()->customer ? auth()->user()->customer->city_id : '') == $city->id ? 'selected' : '' }}>
                                             {{ $city->name }}
                                         </option>
@@ -111,7 +111,7 @@
                             <div class="col-lg-6">
                                 <label for="email">Email Address</label>
                                 <input type="email" id="email" name="email" class="@error('email') is-invalid @enderror" placeholder="Email Address"
-                                    value="{{ old('email', auth()->user() && auth()->user()->customer ? auth()->user()->customer->email : '') }}">
+                                    value="{{ old('email', auth()->user() && auth()->user()->customer ? auth()->user()->email : '') }}">
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -141,7 +141,7 @@
                                 <input type="text" placeholder="Enter Your Coupon Code" name="coupon_code" id="coupon_code" class="form-control"
                                     value="{{ $coupon_code }}">
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-dark" id="apply_coupon_btn" style="height: 46px; border-radius: 0;">Apply</button>
+                                    <button type="button" class="btn btn-dark" id="apply_coupon_btn">Apply</button>
                                 </div>
                             </div>
                             <div id="coupon_status" class="mt-2">
@@ -187,7 +187,7 @@
                                     <div class="pc-item">
                                         <label for="pc-cod">
                                             Cash On Delivery
-                                            <input type="checkbox" id="pc-cod" name="payment_method" value="cod" checked>
+                                            <input type="radio" id="pc-cod" name="payment_method" value="cod" checked>
                                             <span class="checkmark"></span>
                                         </label>
                                     </div>

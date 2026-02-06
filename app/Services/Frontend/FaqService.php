@@ -14,12 +14,12 @@ class FaqService
     {
         return Cache::remember('faqs_list', config('cache_settings.long'), function () {
             return FaqCategory::active()
+                ->where('id', '!=', 1) // Exclude "General" category
                 ->with([
                     'faqs' => function ($query) {
-                        $query->active()->orderBy('priority', 'asc');
+                        $query->active()->latest()->get();
                     }
                 ])
-                ->orderBy('priority', 'asc') // Assuming there is a priority field
                 ->orderBy('name', 'asc')
                 ->get();
         });

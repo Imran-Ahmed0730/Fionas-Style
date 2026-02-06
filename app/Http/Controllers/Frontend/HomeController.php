@@ -45,6 +45,7 @@ class HomeController extends Controller
             'featuredCategories' => $this->categoryService->getFeaturedCategories(),
             'featuredProducts' => $this->productService->getFeaturedProducts(),
             'todaysDealProducts' => $this->productService->getTodaysDealProducts(),
+            'campaigns' => $this->homeService->getActiveCampaigns(),
             'latestProducts' => $this->productService->getLatestProducts(),
             'categoryProducts' => $this->categoryService->getCategoryWiseProducts(),
             'blogs' => $this->homeService->getLatestBlogs(),
@@ -99,6 +100,27 @@ class HomeController extends Controller
     {
         $data['items'] = $this->faqService->getFaqs();
         return view('frontend.faq.index', $data);
+    }
+
+    public function orderTrackForm()
+    {
+        return view('frontend.order.track');
+    }
+
+    public function orderTrackSubmit(Request $request)
+    {
+        $request->validate([
+            'invoice' => 'required|string',
+        ]);
+
+        $invoice = $request->input('invoice');
+        $order = \App\Models\Admin\Order::where('invoice_no', $invoice)->first();
+
+        if (!$order) {
+            return redirect()->back()->with('error', 'Order not found with provided invoice number');
+        }
+
+        return redirect()->route('checkout.summary', $invoice);
     }
 
     public function privacyPolicy()

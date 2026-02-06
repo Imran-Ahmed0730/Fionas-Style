@@ -6,6 +6,7 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Frontend\CategoryController;
 use App\Http\Controllers\Frontend\ProductController;
+use App\Http\Controllers\Frontend\CampaignController;
 use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Admin\SubscriberController;
 use App\Http\Controllers\Auth\SocialiteController;
@@ -26,6 +27,8 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/lifestyle', 'lifestyle')->name('lifestyle');
     Route::get('/about-us', 'aboutUs')->name('page.about');
     Route::get('/faq', 'faq')->name('faq');
+    Route::get('/order/track', 'orderTrackForm')->name('order.track');
+    Route::post('/order/track', 'orderTrackSubmit')->name('order.track.submit');
     Route::get('/privacy-policy', 'privacyPolicy')->name('page.privacy');
     Route::get('/terms-conditions', 'termsConditions')->name('page.terms');
     Route::get('/contact', 'contact')->name('contact');
@@ -43,6 +46,11 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/product/{slug}', 'show')->name('product.show');
     Route::get('/product/quick-view/{id}', 'quickView')->name('product.quickView');
     Route::get('/get-variant', 'getVariant')->name('product.getVariant');
+});
+
+Route::controller(CampaignController::class)->group(function () {
+    Route::get('/campaigns', 'index')->name('campaign.index');
+    Route::get('/campaign/{slug}', 'show')->name('campaign.show');
 });
 
 Route::controller(BlogController::class)->group(function () {

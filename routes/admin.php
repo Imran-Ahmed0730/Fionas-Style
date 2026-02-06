@@ -284,6 +284,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::controller(\App\Http\Controllers\Admin\OrderController::class)->prefix('order')->name('order.')->group(function () {
             Route::get('/online', 'onlineOrders')->name('online');
             Route::get('/pos', 'posOrders')->name('pos');
+            // Invoice routes
+            Route::get('/{id}/invoice', 'invoice')->name('invoice');
+            Route::get('/{id}/invoice/download', 'downloadInvoice')->name('invoice.download');
+            Route::get('/{id}/invoice/print', 'printInvoice')->name('invoice.print');
+            // Order view/update
             Route::get('/{id}', 'show')->name('show');
             Route::get('/{id}/edit', 'edit')->name('edit');
             Route::put('/{id}', 'update')->name('update');

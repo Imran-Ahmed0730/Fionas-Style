@@ -8,9 +8,9 @@
                 Back to Orders</a>
         </div>
 
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card border-0 shadow-sm">
+        <div class="row mb-4 align-items-stretch">
+            <div class="col-md-6 d-flex">
+                <div class="card border-0 shadow-sm h-100 w-100">
                     <div class="card-header bg-white font-weight-bold">Shipping Information</div>
                     <div class="card-body">
                         <p class="mb-1"><strong>Name:</strong> {{ $order->name }}</p>
@@ -21,18 +21,38 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card border-0 shadow-sm">
+            <div class="col-md-6 d-flex">
+                <div class="card border-0 shadow-sm h-100 w-100">
                     <div class="card-header bg-white font-weight-bold">Order Summary</div>
                     <div class="card-body">
                         <p class="mb-1"><strong>Order Date:</strong> {{ $order->created_at->format('d M Y, h:i A') }}</p>
                         <p class="mb-1"><strong>Order Status:</strong>
-                            <span class="badge badge-info">{{ ucfirst($order->status) }}</span>
+                            @php
+                                $statusLabels = [
+                                    0 => ['label' => 'Pending', 'class' => 'warning'],
+                                    1 => ['label' => 'Confirmed', 'class' => 'info'],
+                                    2 => ['label' => 'Processing', 'class' => 'primary'],
+                                    3 => ['label' => 'Shipped', 'class' => 'secondary'],
+                                    4 => ['label' => 'Delivered', 'class' => 'success'],
+                                    5 => ['label' => 'Cancelled', 'class' => 'danger'],
+                                ];
+                                $currentStatus = $statusLabels[$order->status] ?? ['label' => 'Unknown', 'class' => 'secondary'];
+                            @endphp
+                            <span class="badge badge-{{ $currentStatus['class'] }}">{{ $currentStatus['label'] }}</span>
                         </p>
                         <p class="mb-1"><strong>Payment Status:</strong>
-                            <span class="badge badge-success">{{ ucfirst($order->payment_status) }}</span>
+                            @php
+                                $paymentStatus = [
+                                    0 => ['label' => 'Unpaid', 'class' => 'danger'],
+                                    1 => ['label' => 'Paid', 'class' => 'success'],
+                                    2 => ['label' => 'Partial', 'class' => 'warning'],
+                                    3 => ['label' => 'Refunded', 'class' => 'info'],
+                                ];
+                                $pStatus = $paymentStatus[$order->payment_status] ?? ['label' => 'Unknown', 'class' => 'secondary'];
+                            @endphp
+                            <span class="badge badge-{{ $pStatus['class'] }}">{{ $pStatus['label'] }}</span>
                         </p>
-                        <p class="mb-1"><strong>Payment Method:</strong> {{ $order->payment_type }}</p>
+
                     </div>
                 </div>
             </div>
@@ -97,5 +117,40 @@
                 </div>
             </div>
         </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white font-weight-bold">Payments</div>
+            <div class="card-body">
+                @if($order->orderPayments && $order->orderPayments->count())
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Method</th>
+                                    <th>Amount</th>
+                                    <th>Trx ID</th>
+                                    <th>Comment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($order->orderPayments as $payment)
+                                    <tr>
+                                        <td>{{ $payment->created_at->format('d-m-Y H:i') }}</td>
+                                        <td>{{ $payment->paymentMethod->name ?? '-' }}</td>
+                                        <td>{{ getCurrency()['symbol'] }}{{ number_format($payment->amount, 2) }}</td>
+                                        <td>{{ $payment->transaction_id }}</td>
+                                        <td>{{ $payment->comment }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="mb-0">No payments found for this order.</p>
+                @endif
+            </div>
+        </div>
     </div>
 @endsection
+

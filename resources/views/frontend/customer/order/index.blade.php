@@ -24,16 +24,32 @@
                             <td>
                                 @php
                                     $badgeClass = 'secondary';
-                                    if ($order->status == 'pending')
-                                        $badgeClass = 'warning';
-                                    elseif ($order->status == 'confirmed')
+                                    if ($order->status == '0'){
+                                        $badgeClass = 'secondary';
+                                        $statusText = 'Pending';
+                                    }
+                                    elseif ($order->status == '1'){
+                                        $badgeClass = 'primary';
+                                        $statusText = 'Confirmed';
+                                    }
+                                    elseif ($order->status == '2'){
                                         $badgeClass = 'info';
-                                    elseif ($order->status == 'delivered')
+                                        $statusText = 'Processing';
+                                    }
+                                    elseif ($order->status == '3'){
+                                        $badgeClass = 'warning';
+                                        $statusText = 'Shipped';
+                                    }
+                                    elseif ($order->status == '4'){
                                         $badgeClass = 'success';
-                                    elseif ($order->status == 'cancelled')
+                                        $statusText = 'Delivered';
+                                    }
+                                    elseif ($order->status == '5'){
                                         $badgeClass = 'danger';
+                                        $statusText = 'Cancelled';
+                                    }
                                 @endphp
-                                <span class="badge badge-{{ $badgeClass }}">{{ ucfirst($order->status) }}</span>
+                                <span class="badge badge-{{ $badgeClass }}">{{ ucfirst($statusText) }}</span>
                             </td>
                             <td>
                                 <a href="{{ route('customer.order.details', $order->invoice_no) }}"

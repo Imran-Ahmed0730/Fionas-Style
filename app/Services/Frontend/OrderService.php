@@ -43,7 +43,7 @@ class OrderService
                 'address'           => $data['address'],
                 'note'              => $data['note'],
                 'status'            => 0, // Pending
-                'created_by'        => Auth::id() ?? 0,
+                'created_by'        => Auth::user()->customer ? Auth::id() : 0,
             ]);
 
             // 3. Create Order Items and Deduct Stock
