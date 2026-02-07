@@ -40,8 +40,8 @@
                                 @enderror
                             </div>
                             <div class="group-input">
-                                <label for="email">Email address</label>
-                                <input type="email" id="email" name="email" value="{{ old('email') }}">
+                                <label for="email">Email address *</label>
+                                <input type="email" id="email" name="email" value="{{ old('email') }}" required>
                                 @error('email')
                                     <span class="text-danger small">{{ $message }}</span>
                                 @enderror

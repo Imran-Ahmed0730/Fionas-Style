@@ -11,6 +11,7 @@ use App\Models\Admin\State;
 use App\Services\Admin\OrderService;
 use App\Helpers\ImageHelper;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\OrderPaymentRequest;
 use Mpdf\Mpdf;
 
 class OrderController extends Controller
@@ -72,15 +73,18 @@ class OrderController extends Controller
             'payment_status' => 'required',
         ]);
 
-        $this->orderService->updateOrder($id, $request->all());
-
-        return redirect()->back()->with('success', 'Order updated successfully');
+        try {
+            $this->orderService->updateOrder($id, $request->all());
+            return redirect()->back()->with('success', 'Order updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
-    public function addPayment(Request $request, $id)
+    public function addPayment(OrderPaymentRequest $request, $id)
     {
         $request->validate([
-            'payment_method_id' => 'required',
+            'payment_method' => 'required',
             'amount' => 'required|numeric|min:0.01',
         ]);
 

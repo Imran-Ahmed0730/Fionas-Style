@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->integer('variant_id')->nullable();
             $table->string('product_name');
             $table->string('sku');
+            $table->string('stock_sku')->nullable();
             $table->string('variant_name')->nullable();
             $table->string('variant_attr_name')->nullable();
             $table->decimal('price', 15, 2);

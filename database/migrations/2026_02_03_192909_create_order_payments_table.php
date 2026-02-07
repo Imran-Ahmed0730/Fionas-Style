@@ -15,6 +15,7 @@ return new class extends Migration {
         Schema::create('order_payments', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_id');
+            $table('payment_method');
             $table->decimal('amount', 15, 2);
             $table->string('account_number')->nullable();
             $table->string('transaction_id')->nullable()->unique();

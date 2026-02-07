@@ -43,7 +43,7 @@ class OrderService
                 'address'           => $data['address'],
                 'note'              => $data['note'],
                 'status'            => 0, // Pending
-                'created_by'        => Auth::user()->customer ? Auth::id() : 0,
+                'created_by'        => Auth::check() ? Auth::id() : 0,
             ]);
 
             // 3. Create Order Items and Deduct Stock
@@ -61,21 +61,22 @@ class OrderService
 
                 $product = Product::find($productId);
 
+                // Deduct Stock and get the stock_sku used
+                $stockUsed = $this->deductStock($productId, $variantId, $item->quantity);
+
                 OrderItem::create([
                     'order_id'          => $order->id,
                     'product_id'        => $productId,
                     'variant_id'        => $variantId,
                     'product_name'      => $product->name,
                     'sku'               => $item->id, // SKU is stored as item ID in cart
+                    'stock_sku'         => $stockUsed['stock_sku'] ?? null,
                     'variant_name'      => $variantName,
                     'price'             => $item->price,
                     'quantity'          => $item->quantity,
                     'total'             => $item->price * $item->quantity,
                     'tax'               => $item->attributes->tax,
                 ]);
-
-                // Deduct Stock
-                $this->deductStock($productId, $variantId, $item->quantity);
             }
 
             // Clear Cart
@@ -119,7 +120,8 @@ class OrderService
     }
 
     /**
-     * Deduct stock starting from the first non-empty stock record
+     * Deduct stock starting from the first non-empty stock record (FIFO)
+     * Returns array with stock_sku of the first stock used
      */
     private function deductStock($productId, $variantId, $quantityToDeduct)
     {
@@ -137,10 +139,18 @@ class OrderService
         $stocks = $query->where('qty', '>', 0)->orderBy('added_on', 'asc')->get();
 
         $remainingToDeduct = $quantityToDeduct;
+        $firstStockUsed = null;
 
         foreach ($stocks as $stock) {
             if ($remainingToDeduct <= 0)
                 break;
+
+            // Track the first stock used
+            if (!$firstStockUsed) {
+                $firstStockUsed = [
+                    'stock_sku' => $stock->sku,
+                ];
+            }
 
             if ($stock->qty >= $remainingToDeduct) {
                 $stock->decrement('qty', $remainingToDeduct);
@@ -154,5 +164,7 @@ class OrderService
         if ($remainingToDeduct > 0) {
             throw new \Exception("Error updating stock: Remaining quantity {$remainingToDeduct} for product ID {$productId}");
         }
+
+        return $firstStockUsed ?? [];
     }
 }

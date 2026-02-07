@@ -12,7 +12,7 @@ class OrderService
 {
     public function getOrders($request, $type)
     {
-        $orders = Order::with(['customer', 'paymentMethod'])
+        $orders = Order::with(['customer'])
             ->where('type', $type)
             ->orderBy('id', 'desc');
 
@@ -46,10 +46,19 @@ class OrderService
         $order = Order::findOrFail($id);
         $oldStatus = $order->status;
         $newStatus = $data['status'];
+        $newPaymentStatus = $data['payment_status'];
+
+        // Validate payment status change
+        if ($newPaymentStatus == 1) { // Attempting to mark as "Paid"
+            $totalPaid = $order->orderPayments()->sum('amount');
+            if ($totalPaid < $order->grand_total) {
+                throw new \Exception("Cannot mark order as paid. Total paid ({$totalPaid}) is less than order total ({$order->grand_total})");
+            }
+        }
 
         $updatePayload = [
             'status' => $newStatus,
-            'payment_status' => $data['payment_status'],
+            'payment_status' => $newPaymentStatus,
             'note' => $data['note'] ?? null,
         ];
 
@@ -73,8 +82,10 @@ class OrderService
             $updatePayload['confirmed_at'] = now();
         if ($newStatus == 3 && $oldStatus != 3)
             $updatePayload['shipped_at'] = now();
-        if ($newStatus == 4 && $oldStatus != 4)
+        if ($newStatus == 4 && $oldStatus != 4){
             $updatePayload['delivered_at'] = now();
+            $this->updateOrderItemSellCount($order);
+        }
         if ($newStatus == 5 && $oldStatus != 5)
             $updatePayload['cancelled_at'] = now();
 
@@ -93,11 +104,15 @@ class OrderService
 
         OrderPayment::create([
             'order_id' => $order->id,
-            'payment_method_id' => $data['payment_method_id'],
+            'payment_method' => $data['payment_method'],
             'amount' => $data['amount'],
+            'account_number' => $data['account_number'] ?? null,
             'transaction_id' => $data['transaction_id'] ?? null,
             'comment' => $data['comment'] ?? null,
         ]);
+
+        // Add payment to ledger immediately
+        $this->addPaymentToLedger($order, $data['amount']);
 
         $totalPaid = $order->orderPayments()->sum('amount');
         if ($totalPaid >= $order->grand_total) {
@@ -129,7 +144,34 @@ class OrderService
             'balance' => $current_balance,
             'order_id' => $order->id,
             'added_by' => Auth::id(),
-            'added_by_role' => Auth::user()->role_id ?? 1,
         ]);
+    }
+
+    private function addPaymentToLedger($order, $amount)
+    {
+        $prev_balance = AccountLedger::orderBy('id', 'desc')->first();
+        $balance = $prev_balance ? $prev_balance->balance : 0;
+        $current_balance = $balance + $amount;
+
+        AccountLedger::create([
+            'account_head_id' => 1,
+            'type' => 1,
+            'particular' => 'Payment received for Order: ' . $order->invoice_no,
+            'credit' => $amount,
+            'debit' => 0,
+            'balance' => $current_balance,
+            'order_id' => $order->id,
+            'added_by' => Auth::id(),
+        ]);
+    }
+
+    public function updateOrderItemSellCount(Order $order)
+    {
+        foreach ($order->items as $item) {
+            $product = $item->product;
+            if ($product) {
+                $product->increment('sell_count', $item->quantity);
+            }
+        }
     }
 }

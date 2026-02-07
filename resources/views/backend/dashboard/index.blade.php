@@ -31,8 +31,8 @@
                                 </div>
                                 <div class="col col-stats ms-3 ms-sm-0">
                                     <div class="numbers">
-                                        <p class="card-category">Visitors</p>
-                                        <h4 class="card-title">1,294</h4>
+                                        <p class="card-category">Customers</p>
+                                        <h4 class="card-title">{{ number_format($totalCustomers ?? 0) }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -52,8 +52,8 @@
                                 </div>
                                 <div class="col col-stats ms-3 ms-sm-0">
                                     <div class="numbers">
-                                        <p class="card-category">Subscribers</p>
-                                        <h4 class="card-title">1303</h4>
+                                        <p class="card-category">New (7d)</p>
+                                        <h4 class="card-title">{{ ($newCustomers ?? collect())->count() }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -73,8 +73,8 @@
                                 </div>
                                 <div class="col col-stats ms-3 ms-sm-0">
                                     <div class="numbers">
-                                        <p class="card-category">Sales</p>
-                                        <h4 class="card-title">$ 1,345</h4>
+                                        <p class="card-category">Today Sales</p>
+                                        <h4 class="card-title">$ {{ number_format($todaySales ?? 0, 2) }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -94,8 +94,8 @@
                                 </div>
                                 <div class="col col-stats ms-3 ms-sm-0">
                                     <div class="numbers">
-                                        <p class="card-category">Order</p>
-                                        <h4 class="card-title">576</h4>
+                                        <p class="card-category">Total Orders</p>
+                                        <h4 class="card-title">{{ number_format($totalOrders ?? 0) }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -166,11 +166,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-category">March 25 - April 02</div>
+                            <div class="card-category">{{ \Carbon\Carbon::now()->startOfMonth()->format('M d') }} - {{ \Carbon\Carbon::now()->format('M d') }}</div>
                         </div>
                         <div class="card-body pb-0">
                             <div class="mb-4 mt-2">
-                                <h1>$4,578.58</h1>
+                                <h1>$ {{ number_format($monthSales ?? 0, 2) }}</h1>
                             </div>
                             <div class="pull-in">
                                 <canvas id="dailySalesChart"></canvas>
@@ -352,23 +352,27 @@
                             </div>
                             <div class="card-list py-4">
                                 <div class="item-list">
-                                    <div class="avatar">
-                                        <img
-                                            src="{{asset('backend')}}/assets/img/jm_denis.jpg"
-                                            alt="..."
-                                            class="avatar-img rounded-circle"
-                                        />
-                                    </div>
-                                    <div class="info-user ms-3">
-                                        <div class="username">Jimmy Denis</div>
-                                        <div class="status">Graphic Designer</div>
-                                    </div>
-                                    <button class="btn btn-icon btn-link op-8 me-1">
-                                        <i class="far fa-envelope"></i>
-                                    </button>
-                                    <button class="btn btn-icon btn-link btn-danger op-8">
-                                        <i class="fas fa-ban"></i>
-                                    </button>
+                                    @foreach($newCustomers ?? collect() as $cust)
+                                        <div class="item-list">
+                                            <div class="avatar">
+                                                @if($cust->image)
+                                                    <img src="{{ asset($cust->image) }}" alt="{{ $cust->name }}" class="avatar-img rounded-circle" />
+                                                @else
+                                                    <span class="avatar-title rounded-circle border border-white">{{ strtoupper(substr($cust->name,0,1)) }}</span>
+                                                @endif
+                                            </div>
+                                            <div class="info-user ms-3">
+                                                <div class="username">{{ $cust->name }}</div>
+                                                <div class="status">{{ $cust->email }}</div>
+                                            </div>
+                                            <button class="btn btn-icon btn-link op-8 me-1">
+                                                <i class="far fa-envelope"></i>
+                                            </button>
+                                            <button class="btn btn-icon btn-link btn-danger op-8">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </div>
+                                    @endforeach
                                 </div>
                                 <div class="item-list">
                                     <div class="avatar">
@@ -510,111 +514,31 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <th scope="row">
-                                            <button
-                                                class="btn btn-icon btn-round btn-success btn-sm me-2"
-                                            >
-                                                <i class="fa fa-check"></i>
-                                            </button>
-                                            Payment from #10231
-                                        </th>
-                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
-                                        <td class="text-end">$250.00</td>
-                                        <td class="text-end">
-                                            <span class="badge badge-success">Completed</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <button
-                                                class="btn btn-icon btn-round btn-success btn-sm me-2"
-                                            >
-                                                <i class="fa fa-check"></i>
-                                            </button>
-                                            Payment from #10231
-                                        </th>
-                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
-                                        <td class="text-end">$250.00</td>
-                                        <td class="text-end">
-                                            <span class="badge badge-success">Completed</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <button
-                                                class="btn btn-icon btn-round btn-success btn-sm me-2"
-                                            >
-                                                <i class="fa fa-check"></i>
-                                            </button>
-                                            Payment from #10231
-                                        </th>
-                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
-                                        <td class="text-end">$250.00</td>
-                                        <td class="text-end">
-                                            <span class="badge badge-success">Completed</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <button
-                                                class="btn btn-icon btn-round btn-success btn-sm me-2"
-                                            >
-                                                <i class="fa fa-check"></i>
-                                            </button>
-                                            Payment from #10231
-                                        </th>
-                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
-                                        <td class="text-end">$250.00</td>
-                                        <td class="text-end">
-                                            <span class="badge badge-success">Completed</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <button
-                                                class="btn btn-icon btn-round btn-success btn-sm me-2"
-                                            >
-                                                <i class="fa fa-check"></i>
-                                            </button>
-                                            Payment from #10231
-                                        </th>
-                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
-                                        <td class="text-end">$250.00</td>
-                                        <td class="text-end">
-                                            <span class="badge badge-success">Completed</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <button
-                                                class="btn btn-icon btn-round btn-success btn-sm me-2"
-                                            >
-                                                <i class="fa fa-check"></i>
-                                            </button>
-                                            Payment from #10231
-                                        </th>
-                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
-                                        <td class="text-end">$250.00</td>
-                                        <td class="text-end">
-                                            <span class="badge badge-success">Completed</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <button
-                                                class="btn btn-icon btn-round btn-success btn-sm me-2"
-                                            >
-                                                <i class="fa fa-check"></i>
-                                            </button>
-                                            Payment from #10231
-                                        </th>
-                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
-                                        <td class="text-end">$250.00</td>
-                                        <td class="text-end">
-                                            <span class="badge badge-success">Completed</span>
-                                        </td>
-                                    </tr>
+                                    @foreach($recentTransactions ?? collect() as $order)
+                                        @php
+                                            $payment = $order->orderPayments->first();
+                                            $amount = $order->orderPayments->sum('amount') ?: $order->grand_total;
+                                        @endphp
+                                        <tr>
+                                            <th scope="row">
+                                                <button class="btn btn-icon btn-round btn-success btn-sm me-2">
+                                                    <i class="fa fa-check"></i>
+                                                </button>
+                                                Payment from #{{ $order->id }}
+                                            </th>
+                                            <td class="text-end">{{ optional($order->created_at)->format('M d, Y, g:ia') }}</td>
+                                            <td class="text-end">$ {{ number_format($amount, 2) }}</td>
+                                            <td class="text-end">
+                                                @if($order->payment_status == 1)
+                                                    <span class="badge badge-success">Completed</span>
+                                                @elseif($order->payment_status == 2)
+                                                    <span class="badge badge-warning">Partial</span>
+                                                @else
+                                                    <span class="badge badge-secondary">Pending</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -666,5 +590,39 @@
             fillColor: "rgba(255, 165, 52, .14)",
         });
     </script>
+    <script>
+        // Chart.js statistics chart (orders POS vs Online)
+        (function(){
+            const ctx = document.getElementById('statisticsChart');
+            if(!ctx) return;
+            const labels = {!! $orderGraphData['dates'] ?? '[]' !!};
+            const pos = {!! $orderGraphData['posOrders'] ?? '[]' !!};
+            const online = {!! $orderGraphData['onlineOrders'] ?? '[]' !!};
 
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'POS Orders', data: pos, borderColor: '#36A2EB', backgroundColor: 'rgba(54,162,235,0.1)', fill: true },
+                        { label: 'Online Orders', data: online, borderColor: '#FF6384', backgroundColor: 'rgba(255,99,132,0.1)', fill: true }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        })();
+
+        // Daily sales mini chart (use orderGraph dates as x)
+        (function(){
+            const ctx2 = document.getElementById('dailySalesChart');
+            if(!ctx2) return;
+            const labels = {!! $orderGraphData['dates'] ?? '[]' !!};
+            const sales = {!! $orderGraphData['posOrders'] ?? '[]' !!};
+            new Chart(ctx2, {
+                type: 'bar',
+                data: { labels: labels, datasets: [{ label: 'Orders', data: sales, backgroundColor: '#4BC0C0' }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        })();
+    </script>
 @endpush

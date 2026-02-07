@@ -71,8 +71,11 @@ Route::post('/subscribe', [SubscriberController::class, 'store'])->name('subscri
 
 Route::controller(CompareController::class)->prefix('compare')->name('compare.')->group(function () {
     Route::get('/', 'index')->name('index');
-    Route::get('/add', 'add')->name('add');
-    Route::get('/remove', 'remove')->name('remove');
+    Route::post('/add', 'add')->name('add');
+    Route::post('/remove', 'remove')->name('remove');
+    Route::post('/clear', 'clear')->name('clear');
+    Route::get('/count', 'getCount')->name('count');
+    Route::post('/is-in-comparison', 'isInComparison')->name('is.in.comparison');
 });
 
 Route::controller(CheckoutController::class)->prefix('checkout')->name('checkout.')->group(function () {

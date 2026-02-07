@@ -317,7 +317,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Payment Method</label>
-                            <select name="payment_method_id" class="form-control" required>
+                            <select name="payment_method" class="form-control" required>
                                 @foreach($payment_methods as $pm)
                                     <option value="{{ $pm->id }}">{{ $pm->name }}</option>
                                 @endforeach
@@ -327,6 +327,11 @@
                             <label class="form-label">Amount</label>
                             <input type="number" step="0.01" name="amount" class="form-control"
                                 value="{{ $item->grand_total - $item->orderPayments->sum('amount') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Account Number</label>
+                            <input type="text" name="account_number" class="form-control"
+                                value="">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Transaction ID</label>

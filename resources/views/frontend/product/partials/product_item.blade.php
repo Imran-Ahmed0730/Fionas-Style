@@ -16,7 +16,11 @@
                 </a>
             </li>
 
-            <li class="w-icon"><a href="#"><i class="ti-loop"></i></a></li>
+            <li class="w-icon compare-icon" style="cursor: pointer;" data-id="{{ $product->id }}" title="Add to Comparison">
+                <a href="javascript:void(0)" class="btn-compare-product-item" data-product-id="{{ $product->id }}">
+                    <i class="ti-loop"></i>
+                </a>
+            </li>
         </ul>
     </div>
     <div class="pi-text">

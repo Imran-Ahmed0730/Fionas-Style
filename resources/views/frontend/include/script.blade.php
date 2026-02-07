@@ -477,4 +477,121 @@
         }
     });
 </script>
+<!-- Product Comparison Module -->
+<script src="{{ asset('frontend/js/product-comparison.js') }}"></script>
+
+<!-- Global Comparison Response Handler -->
+<script>
+    function handleComparisonResponse(response) {
+        if (response.success) {
+            toastr.success(response.message);
+            // Update comparison count badge
+            const badge = document.getElementById('comparisonCount');
+            if (badge) {
+                badge.textContent = response.count;
+                badge.style.display = response.count > 0 ? 'flex' : 'none';
+            }
+        } else {
+            toastr.error(response.message);
+        }
+    }
+
+    // Comparison Page Functions
+    function comparisonAddToCart(slug) {
+        addToCart(slug);
+    }
+
+    function comparisonRemoveProduct(productId) {
+        $.post('{{ route("compare.remove") }}', {
+            product_id: productId,
+            _token: '{{ csrf_token() }}'
+        }, function(response) {
+            if (response.success) {
+                toastr.success(response.message);
+                // Update badge
+                const badge = document.getElementById('comparisonCount');
+                if (badge) {
+                    badge.textContent = response.count;
+                    if (response.count === 0) {
+                        badge.style.display = 'none';
+                    }
+                }
+                // Reload page to update table
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                toastr.error(response.message);
+            }
+        }).fail(function() {
+            toastr.error('Error removing product from comparison');
+        });
+    }
+
+    function comparisonClearAll() {
+        if (confirm('Are you sure you want to clear all products from comparison?')) {
+            $.post('{{ route("compare.clear") }}', {
+                _token: '{{ csrf_token() }}'
+            }, function(response) {
+                if (response.success) {
+                    toastr.success(response.message);
+                    // Update badge
+                    const badge = document.getElementById('comparisonCount');
+                    if (badge) {
+                        badge.style.display = 'none';
+                    }
+                    // Reload page
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    toastr.error(response.message);
+                }
+            }).fail(function() {
+                toastr.error('Error clearing comparison');
+            });
+        }
+    }
+
+    // Compare button click handler - match wishlist pattern
+    $(document).on('click', '.compare-icon', function (e) {
+        e.preventDefault();
+        const productId = $(this).data('id');
+        const button = $(this);
+
+        $.post('{{ route("compare.add") }}', {
+            product_id: productId,
+            _token: '{{ csrf_token() }}'
+        }, function(response) {
+            if (response.success) {
+                button.addClass('is-comparing');
+                toastr.success(response.message);
+                // Update comparison count badge
+                const badge = document.getElementById('comparisonCount');
+                if (badge) {
+                    badge.textContent = response.count;
+                    badge.style.display = response.count > 0 ? 'flex' : 'none';
+                }
+            } else {
+                if (response.message.includes('already')) {
+                    // Remove from comparison if already added
+                    $.post('{{ route("compare.remove") }}', {
+                        product_id: productId,
+                        _token: '{{ csrf_token() }}'
+                    }, function(resp) {
+                        if (resp.success) {
+                            button.removeClass('is-comparing');
+                            toastr.success(resp.message);
+                            const badge = document.getElementById('comparisonCount');
+                            if (badge) {
+                                badge.textContent = resp.count;
+                                badge.style.display = resp.count > 0 ? 'flex' : 'none';
+                            }
+                        }
+                    });
+                } else {
+                    toastr.error(response.message);
+                }
+            }
+        }).fail(function() {
+            toastr.error('Error updating comparison');
+        });
+    });
+</script>
 @stack('js')

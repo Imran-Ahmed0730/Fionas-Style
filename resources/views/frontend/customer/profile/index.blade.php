@@ -31,10 +31,10 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <div class="form-group">
-                        <label for="email">Email Address <small class="text-muted">(optional)</small></label>
+                        <label for="email">Email Address <span class="text-danger">*</span></label>
                         <input type="email" name="email" id="email"
                             class="form-control @error('email') is-invalid @enderror"
-                            value="{{ old('email', $user->email) }}">
+                            value="{{ old('email', $user->email) }}" required>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

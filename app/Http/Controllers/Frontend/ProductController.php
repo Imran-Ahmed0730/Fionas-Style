@@ -80,6 +80,7 @@ class ProductController extends Controller
 
         // Total Stock Calculation
         $product->total_stock = $product->variants->sum('stock_qty') ?: $product->stock_qty;
+        $this->productService->updateProductViewCount($product);
 
         $view = view('frontend.product.partials.quick_view', compact('product'))->render();
 
@@ -105,6 +106,7 @@ class ProductController extends Controller
     public function show($slug)
     {
         $product = $this->productService->getProductDetails($slug);
+        $this->productService->updateProductViewCount($product);
 
         $data['item'] = $product;
         $data['related_products'] = $this->productService->getRelatedProducts($product);

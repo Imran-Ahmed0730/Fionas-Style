@@ -36,11 +36,10 @@ class AccountLedgerService
 
     public function getSalesReport($startDate = null, $endDate = null)
     {
-        // Sales are usually linked to an account head like 'Product Sell' (type 1)
-        $query = AccountLedger::with('accountHead')
-            ->whereHas('accountHead', function ($q) {
-                $q->where('title', 'Product Sell');
-            });
+        // Get order items with buying prices to calculate profit/loss
+        $query = Order::with(['items.stock', 'items.product'])
+            ->where('payment_status', 1) // Only paid orders
+            ->where('status', '!=', 5); // Exclude cancelled orders
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [

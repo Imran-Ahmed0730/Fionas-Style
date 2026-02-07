@@ -55,27 +55,69 @@
                                 <thead>
                                     <tr>
                                         <th>Date</th>
-                                        <th>Particular</th>
                                         <th>Order ID</th>
-                                        <th>Amount</th>
+                                        <th>Product</th>
+                                        <th>Qty</th>
+                                        <th>Unit Price</th>
+                                        <th>Cost Price</th>
+                                        <th>Total Sale</th>
+                                        <th>Total Cost</th>
+                                        <th>Profit/Loss</th>
+                                        <th>Margin %</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $totalSales = 0; @endphp
-                                    @foreach($ledgers as $ledger)
-                                        <tr class="align-middle">
-                                            <td>{{ $ledger->created_at->format('d-m-Y') }}</td>
-                                            <td>{{ $ledger->particular }}</td>
-                                            <td>#{{ $ledger->order_id }}</td>
-                                            <td class="text-success fw-bold">{{ number_format($ledger->credit, 2) }}</td>
-                                        </tr>
-                                        @php $totalSales += $ledger->credit; @endphp
+                                    @php
+                                        $totalSales = 0;
+                                        $totalCost = 0;
+                                        $totalProfit = 0;
+                                    @endphp
+                                    @foreach($ledgers as $order)
+                                        @foreach($order->items as $item)
+                                            @php
+                                                $costPrice = $item->stock ? $item->stock->buying_price : 0;
+                                                $totalSaleItem = $item->price * $item->quantity;
+                                                $totalCostItem = $costPrice * $item->quantity;
+                                                $profitItem = $totalSaleItem - $totalCostItem;
+                                                $marginPercent = $totalSaleItem > 0 ? (($profitItem / $totalSaleItem) * 100) : 0;
+
+                                                $totalSales += $totalSaleItem;
+                                                $totalCost += $totalCostItem;
+                                                $totalProfit += $profitItem;
+                                            @endphp
+                                            <tr class="align-middle">
+                                                <td>{{ $order->created_at->format('d-m-Y') }}</td>
+                                                <td><strong>#{{ $order->id }}</strong></td>
+                                                <td>{{ $item->product_name }}</td>
+                                                <td class="text-center">{{ $item->quantity }}</td>
+                                                <td class="text-end">{{ number_format($item->price, 2) }}</td>
+                                                <td class="text-end">{{ number_format($costPrice, 2) }}</td>
+                                                <td class="text-end text-success">{{ number_format($totalSaleItem, 2) }}</td>
+                                                <td class="text-end">{{ number_format($totalCostItem, 2) }}</td>
+                                                <td class="text-end @if($profitItem >= 0) text-success @else text-danger @endif">
+                                                    {{ number_format($profitItem, 2) }}
+                                                </td>
+                                                <td class="text-center @if($marginPercent >= 0) text-success @else text-danger @endif">
+                                                    {{ number_format($marginPercent, 2) }}%
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr class="fw-bold bg-light">
-                                        <td colspan="3" class="text-end">Total Sales:</td>
-                                        <td class="text-success">{{ number_format($totalSales, 2) }}</td>
+                                        <td colspan="6" class="text-end">Totals:</td>
+                                        <td class="text-end text-success">{{ number_format($totalSales, 2) }}</td>
+                                        <td class="text-end">{{ number_format($totalCost, 2) }}</td>
+                                        <td class="text-end @if($totalProfit >= 0) text-success @else text-danger @endif">
+                                            {{ number_format($totalProfit, 2) }}
+                                        </td>
+                                        <td class="text-center">
+                                            @php $overallMargin = $totalSales > 0 ? (($totalProfit / $totalSales) * 100) : 0; @endphp
+                                            <span class="@if($overallMargin >= 0) text-success @else text-danger @endif">
+                                                {{ number_format($overallMargin, 2) }}%
+                                            </span>
+                                        </td>
                                     </tr>
                                 </tfoot>
                             </table>

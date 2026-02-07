@@ -83,6 +83,46 @@
                                     </span>
                                 </a>
                             </li>
+                            <li class="exchange-icon" title="comparison">
+                                <a href="{{ route('compare.index') }}" style="position: relative;">
+                                    <i class="fa fa-exchange"></i>
+                                    <?php $compareService = app(\App\Services\Frontend\CompareService::class); $comparisonCount = $compareService->getComparisonCount(); ?>
+                                    @if($comparisonCount > 0)
+                                        <span id="comparisonCount" style="
+                                            position: absolute;
+                                            top: -8px;
+                                            right: -8px;
+                                            background: #e7ab3c;
+                                            color: white;
+                                            border-radius: 50%;
+                                            width: 24px;
+                                            height: 24px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-size: 12px;
+                                            font-weight: bold;
+                                        ">{{ $comparisonCount }}</span>
+                                    @else
+                                        <span id="comparisonCount" style="
+                                            position: absolute;
+                                            top: -8px;
+                                            right: -8px;
+                                            background: #e7ab3c;
+                                            color: white;
+                                            border-radius: 50%;
+                                            width: 24px;
+                                            height: 24px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-size: 12px;
+                                            font-weight: bold;
+                                            display: none;
+                                        ">0</span>
+                                    @endif
+                                </a>
+                            </li>
                             <li class="cart-icon">
                                 <a href="#">
                                     <i class="icon_bag_alt"></i>

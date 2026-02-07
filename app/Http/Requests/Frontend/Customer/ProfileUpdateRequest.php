@@ -25,7 +25,7 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:customers,username,' . Auth::user()->customer->id,
-            'email' => 'nullable|email|unique:users,email,' . Auth::id(),
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
             'phone' => 'required|string|max:20',
             'address' => 'nullable|string',
             'country_id' => 'nullable|integer',

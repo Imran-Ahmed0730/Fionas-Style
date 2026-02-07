@@ -11,6 +11,7 @@
         "darryldecode/cart": "^4.2",
         "intervention/image": "^3.11",
         "laravel/framework": "^11.9",
+        "laravel/socialite": "*",
         "laravel/tinker": "^2.9",
         "spatie/laravel-permission": "^6.9"
     },

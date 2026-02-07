@@ -3,63 +3,106 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Services\Frontend\CompareService;
 use Illuminate\Http\Request;
 
 class CompareController extends Controller
 {
+    protected $compareService;
+
+    public function __construct(CompareService $compareService)
+    {
+        $this->compareService = $compareService;
+    }
+
     /**
-     * Display a listing of the resource.
+     * Display comparison page
      */
     public function index()
     {
-        //
+        $data = $this->compareService->getComparisonData();
+        return view('frontend.compare.index', $data);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Add product to comparison
      */
-    public function create()
+    public function add(Request $request)
     {
-        //
+        $productId = $request->get('product_id');
+
+        if (!$productId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Product ID is required'
+            ], 400);
+        }
+
+        $result = $this->compareService->addToComparison($productId);
+
+        return response()->json($result);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Remove product from comparison
      */
-    public function store(Request $request)
+    public function remove(Request $request)
     {
-        //
+        $productId = $request->get('product_id');
+
+        if (!$productId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Product ID is required'
+            ], 400);
+        }
+
+        $result = $this->compareService->removeFromComparison($productId);
+
+        return response()->json($result);
     }
 
     /**
-     * Display the specified resource.
+     * Clear all comparisons
      */
-    public function show(string $id)
+    public function clear(Request $request)
     {
-        //
+        $result = $this->compareService->clearComparison();
+
+        return response()->json($result);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Get comparison count (for AJAX)
      */
-    public function edit(string $id)
+    public function getCount()
     {
-        //
+        return response()->json([
+            'count' => $this->compareService->getComparisonCount(),
+            'max' => 4
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Check if product is in comparison
      */
-    public function update(Request $request, string $id)
+    public function isInComparison(Request $request)
     {
-        //
-    }
+        $productId = $request->get('product_id');
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if (!$productId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Product ID is required'
+            ], 400);
+        }
+
+        $isInComparison = $this->compareService->isProductInComparison($productId);
+
+        return response()->json([
+            'success' => true,
+            'isInComparison' => $isInComparison,
+            'productId' => $productId
+        ]);
     }
 }

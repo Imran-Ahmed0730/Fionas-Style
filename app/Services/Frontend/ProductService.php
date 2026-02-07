@@ -467,4 +467,11 @@ class ProductService
 
         return $paginatedItems->appends($request->all());
     }
+
+    public function updateProductViewCount(Product $product)
+    {
+        return $product->increment('view_count');
+
+        // Optionally, you can also update the database periodically (e.g., via a scheduled job)
+    }
 }

@@ -55,7 +55,7 @@
                                     </div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 mb-3"> <label for="exampleInputEmail1" class="form-label">Email address <small>[optional]</small></label> <input type="email" name="email" placeholder="Enter email" class="form-control @error('email') is-invalid @enderror" value="@isset($item){{$item->email}}@else{{old('email')}}@endisset" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                <div class="col-md-6 mb-3"> <label for="exampleInputEmail1" class="form-label">Email address <span class="text-danger">*</span></label> <input type="email" name="email" placeholder="Enter email" class="form-control @error('email') is-invalid @enderror" value="@isset($item){{$item->email}}@else{{old('email')}}@endisset" id="exampleInputEmail1" aria-describedby="emailHelp" required>
                                     @error('email')
                                     <div class="invalid-feedback" role="alert">
                                         {{$message}}
@@ -69,7 +69,7 @@
                                     </div>
                                     @enderror
                                 </div>
-                                
+
                                 <div class="col-md-6 mb-3"> <label for="exampleInputSalary1" class="form-label">Salary <small>[optional]</small></label> <input min="0" type="number" name="salary" placeholder="Enter salary" value="@isset($item){{$item->salary}}@else{{old('salary')}}@endisset" class="form-control @error('salary') is-invalid @enderror" id="exampleInputSalary1" required>
                                     @error('salary')
                                     <div class="invalid-feedback" role="alert">

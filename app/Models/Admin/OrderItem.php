@@ -24,4 +24,9 @@ class OrderItem extends Model
     {
         return $this->belongsTo(ProductVariant::class, 'variant_id');
     }
+
+    public function stock()
+    {
+        return $this->belongsTo(ProductStock::class, 'stock_sku', 'sku');
+    }
 }

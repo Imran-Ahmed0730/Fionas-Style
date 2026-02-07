@@ -37,7 +37,8 @@ class AdminController extends Controller
     public function index()
     {
         if (Auth::user()->role == 1 || Auth::user()->role == 4){
-            return view('backend.dashboard.index');
+            $data = $this->adminService->getDashboardData();
+            return view('backend.dashboard.index', $data);
         }
         else{
             return redirect()->route('customer.dashboard');

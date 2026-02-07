@@ -28,6 +28,8 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\SubscriberController;
 use App\Http\Controllers\Admin\AccountHeadController;
 use App\Http\Controllers\Admin\AccountLedgerController;
+use App\Http\Controllers\Admin\PaymentMethodController;
+use App\Http\Controllers\Admin\OrderController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'login'])->name('login');
@@ -275,13 +277,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // Payment Method module
-        Route::resource('payment-method', \App\Http\Controllers\Admin\PaymentMethodController::class)->except('show');
-        Route::controller(\App\Http\Controllers\Admin\PaymentMethodController::class)->prefix('payment-method')->name('payment-method.')->group(function () {
+        Route::resource('payment-method',PaymentMethodController::class)->except('show');
+        Route::controller(PaymentMethodController::class)->prefix('payment-method')->name('payment-method.')->group(function () {
             Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });
 
         // Order module
-        Route::controller(\App\Http\Controllers\Admin\OrderController::class)->prefix('order')->name('order.')->group(function () {
+        Route::controller(OrderController::class)->prefix('order')->name('order.')->group(function () {
             Route::get('/online', 'onlineOrders')->name('online');
             Route::get('/pos', 'posOrders')->name('pos');
             // Invoice routes
