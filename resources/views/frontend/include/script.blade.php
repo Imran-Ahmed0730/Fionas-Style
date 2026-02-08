@@ -480,118 +480,153 @@
 <!-- Product Comparison Module -->
 <script src="{{ asset('frontend/js/product-comparison.js') }}"></script>
 
-<!-- Global Comparison Response Handler -->
+<!-- Comparison Script -->
 <script>
+    /* ===========================
+     CSRF TOKEN (SAFE FALLBACK)
+    ============================ */
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
+        || '{{ csrf_token() }}';
+
+
+    /* ===========================
+     BADGE HANDLER
+    ============================ */
+    function updateComparisonBadge(count) {
+        const badge = document.getElementById('comparisonCount');
+        if (!badge) return;
+
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'flex';
+        } else {
+            badge.textContent = '';
+            badge.style.display = 'none';
+        }
+    }
+
+
+    /* ===========================
+     GLOBAL RESPONSE HANDLER
+    ============================ */
     function handleComparisonResponse(response) {
         if (response.success) {
             toastr.success(response.message);
-            // Update comparison count badge
-            const badge = document.getElementById('comparisonCount');
-            if (badge) {
-                badge.textContent = response.count;
-                badge.style.display = response.count > 0 ? 'flex' : 'none';
-            }
+            updateComparisonBadge(response.count);
         } else {
-            toastr.error(response.message);
+            toastr.error(response.message || 'Something went wrong');
         }
     }
 
-    // Comparison Page Functions
-    function comparisonAddToCart(slug) {
-        addToCart(slug);
-    }
 
+    /* ===========================
+     REMOVE SINGLE PRODUCT
+    ============================ */
     function comparisonRemoveProduct(productId) {
         $.post('{{ route("compare.remove") }}', {
             product_id: productId,
-            _token: '{{ csrf_token() }}'
-        }, function(response) {
+            _token: csrfToken
+        })
+        .done(response => {
             if (response.success) {
                 toastr.success(response.message);
-                // Update badge
-                const badge = document.getElementById('comparisonCount');
-                if (badge) {
-                    badge.textContent = response.count;
-                    if (response.count === 0) {
-                        badge.style.display = 'none';
-                    }
-                }
-                // Reload page to update table
-                setTimeout(() => location.reload(), 1500);
+                updateComparisonBadge(response.count);
+                setTimeout(() => location.reload(), 800);
             } else {
                 toastr.error(response.message);
             }
-        }).fail(function() {
-            toastr.error('Error removing product from comparison');
-        });
+        })
+        .fail(() => toastr.error('Error removing product from comparison'));
     }
 
+
+    /* ===========================
+     CLEAR ALL COMPARISON
+    ============================ */
     function comparisonClearAll() {
-        if (confirm('Are you sure you want to clear all products from comparison?')) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will remove all products from your comparison list.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, clear all!',
+            confirmButtonColor: '#d33'
+        }).then(result => {
+            if (!result.isConfirmed) return;
+
             $.post('{{ route("compare.clear") }}', {
-                _token: '{{ csrf_token() }}'
-            }, function(response) {
+                _token: csrfToken
+            })
+            .done(response => {
                 if (response.success) {
                     toastr.success(response.message);
-                    // Update badge
-                    const badge = document.getElementById('comparisonCount');
-                    if (badge) {
-                        badge.style.display = 'none';
-                    }
-                    // Reload page
-                    setTimeout(() => location.reload(), 1500);
+                    updateComparisonBadge(0);
+                    setTimeout(() => location.reload(), 800);
                 } else {
                     toastr.error(response.message);
                 }
-            }).fail(function() {
-                toastr.error('Error clearing comparison');
-            });
-        }
+            })
+            .fail(() => toastr.error('Error clearing comparison'));
+        });
     }
 
-    // Compare button click handler - match wishlist pattern
+
+    /* ===========================
+     ADD / TOGGLE COMPARISON
+    ============================ */
     $(document).on('click', '.compare-icon', function (e) {
         e.preventDefault();
-        const productId = $(this).data('id');
+
         const button = $(this);
+        const productId = button.data('id');
+
+        // Prevent double click
+        if (button.hasClass('loading')) return;
+        button.addClass('loading');
 
         $.post('{{ route("compare.add") }}', {
             product_id: productId,
-            _token: '{{ csrf_token() }}'
-        }, function(response) {
+            _token: csrfToken
+        })
+        .done(response => {
             if (response.success) {
                 button.addClass('is-comparing');
                 toastr.success(response.message);
-                // Update comparison count badge
-                const badge = document.getElementById('comparisonCount');
-                if (badge) {
-                    badge.textContent = response.count;
-                    badge.style.display = response.count > 0 ? 'flex' : 'none';
-                }
-            } else {
-                if (response.message.includes('already')) {
-                    // Remove from comparison if already added
-                    $.post('{{ route("compare.remove") }}', {
-                        product_id: productId,
-                        _token: '{{ csrf_token() }}'
-                    }, function(resp) {
-                        if (resp.success) {
-                            button.removeClass('is-comparing');
-                            toastr.success(resp.message);
-                            const badge = document.getElementById('comparisonCount');
-                            if (badge) {
-                                badge.textContent = resp.count;
-                                badge.style.display = resp.count > 0 ? 'flex' : 'none';
-                            }
-                        }
-                    });
-                } else {
-                    toastr.error(response.message);
-                }
+                updateComparisonBadge(response.count);
             }
-        }).fail(function() {
-            toastr.error('Error updating comparison');
+            else if (response.already_exists) {
+                // Toggle remove if already exists
+                $.post('{{ route("compare.remove") }}', {
+                    product_id: productId,
+                    _token: csrfToken
+                })
+                .done(resp => {
+                    if (resp.success) {
+                        button.removeClass('is-comparing');
+                        toastr.success(resp.message);
+                        updateComparisonBadge(resp.count);
+                    } else {
+                        toastr.error(resp.message);
+                    }
+                });
+            }
+            else {
+                toastr.error(response.message);
+            }
+        })
+        .fail(() => toastr.error('Error updating comparison'))
+        .always(() => button.removeClass('loading'));
+    });
+
+
+    /* ===========================
+     OPTIONAL: SYNC STATE ON LOAD
+    ============================ */
+    $(document).ready(function () {
+        $('.compare-icon.is-comparing').each(function () {
+            $(this).attr('title', 'Remove from comparison');
         });
     });
 </script>
+
 @stack('js')

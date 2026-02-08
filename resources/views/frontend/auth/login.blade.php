@@ -59,14 +59,14 @@
                                 @endif
                             </div>
                             <button type="submit" class="site-btn login-btn">Sign In</button>
-                            <div class="row mt-4">
+                            {{-- <div class="row mt-4">
                                 <div class="col-12 text-center">
                                     <p class="mb-2">Or Sign In with</p>
                                     <a href="{{ route('auth.google') }}" class="btn btn-outline-danger w-100">
                                         <i class="fa fa-google me-2"></i> Google
                                     </a>
                                 </div>
-                            </div>
+                            </div> --}}
                         </form>
                         <div class="switch-login">
                             <a href="{{ route('register') }}" class="or-login">Or Create An Account</a>

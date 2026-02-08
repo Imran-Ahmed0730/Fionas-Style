@@ -65,14 +65,14 @@
                                 <input type="password" id="con-pass" name="password_confirmation" required>
                             </div>
                             <button type="submit" class="site-btn register-btn">REGISTER</button>
-                            <div class="row mt-4">
+                            {{-- <div class="row mt-4">
                                 <div class="col-12 text-center">
                                     <p class="mb-2">Or Register with</p>
                                     <a href="{{ route('auth.google') }}" class="btn btn-outline-danger w-100">
                                         <i class="fa fa-google me-2"></i> Google
                                     </a>
                                 </div>
-                            </div>
+                            </div> --}}
                         </form>
                         <div class="switch-login">
                             <a href="{{ route('login') }}" class="or-login">Or Login</a>

@@ -111,7 +111,6 @@
         }
 
         .comparison-table thead th {
-            background: #333;
             color: white;
             padding: 20px;
             text-align: left;
@@ -154,8 +153,12 @@
             font-weight: 600;
             font-size: 16px;
             margin-bottom: 8px;
-            color: #333;
             line-height: 1.3;
+        }
+
+        .product-name a{
+            color: #333;
+            text-decoration: none;
         }
 
         .product-price {
@@ -286,10 +289,6 @@
             }
 
             .comparison-header > div:last-child {
-                width: 100%;
-            }
-
-            .comparison-header .btn-clear-compare {
                 width: 100%;
             }
 
@@ -468,10 +467,11 @@
                                         <div class="product-image">
                                             <img src="{{ asset($product->thumbnail) }}" alt="{{ $product->name }}">
                                         </div>
-                                        <div class="product-name">{{ $product->name }}</div>
+                                        <div class="product-name"><a href="{{ route('product.show', $product->slug) }}">{{ $product->name }}</a></div>
                                         <div class="product-price">${{ number_format($product->final_price, 2) }}</div>
                                         <div class="product-actions">
-                                            <button class="btn-add-to-cart" onclick="comparisonAddToCart('{{ $product->slug }}')">
+                                            <button class="btn-add-to-cart {{ $product->variants->isNotEmpty() ? 'btn-quick-view' : 'add-to-cart' }}"
+                    data-slug="{{ $product->slug }}" data-id="{{ $product->id }}">
                                                 <i class="fa fa-shopping-cart"></i> Add to Cart
                                             </button>
                                             <button class="btn-remove-compare" onclick="comparisonRemoveProduct({{ $product->id }})">
@@ -519,7 +519,7 @@
                                 @foreach ($products as $product)
                                     <td class="attribute-value">
                                         @if ($product->stock_qty > 0)
-                                            <span style="color: #27ae60;">In Stock ({{ $product->stock_qty }})</span>
+                                            <span style="color: #27ae60;">In Stock</span>
                                         @else
                                             <span style="color: #e74c3c;">Out of Stock</span>
                                         @endif
@@ -574,8 +574,8 @@
                                 <td class="attribute-name">{{ $attributes['description']['label'] }}</td>
                                 @foreach ($products as $product)
                                     <td class="attribute-value">
-                                        @if ($product->description)
-                                            {{ Illuminate\Support\Str::limit($product->description, 100) }}
+                                        @if ($product->short_description)
+                                            {{ Illuminate\Support\Str::limit($product->short_description, 100) }}
                                         @else
                                             <span class="no-value">N/A</span>
                                         @endif

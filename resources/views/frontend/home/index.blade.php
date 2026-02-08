@@ -274,42 +274,34 @@
             </div>
             <!-- Banner Section End -->
 
-            <!-- Featured Products Section Begin -->
-            <section class="women-banner spad">
+            <!-- Today's Deal Section Begin -->
+            <section class="man-banner spad">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-lg-3">
-                            <div class="product-large set-bg"
-                                data-setbg="{{ asset('frontend/assets/img/products/women-large.jpg') }}">
-                                <h2>Featured</h2>
-                                <a href="#">Discover More</a>
-                            </div>
-                        </div>
-                        <div class="col-lg-8 offset-lg-1">
+                        <div class="col-lg-8">
                             @php
-                                $featuredCats = $featuredProducts->pluck('category')->unique('id');
+    $dealCats = $todaysDealProducts->pluck('category')->unique('id');
                             @endphp
                             <div class="filter-control">
                                 <ul>
-                                    <li class="active" data-filter="*"><a data-toggle="tab" href="#feat-all">All</a></li>
-                                    @foreach($featuredCats as $cat)
-                                        <li data-filter=".{{ $cat->slug }}"><a data-toggle="tab" href="#feat-{{ $cat->id }}">{{ $cat->name }}</a></li>
+                                    <li class="active"><a data-toggle="tab" href="#deal-all">All</a></li>
+                                    @foreach($dealCats as $cat)
+                                        <li><a data-toggle="tab" href="#deal-{{ $cat->id }}">{{ $cat->name }}</a></li>
                                     @endforeach
                                 </ul>
                             </div>
-
                             <div class="tab-content">
-                                <div class="tab-pane fade show active" id="feat-all" role="tabpanel">
+                                <div class="tab-pane fade show active" id="deal-all" role="tabpanel">
                                     <div class="product-slider owl-carousel">
-                                        @foreach($featuredProducts as $product)
+                                        @foreach($todaysDealProducts as $product)
                                             @include('frontend.product.partials.product_item', ['product' => $product])
                                         @endforeach
                                     </div>
                                 </div>
-                                @foreach($featuredCats as $cat)
-                                    <div class="tab-pane fade" id="feat-{{ $cat->id }}" role="tabpanel">
+                                @foreach($dealCats as $cat)
+                                    <div class="tab-pane fade" id="deal-{{ $cat->id }}" role="tabpanel">
                                         <div class="product-slider owl-carousel">
-                                            @foreach($featuredProducts->where('category_id', $cat->id) as $product)
+                                            @foreach($todaysDealProducts->where('category_id', $cat->id) as $product)
                                                 @include('frontend.product.partials.product_item', ['product' => $product])
                                             @endforeach
                                         </div>
@@ -317,10 +309,17 @@
                                 @endforeach
                             </div>
                         </div>
+                        <div class="col-lg-3 offset-lg-1">
+                            <div class="product-large set-bg m-large"
+                                data-setbg="{{ asset('frontend/assets/img/products/man-large.jpg') }}">
+                                <h2>Today's Deal</h2>
+                                <a href="#">Discover More</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
-            <!-- Featured Products Section End -->
+            <!-- Today's Deal Section End -->
 
             @php
                 $bgColors = ['', 'bg-light', ''];
@@ -409,6 +408,54 @@
                 <!-- Campaign Slider Section End -->
             @endif
 
+            <!-- Featured Products Section Begin -->
+            <section class="women-banner spad">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="product-large set-bg"
+                                data-setbg="{{ asset('frontend/assets/img/products/women-large.jpg') }}">
+                                <h2>Featured</h2>
+                                <a href="#">Discover More</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 offset-lg-1">
+                            @php
+                                $featuredCats = $featuredProducts->pluck('category')->unique('id');
+                            @endphp
+                            <div class="filter-control">
+                                <ul>
+                                    <li class="active" data-filter="*"><a data-toggle="tab" href="#feat-all">All</a></li>
+                                    @foreach($featuredCats as $cat)
+                                        <li data-filter=".{{ $cat->slug }}"><a data-toggle="tab" href="#feat-{{ $cat->id }}">{{ $cat->name }}</a></li>
+                                    @endforeach
+                                </ul>
+                            </div>
+
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="feat-all" role="tabpanel">
+                                    <div class="product-slider owl-carousel">
+                                        @foreach($featuredProducts as $product)
+                                            @include('frontend.product.partials.product_item', ['product' => $product])
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @foreach($featuredCats as $cat)
+                                    <div class="tab-pane fade" id="feat-{{ $cat->id }}" role="tabpanel">
+                                        <div class="product-slider owl-carousel">
+                                            @foreach($featuredProducts->where('category_id', $cat->id) as $product)
+                                                @include('frontend.product.partials.product_item', ['product' => $product])
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Featured Products Section End -->
+
             <!-- Latest Products Section Begin -->
             <section class="product-category-section spad bg-light">
                 <div class="container">
@@ -436,47 +483,6 @@
                 </div>
             </section>
             <!-- Latest Products Section End -->
-
-            <!-- Instagram Section Begin -->
-            <div class="instagram-photo">
-                <div class="insta-item set-bg" data-setbg="{{asset('frontend')}}/assets/img/insta-1.jpg">
-                    <div class="inside-text">
-                        <i class="ti-instagram"></i>
-                        <h5><a href="#">colorlib_Collection</a></h5>
-                    </div>
-                </div>
-                <div class="insta-item set-bg" data-setbg="{{asset('frontend')}}/assets/img/insta-2.jpg">
-                    <div class="inside-text">
-                        <i class="ti-instagram"></i>
-                        <h5><a href="#">colorlib_Collection</a></h5>
-                    </div>
-                </div>
-                <div class="insta-item set-bg" data-setbg="{{asset('frontend')}}/assets/img/insta-3.jpg">
-                    <div class="inside-text">
-                        <i class="ti-instagram"></i>
-                        <h5><a href="#">colorlib_Collection</a></h5>
-                    </div>
-                </div>
-                <div class="insta-item set-bg" data-setbg="{{asset('frontend')}}/assets/img/insta-4.jpg">
-                    <div class="inside-text">
-                        <i class="ti-instagram"></i>
-                        <h5><a href="#">colorlib_Collection</a></h5>
-                    </div>
-                </div>
-                <div class="insta-item set-bg" data-setbg="{{asset('frontend')}}/assets/img/insta-5.jpg">
-                    <div class="inside-text">
-                        <i class="ti-instagram"></i>
-                        <h5><a href="#">colorlib_Collection</a></h5>
-                    </div>
-                </div>
-                <div class="insta-item set-bg" data-setbg="{{asset('frontend')}}/assets/img/insta-6.jpg">
-                    <div class="inside-text">
-                        <i class="ti-instagram"></i>
-                        <h5><a href="#">colorlib_Collection</a></h5>
-                    </div>
-                </div>
-            </div>
-            <!-- Instagram Section End -->
 
             <!-- Latest Blog Section Begin -->
             <section class="latest-blog spad">

@@ -145,7 +145,7 @@ class CompareService
     {
         $products = $this->getComparedProducts();
 
-        if ($products->isEmpty()) {
+        if (count($products) === 0) {
             return [
                 'products' => [],
                 'attributes' => [],

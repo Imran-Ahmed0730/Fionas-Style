@@ -115,13 +115,23 @@ class AdminService
             $mostViewedProducts = \App\Models\Admin\Product::orderBy('created_at', 'desc')->take(6)->get();
 
             $mostSoldProducts = \App\Models\Admin\Product::with('stocks')
-                ->select('products.*')
+                ->select(
+                    'products.id',
+                    'products.name',
+                    'products.slug',
+                    'products.thumbnail',
+                    'products.selling_price',
+                    'products.regular_price',
+                    'products.stock_qty',
+                    'products.status',
+                    'products.sku'
+                )
                 ->selectRaw('SUM(order_items.quantity) as total_sold')
                 ->join('order_items', 'products.id', '=', 'order_items.product_id')
                 ->join('orders', 'order_items.order_id', '=', 'orders.id')
                 ->where('orders.payment_status', 1)
                 ->where('orders.created_at', '>=', \Carbon\Carbon::now()->subDays(30))
-                ->groupBy('products.id')
+                ->groupBy('products.id', 'products.name', 'products.slug', 'products.thumbnail', 'products.selling_price', 'products.regular_price', 'products.stock_qty', 'products.status', 'products.sku')
                 ->orderByDesc('total_sold')
                 ->take(6)
                 ->get();
