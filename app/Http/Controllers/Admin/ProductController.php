@@ -64,7 +64,7 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function show(string $id)
     {
-        $data['item'] = Product::with(['variants', 'gallery', 'stocks.supplier', 'stocks.addedBy'])->findOrFail($id);
+        $data['item'] = Product::with(['variants', 'gallery', 'stocks.supplier', 'stocks.addedBy', 'reviews.user'])->findOrFail($id);
         return view('backend.product.details', $data);
     }
 

@@ -92,4 +92,9 @@ class Product extends Model
     {
         return $this->hasMany(CampaignProduct::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\Frontend\ProductReview::class);
+    }
 }

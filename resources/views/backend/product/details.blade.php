@@ -90,6 +90,14 @@
                                     <a class="nav-link" id="stock-tab" data-bs-toggle="tab" href="#stock" role="tab"
                                         aria-controls="stock" aria-selected="false">Stock History</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="review-tab" data-bs-toggle="tab" href="#review" role="tab"
+                                        aria-controls="review" aria-selected="false">Reviews</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="share-tab" data-bs-toggle="tab" href="#share" role="tab"
+                                        aria-controls="share" aria-selected="false">Social Share</a>
+                                </li>
                             </ul>
 
                             <div class="tab-content mt-2 mb-3" id="productTabsContent">
@@ -250,6 +258,105 @@
                                         </table>
                                     </div>
                                 </div>
+
+                                <!-- Reviews Tab -->
+                                <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Customer</th>
+                                                    <th>Rating</th>
+                                                    <th>Comment</th>
+                                                    <th>Date</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($item->reviews as $review)
+                                                    <tr>
+                                                        <td>{{ $review->user->name }}</td>
+                                                        <td>
+                                                            @for($i = 1; $i <= 5; $i++)
+                                                                <i
+                                                                    class="fa fa-star{{ $i <= $review->rating ? '' : '-o' }} text-warning"></i>
+                                                            @endfor
+                                                        </td>
+                                                        <td>{{ $review->comment }}</td>
+                                                        <td>{{ $review->created_at->format('d M Y') }}</td>
+                                                        <td>
+                                                            <form
+                                                                action="{{ route('admin.product.review.delete', $review->id) }}"
+                                                                method="POST"
+                                                                onsubmit="return confirm('Are you sure you want to delete this review?');">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                                    title="Delete">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="5" class="text-center py-4">No reviews found for this
+                                                            product.</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Social Share Tab -->
+                                <div class="tab-pane fade" id="share" role="tabpanel" aria-labelledby="share-tab">
+                                    <div class="card-body text-center">
+                                        <h4 class="mb-4">Share this product on social media</h4>
+                                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                            <a href="javascript:void(0)" onclick="shareProduct('facebook')"
+                                                class="btn btn-primary btn-lg"
+                                                style="background-color: #3b5998; border-color: #3b5998;"
+                                                title="Share on Facebook">
+                                                <i class="fab fa-facebook-f"></i> Facebook
+                                            </a>
+                                            <a href="javascript:void(0)" onclick="shareProduct('twitter')"
+                                                class="btn btn-info btn-lg text-white"
+                                                style="background-color: #1da1f2; border-color: #1da1f2;"
+                                                title="Share on Twitter">
+                                                <i class="fab fa-twitter"></i> Twitter
+                                            </a>
+                                            <a href="javascript:void(0)" onclick="shareProduct('linkedin')"
+                                                class="btn btn-primary btn-lg"
+                                                style="background-color: #0077b5; border-color: #0077b5;"
+                                                title="Share on LinkedIn">
+                                                <i class="fab fa-linkedin-in"></i> LinkedIn
+                                            </a>
+                                            <a href="javascript:void(0)" onclick="shareProduct('pinterest')"
+                                                class="btn btn-danger btn-lg"
+                                                style="background-color: #bd081c; border-color: #bd081c;"
+                                                title="Share on Pinterest">
+                                                <i class="fab fa-pinterest-p"></i> Pinterest
+                                            </a>
+                                            <a href="javascript:void(0)" onclick="shareProduct('whatsapp')"
+                                                class="btn btn-success btn-lg"
+                                                style="background-color: #25d366; border-color: #25d366;"
+                                                title="Share on WhatsApp">
+                                                <i class="fab fa-whatsapp"></i> WhatsApp
+                                            </a>
+                                        </div>
+                                        <div class="mt-4">
+                                            <label>Product Public URL:</label>
+                                            <div class="input-group w-50 mx-auto">
+                                                <input type="text" class="form-control"
+                                                    value="{{ route('product.show', $item->slug) }}" id="productUrl"
+                                                    readonly>
+                                                <button class="btn btn-secondary" type="button" onclick="copyToClipboard()">
+                                                    <i class="fa fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -258,3 +365,64 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+    <script>
+        function shareProduct(platform) {
+            const url = encodeURIComponent(document.getElementById('productUrl').value);
+            const title = "{{ $item->name }}";
+            let shareUrl = '';
+            switch (platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${encodeURIComponent(title)}`;
+                    break;
+                case 'linkedin':
+                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                    break;
+                case 'pinterest':
+                    shareUrl = `https://pinterest.com/pin/create/button/?url=${url}&description=${encodeURIComponent(title)}`;
+                    break;
+                case 'whatsapp':
+                    shareUrl = `https://wa.me/?text=${encodeURIComponent(title)}%20${url}`;
+                    break;
+                case 'instagram':
+                    // Instagram sharing is typically done via app, but web intent is limited.
+                    // We can just copy link or show a message.
+                    shareUrl = `https://www.instagram.com/`; 
+                    alert('Instagram sharing from web is limited. Link copied to clipboard.');
+                    copyToClipboard();
+                    return;
+            }
+            window.open(shareUrl, '_blank', 'width=600,height=500');
+        }
+
+        function copyToClipboard() {
+            var copyText = document.getElementById("productUrl");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+
+            navigator.clipboard.writeText(copyText.value).then(function() {
+                // Success
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Link copied to clipboard',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                } else {
+                    alert("Link copied: " + copyText.value);
+                }
+            }, function(err) {
+                // Fallback
+                 document.execCommand('copy');
+                 alert("Link copied: " + copyText.value);
+            });
+        }
+    </script>
+@endpush

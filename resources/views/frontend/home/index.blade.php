@@ -5,6 +5,95 @@
 @section('meta_keywords', getSetting('meta_keywords'))
 @push('css')
     <style>
+        .premium-banner {
+                        position: relative;
+                        overflow: hidden;
+                        border-radius: 12px;
+                        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                        background: #f8f9fa;
+                    }
+                    .banner-img-wrapper {
+                        overflow: hidden;
+                        position: relative;
+                        width: 100%;
+                    }
+                    .banner-img-wrapper img {
+                        transition: transform 0.8s ease;
+                        display: block;
+                    }
+                    .premium-banner:hover .banner-img-wrapper img {
+                        transform: scale(1.08);
+                    }
+                    .banner-overlay {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+                        z-index: 1;
+                    }
+                    .banner-glass-content {
+                        position: absolute;
+                        top: 50%;
+                        left: 40px;
+                        transform: translateY(-50%);
+                        z-index: 2;
+                        max-width: 60%;
+                        padding: 30px;
+                        border-radius: 16px;
+                    }
+                    .banner-tag {
+                        display: inline-block;
+                        padding: 4px 12px;
+                        background: #e7ab3c;
+                        color: #fff;
+                        font-size: 11px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        border-radius: 4px;
+                        margin-bottom: 12px;
+                    }
+                    .banner-title {
+                        font-size: 32px;
+                        font-weight: 800;
+                        color: #fff;
+                        line-height: 1.2;
+                        margin-bottom: 15px;
+                        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    }
+                    .banner-btn-wrapped {
+                        display: inline-flex;
+                        align-items: center;
+                        padding: 12px 28px;
+                        background: #fff;
+                        color: #252525;
+                        font-weight: 700;
+                        border-radius: 30px;
+                        transition: all 0.3s ease;
+                        text-decoration: none;
+                    }
+                    .banner-btn-wrapped:hover {
+                        background: #e7ab3c;
+                        color: #fff;
+                        transform: translateX(5px);
+                    }
+                    .banner-btn-wrapped i {
+                        margin-left: 8px;
+                        font-size: 14px;
+                    }
+                    @media (max-width: 768px) {
+                        .banner-glass-content {
+                            left: 20px;
+                            padding: 20px;
+                            max-width: 85%;
+                        }
+                        .banner-title {
+                            font-size: 24px;
+                        }
+                    }
         .product-category-section {
             background: #f8f9fa;
             padding: 80px 0;
@@ -256,22 +345,23 @@
             <!-- Hero Section End -->
 
             <!-- Banner Section Begin -->
-            <div class="banner-section spad">
-                <div class="container-fluid">
-                    <div class="row">
-                        @foreach($featuredCategories as $category)
-                            <div class="col-lg-4">
-                                <div class="single-banner">
-                                    <img src="{{ $category->cover_photo ? asset($category->cover_photo) : asset('backend/assets/img/default-150x150.png') }}" alt="">
-                                    <div class="inner-text">
-                                        <h4>{{ $category->name }}</h4>
+            
+                <div class="banner-section spad">
+                    <div class="container-fluid">
+                        <div class="row">
+                            @foreach($featuredCategories as $category)
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="single-banner">
+                                        <img src="{{ $category->cover_photo ? asset($category->cover_photo) : asset('backend/assets/img/default-150x150.png') }}" alt="{{ $category->name }}">
+                                        <div class="inner-text">
+                                            <h4>{{ $category->name }}</h4>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
             <!-- Banner Section End -->
 
             <!-- Today's Deal Section Begin -->
@@ -280,7 +370,7 @@
                     <div class="row">
                         <div class="col-lg-8">
                             @php
-    $dealCats = $todaysDealProducts->pluck('category')->unique('id');
+$dealCats = $todaysDealProducts->pluck('category')->unique('id');
                             @endphp
                             <div class="filter-control">
                                 <ul>
@@ -321,8 +411,45 @@
             </section>
             <!-- Today's Deal Section End -->
 
+            @if(isset($banners) && $banners->count() > 0)
+                @php
+    $displayBanners = $banners->take(2);
+    $bannerCount = $displayBanners->count();
+    $colClass = $bannerCount == 1 ? 'col-lg-12' : 'col-lg-6 col-md-6';
+                @endphp
+
+                <div class="banner-section spad">
+                    <div class="container-fluid">
+                        <div class="row">
+                            @foreach($displayBanners as $banner)
+                                <div class="{{ $colClass }} mb-4">
+                                    <div class="premium-banner">
+                                        <div class="banner-img-wrapper">
+                                            <div class="banner-overlay"></div>
+                                            <img src="{{ asset($banner->image) }}" alt="{{ $banner->title }}" style="width: 100%; object-fit: cover; {{ $bannerCount == 1 ? 'height: 450px;' : 'height: 350px;' }}">
+                                        </div>
+                                        <div class="banner-glass-content">
+                                            @if($banner->subtitle)
+                                                <span class="banner-tag">{{ $banner->subtitle }}</span>
+                                            @endif
+                                            <h3 class="banner-title">{{ $banner->title }}</h3>
+                                            @if($banner->link)
+                                                <a href="{{ $banner->link }}" class="banner-btn-wrapped">
+                                                    {{ $banner->btn_text ?? 'Explore Now' }}
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             @php
-                $bgColors = ['', 'bg-light', ''];
+$bgColors = ['', 'bg-light', ''];
             @endphp
 
             <!-- Category Sections Begin -->
@@ -364,10 +491,10 @@
                                 <div class="campaign-carousel owl-carousel">
                                     @foreach ($campaigns as $campaign)
                                         @php
-                                            $products = $campaign->campaignProducts->map->product->filter();
-                                            $firstProduct = $products->first();
-                                            $bgImage = $firstProduct && $firstProduct->thumbnail ? asset($firstProduct->thumbnail) : asset('frontend/assets/img/time-bg.jpg');
-                                            $endDate = $campaign->getCountdownEndDate();
+        $products = $campaign->campaignProducts->map->product->filter();
+        $firstProduct = $products->first();
+        $bgImage = $firstProduct && $firstProduct->thumbnail ? asset($firstProduct->thumbnail) : asset('frontend/assets/img/time-bg.jpg');
+        $endDate = $campaign->getCountdownEndDate();
                                         @endphp
                                         <div class="campaign-slide" style="background-image: url('{{ $bgImage }}')">
                                             <div class="campaign-content">
@@ -421,7 +548,7 @@
                         </div>
                         <div class="col-lg-8 offset-lg-1">
                             @php
-                                $featuredCats = $featuredProducts->pluck('category')->unique('id');
+$featuredCats = $featuredProducts->pluck('category')->unique('id');
                             @endphp
                             <div class="filter-control">
                                 <ul>

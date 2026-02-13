@@ -13,6 +13,9 @@
                             @endif
                         </a>
                     </div>
+                    @if($settings->short_bio)
+                        <p class="mt-3">{{ $settings->short_bio }}</p>
+                    @endif
                     <ul>
                         <li>Address: {{ $settings->address }}</li>
                         <li>Phone: {{ $settings->phone }}</li>

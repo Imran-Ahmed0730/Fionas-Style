@@ -36,6 +36,9 @@
                     <div class="card mb-4">
                         <div class="card-header d-flex align-items-center">
                             <h3 class="card-title mb-0">View Subscribers</h3>
+                            <a href="{{ route('admin.subscriber.export') }}" class="btn btn-success ms-auto">
+                                <i class="fas fa-file-excel me-2"></i> Export to Excel
+                            </a>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body table-responsive">

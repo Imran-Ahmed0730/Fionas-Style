@@ -639,6 +639,15 @@
                     </li>
                 @endcan
 
+                @can('Message View')
+                    <li class="nav-item {{$route == 'admin.user-message.index' ? 'active' : ''}}">
+                        <a href="{{route('admin.user-message.index')}}">
+                            <i class="fas fa-comments"></i>
+                            <p>Messages</p>
+                        </a>
+                    </li>
+                @endcan
+
                 @canany(['Role Add', 'Role View', 'Permission Add', 'Permission View'])
                     <li
                         class="nav-item {{Str::contains($route, 'role') || Str::contains($route, 'permission') ? 'active' : ''}}">

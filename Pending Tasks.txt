@@ -1,0 +1,10 @@
+1. Product Review (Frontend + backend) //completed
+2. POS (Place order + hold)
+3. Email smtp setup
+4. Progressive App
+5. Account Ledger Sales report issue fix //completed
+6. Dynamic dashboard
+7. Short bio, meta title, description, keyword, image add. //completed
+8. Include use of banner //completed
+9. Expense Add.
+10. Subscriber list export, email send

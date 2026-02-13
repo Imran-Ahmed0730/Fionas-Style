@@ -35,7 +35,8 @@ class ProductController extends Controller
             'brand',
             'gallery',
             'variants',
-            'campaignProducts.campaign'
+            'campaignProducts.campaign',
+            'reviews'
         ])->findOrFail($id);
 
         // Pricing Logic now handled by Accessor
@@ -106,10 +107,25 @@ class ProductController extends Controller
     public function show($slug)
     {
         $product = $this->productService->getProductDetails($slug);
+        $product->load(['reviews.user']);
         $this->productService->updateProductViewCount($product);
+
+        $canReview = false;
+        if (\Illuminate\Support\Facades\Auth::check()) {
+            $user = \Illuminate\Support\Facades\Auth::user();
+            if ($user->customer) {
+                $canReview = \App\Models\Admin\Order::where('customer_id', $user->customer->id)
+                    ->whereHas('items', function ($q) use ($product) {
+                        $q->where('product_id', $product->id);
+                    })
+                    ->where('payment_status', 1)
+                    ->exists();
+            }
+        }
 
         $data['item'] = $product;
         $data['related_products'] = $this->productService->getRelatedProducts($product);
+        $data['canReview'] = $canReview;
 
         return view('frontend.product.details', $data);
     }

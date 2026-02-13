@@ -33,8 +33,13 @@
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center w-100">
                                 <h3 class="card-title mb-0">Balance Sheet Report</h3>
+                                @can('Account Ledger Add')
+                                    <a href="{{ route('admin.account-ledger.create') }}" class="btn btn-primary ms-auto">
+                                        <i class="fa fa-plus me-2"></i> Add Transaction
+                                    </a>
+                                @endcan
                             </div>
                             <form action="{{ route('admin.account-report.balance-sheet') }}" method="GET" class="row g-3 mt-3 align-items-end">
                                 <div class="col-md-3">

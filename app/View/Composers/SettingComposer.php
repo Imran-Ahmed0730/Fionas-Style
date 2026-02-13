@@ -20,14 +20,15 @@ class SettingComposer
             $instagram = getSetting('instagram_url');
             $pinterest = getSetting('pinterest_url');
             $youtube = getSetting('youtube_url');
+            $short_bio = getSetting('short_bio');
 
             $homeUrl = route('home');
             $devName = e(getSetting('developed_by'));
             $devUrl = getSetting('developed_by_url');
 
-            $devLink = $devUrl ? '<a target="_blank" href="'.e($devUrl).'">'.$devName.'</a>' : $devName;
+            $devLink = $devUrl ? '<a target="_blank" href="' . e($devUrl) . '">' . $devName . '</a>' : $devName;
 
-            $copyright = '&copy; '.date('Y').' <a href="'.e($homeUrl).'">Fiona\'s Style</a>. All rights reserved. Developed By '.$devLink;
+            $copyright = '&copy; ' . date('Y') . ' <a href="' . e($homeUrl) . '">Fiona\'s Style</a>. All rights reserved. Developed By ' . $devLink;
 
             return [
                 'logo' => $logo,
@@ -40,6 +41,7 @@ class SettingComposer
                 'instagram_url' => $instagram,
                 'pinterest_url' => $pinterest,
                 'youtube_url' => $youtube,
+                'short_bio' => $short_bio,
                 'copyright_text' => $copyright,
             ];
         });

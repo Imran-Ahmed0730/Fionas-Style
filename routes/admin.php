@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\AccountHeadController;
 use App\Http\Controllers\Admin\AccountLedgerController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\UserMessageController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'login'])->name('login');
@@ -259,6 +260,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::controller(SubscriberController::class)->prefix('subscriber')->name('subscriber.')->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/export', 'export')->name('export');
+        });
+
+        Route::controller(UserMessageController::class)->prefix('user-message')->name('user-message.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::delete('/bulk-delete', 'bulkDestroy')->name('bulk-delete');
+            Route::delete('/{id}', 'destroy')->name('destroy');
         });
 
         // Account Head module
@@ -269,6 +277,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/status/change/{id}', 'status')->name('status.change');
         });
 
+        // Account Ledger module
+        Route::prefix('account-ledger')->name('account-ledger.')->group(function () {
+            Route::get('/create', [AccountLedgerController::class, 'create'])->name('create');
+            Route::post('/store', [AccountLedgerController::class, 'store'])->name('store');
+        });
+
         // Account Report module
         Route::prefix('account-report')->name('account-report.')->group(function () {
             Route::get('/balance-sheet', [AccountLedgerController::class, 'balanceSheet'])->name('balance-sheet');
@@ -277,7 +291,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // Payment Method module
-        Route::resource('payment-method',PaymentMethodController::class)->except('show');
+        Route::resource('payment-method', PaymentMethodController::class)->except('show');
         Route::controller(PaymentMethodController::class)->prefix('payment-method')->name('payment-method.')->group(function () {
             Route::get('/status/change/{id}', 'changeStatus')->name('status.change');
         });

@@ -100,6 +100,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('/update', 'update')->name('update');
         Route::delete('/destroy', 'destroy')->name('destroy');
     });
+
+    Route::post('/product/review/{id}', [\App\Http\Controllers\Frontend\ProductReviewController::class, 'store'])->name('product.review.store');
 });
 
 require __DIR__ . '/auth.php';

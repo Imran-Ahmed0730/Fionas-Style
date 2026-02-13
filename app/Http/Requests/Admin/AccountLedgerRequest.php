@@ -21,6 +21,16 @@ class AccountLedgerRequest extends FormRequest
      */
     public function rules(): array
     {
+        if ($this->isMethod('post')) {
+            return [
+                'type' => 'required|in:1,2',
+                'account_head_id' => 'required|exists:account_heads,id',
+                'amount' => 'required|numeric|min:0',
+                'particular' => 'required|string|max:255',
+                'comment' => 'nullable|string',
+            ];
+        }
+
         return [
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',

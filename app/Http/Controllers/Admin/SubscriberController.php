@@ -8,6 +8,7 @@ use App\Models\Admin\Subscriber;
 use App\Services\Admin\SubscriberService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Http\Request;
 
 class SubscriberController extends Controller implements HasMiddleware
 {
@@ -79,6 +80,30 @@ class SubscriberController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        //
+        Subscriber::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Subscriber deleted successfully');
+    }
+
+    public function export()
+    {
+        $subscribers = Subscriber::all();
+        $filename = "subscribers_" . date('Y-m-d_H-i-s') . ".csv";
+        $handle = fopen('php://output', 'w');
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        fputcsv($handle, ['ID', 'Email', 'Subscribed On']);
+
+        foreach ($subscribers as $subscriber) {
+            fputcsv($handle, [
+                $subscriber->id,
+                $subscriber->email,
+                $subscriber->created_at->format('Y-m-d H:i:s'),
+            ]);
+        }
+
+        fclose($handle);
+        exit;
     }
 }

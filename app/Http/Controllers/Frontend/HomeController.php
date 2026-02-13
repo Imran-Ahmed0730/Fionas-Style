@@ -50,6 +50,7 @@ class HomeController extends Controller
             'categoryProducts' => $this->categoryService->getCategoryWiseProducts(),
             'blogs' => $this->homeService->getLatestBlogs(),
             'brands' => $this->homeService->getBrands(),
+            'banners' => $this->homeService->getBanners(),
         ];
 
         return view('frontend.home.index', $data);

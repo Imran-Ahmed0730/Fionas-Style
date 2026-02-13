@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Description <small>[optional]</small></label>
-                                    <textarea id="description" name="description" rows="3" placeholder="Enter description" class="form-control note-icon-summernote" required>@isset($item){{$item->description}}@else{{old('description')}}@endisset</textarea>
+                                    <textarea id="description" name="description" rows="3" placeholder="Enter description" class="form-control note-icon-summernote">@isset($item){{$item->description}}@else{{old('description')}}@endisset</textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label for="link" class="form-label">Link<small>[optional]</small></label>

@@ -220,6 +220,21 @@
                     <span class="brand text-muted d-block small mb-1">Brand: {{ $product->brand->name }}</span>
                 @endif
                 <h2>{{ $product->name }}</h2>
+                <div class="qv-rating mb-2">
+                    @php
+                        $avgRating = $product->reviews->avg('rating');
+                    @endphp
+                    @for($i = 1; $i <= 5; $i++)
+                        @if($i <= floor($avgRating))
+                            <i class="fa fa-star text-warning"></i>
+                        @elseif($i == ceil($avgRating) && $avgRating - floor($avgRating) >= 0.5)
+                            <i class="fa fa-star-half-o text-warning"></i>
+                        @else
+                            <i class="fa fa-star-o text-warning"></i>
+                        @endif
+                    @endfor
+                    <span class="text-muted ms-2">({{ $product->reviews->count() }} Reviews)</span>
+                </div>
 
                 <div class="qv-price-wrapper">
                     <span class="qv-price">{{ $currency_symbol }}<span

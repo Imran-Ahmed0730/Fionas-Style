@@ -16,220 +16,302 @@
                     <div class="breadcrumb-text product-more">
                         <a href="{{ route('home') }}"><i class="fa fa-home"></i> Home</a>
                         <a href="{{ route('shop') }}">Shop</a>
-                            <span>Detail</span>
+                        <span>Detail</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb Section Begin -->
+
+    <!-- Product Shop Section Begin -->
+    <section class="product-shop spad page-details">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="product-pic-zoom">
+                                <img class="product-big-img" src="{{ asset($item->thumbnail) }}" alt="{{ $item->name }}">
+                                <div class="zoom-icon">
+                                    <i class="fa fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <div class="product-thumbs">
+                                <div class="product-thumbs-track ps-slider owl-carousel">
+                                    <div class="pt active" data-imgbigurl="{{ asset($item->thumbnail) }}">
+                                        <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->name }}">
+                                    </div>
+                                    @if($item->gallery && $item->gallery->count() > 0)
+                                        @foreach($item->gallery as $gallery)
+                                            <div class="pt" data-imgbigurl="{{ asset($gallery->image) }}">
+                                                <img src="{{ asset($gallery->image) }}" alt="">
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="product-details">
+                                <input type="hidden" id="product_id" value="{{$item->id}}">
+                                <input type="hidden" id="variant_id" value="">
+                                <input type="hidden" id="final_price" value="{{$item->final_price}}">
+                                <div class="pd-title">
+                                    @if($item->brand_id)
+                                        <span>{{ $item->brand->name ?? '' }}</span>
+                                    @endif
+                                    <h3>{{ $item->name }}</h3>
+                                    <a href="#" class="heart-icon"><i class="icon_heart_alt"></i></a>
+                                </div>
+                                <div class="pd-rating">
+                                    @php
+                                        $avgRating = $item->reviews->avg('rating');
+                                    @endphp
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <= floor($avgRating))
+                                            <i class="fa fa-star text-warning"></i>
+                                        @elseif($i == ceil($avgRating) && $avgRating - floor($avgRating) >= 0.5)
+                                            <i class="fa fa-star-half-o text-warning"></i>
+                                        @else
+                                            <i class="fa fa-star-o text-warning"></i>
+                                        @endif
+                                    @endfor
+                                    <span>({{ $item->reviews->count() }})</span>
+                                </div>
+                                <div class="pd-desc">
+                                    <p>{{ $item->short_description ?? '' }}</p>
+                                    <h4>৳<span
+                                            id="pd-final-price">{{ number_format($item->calculated_final_price, 2) }}</span>
+                                        @if($item->calculated_final_price < $item->regular_price)
+                                            <span id="pd-regular-price">৳{{ number_format($item->regular_price, 2) }}</span>
+                                        @endif
+                                    </h4>
+                                </div>
+                                @if($item->colors && $item->colors->count() > 0)
+                                    <div class="pd-color">
+                                        <h6>Color</h6>
+                                        <div class="pd-color-choose">
+                                            @foreach($item->colors as $color)
+                                                <div class="cc-item">
+                                                    <input type="radio" name="color" id="cc-{{ $color->id }}"
+                                                        value="{{ $color->name }}" {{ $loop->first ? 'checked' : '' }}>
+                                                    <label for="cc-{{ $color->id }}"
+                                                        style="background-color: {{ $color->code ?: $color->name }};"
+                                                        title="{{ $color->name }}"></label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if($item->attributes_with_values && $item->attributes_with_values->count() > 0)
+                                    @foreach($item->attributes_with_values as $attribute)
+                                        <div class="pd-size-choose" data-attribute-name="{{ $attribute->name }}">
+                                            <h6>{{ $attribute->name }}</h6>
+                                            @foreach($attribute->values as $value)
+                                                <div class="sc-item">
+                                                    <input type="radio" name="attribute[{{ $attribute->name }}]"
+                                                        id="attr-{{ $attribute->id }}-{{ $loop->index }}" value="{{ $value }}" {{ $loop->first ? 'checked' : '' }}>
+                                                    <label for="attr-{{ $attribute->id }}-{{ $loop->index }}"
+                                                        class="{{ $loop->first ? 'active' : '' }}">{{ $value }}</label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endforeach
+                                @endif
+
+                                <div class="quantity">
+                                    <div class="pro-qty">
+                                        <input type="text" value="1" id="product_qty">
+                                    </div>
+                                    <a href="javascript:void(0)" class="primary-btn pd-cart" id="add-to-cart-btn">Add To
+                                        Cart</a>
+                                </div>
+                                <ul class="pd-tags">
+                                    <li><span>CATEGORY</span>: {{ $item->category->name }}</li>
+                                    @if($item->tags)
+                                        <li><span>TAGS</span>: {{ $item->tags }}</li>
+                                    @endif
+                                </ul>
+                                <div class="pd-share">
+                                    <div class="p-code">Sku : {{ $item->sku }}</div>
+                                    <div class="pd-social">
+                                        <div class="pd-social">
+                                            <a href="javascript:void(0)" onclick="shareProduct('facebook')"
+                                                title="Share on Facebook">
+                                                <i class="ti-facebook"></i>
+                                            </a>
+
+                                            <a href="javascript:void(0)" onclick="shareProduct('twitter')"
+                                                title="Share on Twitter">
+                                                <i class="ti-twitter-alt"></i>
+                                            </a>
+
+                                            <a href="javascript:void(0)" onclick="shareProduct('linkedin')"
+                                                title="Share on LinkedIn">
+                                                <i class="ti-linkedin"></i>
+                                            </a>
+
+                                            <a href="javascript:void(0)" onclick="shareProduct('pinterest')"
+                                                title="Share on Pinterest">
+                                                <i class="ti-pinterest"></i>
+                                            </a>
+
+                                            <a href="javascript:void(0)" onclick="shareProduct('instagram')"
+                                                title="Share on Instagram">
+                                                <i class="ti-instagram"></i>
+                                            </a>
+
+                                            <a href="javascript:void(0)" onclick="shareProduct('whatsapp')"
+                                                title="Share on WhatsApp">
+                                                <i class="fa-brands fa-whatsapp"></i>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-tab">
+                        <div class="tab-item">
+                            <ul class="nav" role="tablist">
+                                <li>
+                                    <a class="active" data-toggle="tab" href="#tab-1" role="tab">DESCRIPTION</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#tab-2" role="tab">Additional Information</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#tab-3" role="tab">Shipping Information</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#tab-4" role="tab">Reviews
+                                        ({{ $item->reviews->count() }})</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tab-item-content">
+                            <div class="tab-content">
+                                <div class="tab-pane fade-in active" id="tab-1" role="tabpanel">
+                                    <div class="product-content">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <h5>Introduction</h5>
+                                                {!! $item->detailed_description !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab-2" role="tabpanel">
+                                    <div class="specification-table">
+                                        {!! $item->additional_info !!}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab-3" role="tabpanel">
+                                    <div class="specification-table">
+                                        {!! $item->shipping_info !!}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab-4" role="tabpanel">
+                                    <div class="customer-reviews-content">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <h4 class="mb-4">{{ $item->reviews->count() }} Reviews</h4>
+
+                                                @foreach($item->reviews as $review)
+                                                    <div class="review-item mb-4 pb-4 border-bottom">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <h5 class="mb-0">{{ $review->user->name }}</h5>
+                                                            <span
+                                                                class="text-muted small">{{ $review->created_at->format('d M Y') }}</span>
+                                                        </div>
+                                                        <div class="rating mb-2 text-warning">
+                                                            @for($i = 1; $i <= 5; $i++)
+                                                                <i class="fa fa-star{{ $i <= $review->rating ? '' : '-o' }}"></i>
+                                                            @endfor
+                                                        </div>
+                                                        <p class="mb-0">{{ $review->comment }}</p>
+                                                    </div>
+                                                @endforeach
+
+                                                @if(auth()->check())
+                                                    @if(isset($canReview) && $canReview)
+                                                        <div class="review-form-wrapper mt-5">
+                                                            <h4 class="mb-4">Write a Review</h4>
+                                                            <form action="{{ route('product.review.store', $item->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                <div class="form-group mb-3">
+                                                                    <label for="rating">Rating</label>
+                                                                    <select name="rating" id="rating" class="form-control w-auto"
+                                                                        required>
+                                                                        <option value="5">5 Stars</option>
+                                                                        <option value="4">4 Stars</option>
+                                                                        <option value="3">3 Stars</option>
+                                                                        <option value="2">2 Stars</option>
+                                                                        <option value="1">1 Star</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-group mb-4">
+                                                                    <label for="comment">Your Review</label>
+                                                                    <textarea name="comment" id="comment" rows="4"
+                                                                        class="form-control" required
+                                                                        placeholder="Share your thoughts about this product..."></textarea>
+                                                                </div>
+                                                                <button type="submit" class="site-btn">Submit Review</button>
+                                                            </form>
+                                                        </div>
+                                                    @else
+                                                        <div class="alert alert-info mt-4">
+                                                            You must purchase this product to leave a review.
+                                                        </div>
+                                                    @endif
+                                                @else
+                                                    <div class="alert alert-secondary mt-4">
+                                                        Please <a href="{{ route('login') }}" class="text-primary">login</a> to
+                                                        leave a review.
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Breadcrumb Section Begin -->
+    </section>
+    <!-- Product Shop Section End -->
 
-        <!-- Product Shop Section Begin -->
-        <section class="product-shop spad page-details">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="product-pic-zoom">
-                                    <img class="product-big-img" src="{{ asset($item->thumbnail) }}" alt="{{ $item->name }}">
-                                    <div class="zoom-icon">
-                                        <i class="fa fa-search-plus"></i>
-                                    </div>
-                                </div>
-                                <div class="product-thumbs">
-                                    <div class="product-thumbs-track ps-slider owl-carousel">
-                                        <div class="pt active" data-imgbigurl="{{ asset($item->thumbnail) }}">
-                                            <img src="{{ asset($item->thumbnail) }}" alt="{{ $item->name }}">
-                                        </div>
-                                        @if($item->gallery && $item->gallery->count() > 0)
-                                            @foreach($item->gallery as $gallery)
-                                                <div class="pt" data-imgbigurl="{{ asset($gallery->image) }}">
-                                                    <img src="{{ asset($gallery->image) }}" alt="">
-                                                </div>
-                                            @endforeach
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="product-details">
-                                    <input type="hidden" id="product_id" value="{{$item->id}}">
-                                    <input type="hidden" id="variant_id" value="">
-                                    <input type="hidden" id="final_price" value="{{$item->final_price}}">
-                                    <div class="pd-title">
-                                        @if($item->brand_id)
-                                            <span>{{ $item->brand->name ?? '' }}</span>
-                                        @endif
-                                        <h3>{{ $item->name }}</h3>
-                                        <a href="#" class="heart-icon"><i class="icon_heart_alt"></i></a>
-                                    </div>
-                                    <div class="pd-rating">
-                                        <i class="ti-star"></i>
-                                        <i class="ti-star"></i>
-                                        <i class="ti-star"></i>
-                                        <i class="ti-star"></i>
-                                        <i class="ti-star text-muted"></i>
-                                        <span>(5)</span>
-                                    </div>
-                                    <div class="pd-desc">
-                                        <p>{{ $item->short_description ?? '' }}</p>
-                                        <h4>৳<span id="pd-final-price">{{ number_format($item->calculated_final_price, 2) }}</span> 
-                                                @if($item->calculated_final_price < $item->regular_price)
-                                                    <span id="pd-regular-price">৳{{ number_format($item->regular_price, 2) }}</span>
-                                                @endif
-                                            </h4>
-                                        </div>
-                                        @if($item->colors && $item->colors->count() > 0)
-                                            <div class="pd-color">
-                                                <h6>Color</h6>
-                                                <div class="pd-color-choose">
-                                                    @foreach($item->colors as $color)
-                                                        <div class="cc-item">
-                                                            <input type="radio" name="color" id="cc-{{ $color->id }}" 
-                                                                value="{{ $color->name }}" {{ $loop->first ? 'checked' : '' }}>
-                                                            <label for="cc-{{ $color->id }}" 
-                                                                style="background-color: {{ $color->code ?: $color->name }};"
-                                                                title="{{ $color->name }}"></label>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        @if($item->attributes_with_values && $item->attributes_with_values->count() > 0)
-                                            @foreach($item->attributes_with_values as $attribute)
-                                                <div class="pd-size-choose" data-attribute-name="{{ $attribute->name }}">
-                                                    <h6>{{ $attribute->name }}</h6>
-                                                    @foreach($attribute->values as $value)
-                                                        <div class="sc-item">
-                                                            <input type="radio" name="attribute[{{ $attribute->name }}]" 
-                                                                id="attr-{{ $attribute->id }}-{{ $loop->index }}" 
-                                                                value="{{ $value }}" {{ $loop->first ? 'checked' : '' }}>
-                                                            <label for="attr-{{ $attribute->id }}-{{ $loop->index }}" 
-                                                                class="{{ $loop->first ? 'active' : '' }}">{{ $value }}</label>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            @endforeach
-                                        @endif
-
-                                        <div class="quantity">
-                                            <div class="pro-qty">
-                                                <input type="text" value="1" id="product_qty">
-                                            </div>
-                                            <a href="javascript:void(0)" class="primary-btn pd-cart" id="add-to-cart-btn">Add To Cart</a>
-                                        </div>
-                                        <ul class="pd-tags">
-                                            <li><span>CATEGORY</span>: {{ $item->category->name }}</li>
-                                            @if($item->tags)
-                                                <li><span>TAGS</span>: {{ $item->tags }}</li>
-                                            @endif
-                                        </ul>
-                                        <div class="pd-share">
-                                            <div class="p-code">Sku : {{ $item->sku }}</div>
-                                            <div class="pd-social">
-                                                <div class="pd-social">
-                                                    <a href="javascript:void(0)" onclick="shareProduct('facebook')" title="Share on Facebook">
-                                                        <i class="ti-facebook"></i>
-                                                    </a>
-
-                                                    <a href="javascript:void(0)" onclick="shareProduct('twitter')" title="Share on Twitter">
-                                                        <i class="ti-twitter-alt"></i>
-                                                    </a>
-
-                                                    <a href="javascript:void(0)" onclick="shareProduct('linkedin')" title="Share on LinkedIn">
-                                                        <i class="ti-linkedin"></i>
-                                                    </a>
-
-                                                    <a href="javascript:void(0)" onclick="shareProduct('pinterest')" title="Share on Pinterest">
-                                                        <i class="ti-pinterest"></i>
-                                                    </a>
-
-                                                    <a href="javascript:void(0)" onclick="shareProduct('instagram')" title="Share on Instagram">
-                                                        <i class="ti-instagram"></i>
-                                                    </a>
-
-                                                    <a href="javascript:void(0)" onclick="shareProduct('whatsapp')" title="Share on WhatsApp">
-                                                        <i class="fa-brands fa-whatsapp"></i>
-                                                    </a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-tab">
-                                <div class="tab-item">
-                                    <ul class="nav" role="tablist">
-                                        <li>
-                                            <a class="active" data-toggle="tab" href="#tab-1" role="tab">DESCRIPTION</a>
-                                        </li>
-                                        <li>
-                                            <a data-toggle="tab" href="#tab-2" role="tab">Additional Information</a>
-                                        </li>
-                                        <li>
-                                            <a data-toggle="tab" href="#tab-3" role="tab">Shipping Information</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="tab-item-content">
-                                    <div class="tab-content">
-                                        <div class="tab-pane fade-in active" id="tab-1" role="tabpanel">
-                                            <div class="product-content">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <h5>Introduction</h5>
-                                                        {!! $item->detailed_description !!}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane fade" id="tab-2" role="tabpanel">
-                                            <div class="specification-table">
-                                                {!! $item->additional_info !!}
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane fade" id="tab-3" role="tabpanel">
-                                            <div class="specification-table">
-                                                {!! $item->shipping_info !!}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- Product Shop Section End -->
-
-            <!-- Related Products Section End -->
-            <div class="related-products spad">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="section-title">
-                                <h2>Related Products</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        @forelse($related_products as $related)
-                            <div class="col-lg-3 col-sm-6">
-                                @include('frontend.product.partials.product_item', ['product' => $related])
-                            </div>
-                        @empty
-                            <div class="col-lg-12">
-                                <div class="section-title">
-                                    <p class="text-center text-secondary">No Related Products Found</p>
-                                </div>
-                            </div>
-                        @endforelse
+    <!-- Related Products Section End -->
+    <div class="related-products spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        <h2>Related Products</h2>
                     </div>
                 </div>
             </div>
+            <div class="row">
+                @forelse($related_products as $related)
+                    <div class="col-lg-3 col-sm-6">
+                        @include('frontend.product.partials.product_item', ['product' => $related])
+                    </div>
+                @empty
+                    <div class="col-lg-12">
+                        <div class="section-title">
+                            <p class="text-center text-secondary">No Related Products Found</p>
+                        </div>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
 @endsection
 @push('js')
     <script>

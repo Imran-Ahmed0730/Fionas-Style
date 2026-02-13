@@ -3,56 +3,28 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\UserMessage;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class UserMessageController extends Controller
+class UserMessageController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:Message View', only: ['index']),
+            new Middleware('permission:Message Delete', only: ['destroy', 'bulkDestroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+        $data['items'] = UserMessage::latest()->get();
+        return view('backend.user-message.index', $data);
     }
 
     /**
@@ -60,6 +32,17 @@ class UserMessageController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        UserMessage::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Message deleted successfully');
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->ids;
+        if (is_array($ids) && count($ids) > 0) {
+            UserMessage::whereIn('id', $ids)->delete();
+            return response()->json(['success' => true, 'message' => 'Selected messages deleted successfully']);
+        }
+        return response()->json(['success' => false, 'message' => 'No messages selected']);
     }
 }

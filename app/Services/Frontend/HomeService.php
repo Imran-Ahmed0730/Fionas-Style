@@ -5,6 +5,7 @@ namespace App\Services\Frontend;
 use App\Models\Admin\Blog;
 use App\Models\Admin\Slider;
 use App\Models\Admin\Brand;
+use App\Models\Admin\Banner;
 use Illuminate\Support\Facades\Cache;
 
 class HomeService
@@ -52,6 +53,13 @@ class HomeService
                 ->filter(function ($c) {
                     return $c->isActive;
                 })->values();
+        });
+    }
+
+    public function getBanners()
+    {
+        return Cache::remember('banners', config('cache_settings.medium'), function () {
+            return Banner::active()->latest()->get();
         });
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Services\Admin;
 
 use App\Models\Admin\AccountLedger;
+use App\Models\Admin\Order;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class AccountLedgerService
 {
@@ -53,8 +55,37 @@ class AccountLedgerService
 
     public function recordTransaction($data)
     {
-        // Logic to calculate balance would go here if tracking running balance
-        // For simplicity, we just store debit/credit
+        $lastLedger = AccountLedger::latest()->first();
+        $previousBalance = $lastLedger ? $lastLedger->balance : 0;
+
+        if ($data['type'] == 1) { // Income
+            $data['credit'] = $data['amount'];
+            $data['debit'] = 0;
+            $data['balance'] = $previousBalance + $data['amount'];
+        } else { // Expense
+            $data['debit'] = $data['amount'];
+            $data['credit'] = 0;
+            $data['balance'] = $previousBalance - $data['amount'];
+        }
+
+        $data['added_by'] = Auth::id();
+        unset($data['amount']);
+
         return AccountLedger::create($data);
+    }
+
+    public function getAllLedgers($request)
+    {
+        $query = AccountLedger::with('accountHead')->latest();
+
+        if ($request->has('type') && $request->type != '') {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->has('account_head_id') && $request->account_head_id != '') {
+            $query->where('account_head_id', $request->account_head_id);
+        }
+
+        return $query->paginate(20);
     }
 }
