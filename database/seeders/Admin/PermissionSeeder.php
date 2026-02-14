@@ -116,6 +116,7 @@ class PermissionSeeder extends Seeder
             "Account Balance Sheet View",
             "Account Cashbook View",
             "Sales Report View",
+            "Account Ledger Add",
 
             // Order Permissions
             "Order Online View",
