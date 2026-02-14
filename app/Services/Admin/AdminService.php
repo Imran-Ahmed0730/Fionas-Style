@@ -3,6 +3,11 @@
 namespace App\Services\Admin;
 
 use App\Models\User;
+use App\Models\Admin\Product;
+use App\Models\Admin\Order;
+use App\Models\Admin\OrderPayment;
+use App\Models\Admin\ProductStock;
+use App\Models\Admin\AccountLedger;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
@@ -14,11 +19,11 @@ class AdminService
         $imagePath = $image ? saveImagePath($image, $user->image, 'user-profile') : $user->image;
 
         $updateData = [
-            'name'      => $data['name'],
-            'email'     => $data['email'],
-            'image'     => $imagePath,
-            'phone'     => $data['phone'] ?? $user->phone,
-            'address'   => $data['address'] ?? $user->address,
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'image' => $imagePath,
+            'phone' => $data['phone'] ?? $user->phone,
+            'address' => $data['address'] ?? $user->address,
         ];
 
         return $user->update($updateData);
@@ -33,7 +38,7 @@ class AdminService
 
     public function assignRole(User $user, string $role): void
     {
-        if ($user->getRoleNames()->isNotEmpty()){
+        if ($user->getRoleNames()->isNotEmpty()) {
             $user->syncRoles($role);
         } else {
             $user->assignRole($role);
@@ -51,17 +56,17 @@ class AdminService
             $today = \Carbon\Carbon::now()->startOfDay();
             $thisMonth = \Carbon\Carbon::now()->startOfMonth();
 
-            $totalProductQty = \App\Models\Admin\ProductStock::sum('qty');
+            $totalProductQty = ProductStock::sum('qty');
             $totalStockCost = \Illuminate\Support\Facades\DB::table('product_stocks')
                 ->selectRaw('SUM(qty * buying_price) as total_cost')
                 ->value('total_cost') ?? 0;
 
-            $todaySales = \App\Models\Admin\Order::where('payment_status', 1)
+            $todaySales = Order::where('payment_status', 1)
                 ->where('status', '!=', 5)
                 ->whereDate('created_at', $today)
                 ->sum('grand_total');
 
-            $monthSales = \App\Models\Admin\Order::where('payment_status', 1)
+            $monthSales = Order::where('payment_status', 1)
                 ->where('status', '!=', 5)
                 ->whereBetween('created_at', [$thisMonth, \Carbon\Carbon::now()])
                 ->sum('grand_total');
@@ -76,92 +81,87 @@ class AdminService
             $onlineOrders = [];
             foreach ($last7Days as $date) {
                 $dates[] = $date->format('M d');
-                $posOrders[] = \App\Models\Admin\Order::where('type', 2)->whereDate('created_at', $date)->count();
-                $onlineOrders[] = \App\Models\Admin\Order::where('type', 1)->whereDate('created_at', $date)->count();
+                $posOrders[] = Order::where('type', 2)->whereDate('created_at', $date)->count();
+                $onlineOrders[] = Order::where('type', 1)->whereDate('created_at', $date)->count();
             }
 
             // Payment chart
-            $paymentMethods = \App\Models\Admin\OrderPayment::with('paymentMethod')
+            $paymentMethods = OrderPayment::with('paymentMethod')
                 ->select('payment_method')
                 ->selectRaw('COUNT(*) as count, SUM(amount) as total_amount')
-                ->whereHas('order', function ($q) { $q->where('payment_status', 1); })
+                ->whereHas('order', function ($q) {
+                    $q->where('payment_status', 1);
+                })
                 ->groupBy('payment_method')
                 ->get();
 
-            $labels = [];
-            $amounts = [];
+            $paymentLabels = [];
+            $paymentAmounts = [];
             foreach ($paymentMethods as $method) {
-                $labels[] = $method->paymentMethod->name ?? 'Unknown';
-                $amounts[] = round($method->total_amount, 2);
+                $paymentLabels[] = $method->paymentMethod->name ?? 'Unknown';
+                $paymentAmounts[] = (float) $method->total_amount;
             }
 
-            $recentTransactions = \App\Models\Admin\Order::with('orderPayments.paymentMethod')
+            // Only Today's Transactions
+            $todayTransactions = Order::with('orderPayments.paymentMethod')
                 ->where('payment_status', '!=', 0)
+                ->whereDate('created_at', $today)
                 ->latest()
-                ->take(10)
                 ->get();
 
-            $recentOrders = \App\Models\Admin\Order::with('customer')
-                ->latest()
-                ->take(8)
-                ->get();
-
-            $newCustomers = \App\Models\User::where('role', 3)
+            $newCustomers = User::where('role', 3)
                 ->where('created_at', '>=', \Carbon\Carbon::now()->subDays(7))
                 ->latest()
                 ->take(10)
                 ->get();
 
-            $mostViewedProducts = \App\Models\Admin\Product::orderBy('created_at', 'desc')->take(6)->get();
-
-            $mostSoldProducts = \App\Models\Admin\Product::with('stocks')
-                ->select(
-                    'products.id',
-                    'products.name',
-                    'products.slug',
-                    'products.thumbnail',
-                    'products.selling_price',
-                    'products.regular_price',
-                    'products.stock_qty',
-                    'products.status',
-                    'products.sku'
-                )
+            $topSellingProducts = Product::select('products.id', 'products.name')
                 ->selectRaw('SUM(order_items.quantity) as total_sold')
                 ->join('order_items', 'products.id', '=', 'order_items.product_id')
                 ->join('orders', 'order_items.order_id', '=', 'orders.id')
                 ->where('orders.payment_status', 1)
-                ->where('orders.created_at', '>=', \Carbon\Carbon::now()->subDays(30))
-                ->groupBy('products.id', 'products.name', 'products.slug', 'products.thumbnail', 'products.selling_price', 'products.regular_price', 'products.stock_qty', 'products.status', 'products.sku')
+                ->groupBy('products.id', 'products.name')
                 ->orderByDesc('total_sold')
-                ->take(6)
+                ->take(5)
                 ->get();
 
-            $totalOrders = \App\Models\Admin\Order::count();
-            $pendingOrders = \App\Models\Admin\Order::where('status', 0)->count();
-            $totalCustomers = \App\Models\User::where('role', 3)->count();
+            $topSellingLabels = $topSellingProducts->pluck('name')->toArray();
+            $topSellingCounts = $topSellingProducts->pluck('total_sold')->toArray();
+
+            $todaysDealProducts = Product::where('include_to_todays_deal', 1)
+                ->where('status', 1)
+                ->take(10)
+                ->get();
+
+            $totalOrders = Order::count();
+            $totalCustomers = User::where('role', 3)->count();
+
+            $latestLedger = AccountLedger::latest()->first();
+            $currentBalance = $latestLedger ? $latestLedger->balance : 0;
 
             return [
                 'totalProductQty' => $totalProductQty,
                 'totalStockCost' => $totalStockCost,
                 'todaySales' => $todaySales,
                 'monthSales' => $monthSales,
+                'currentBalance' => $currentBalance,
                 'orderGraphData' => [
                     'dates' => json_encode($dates),
                     'posOrders' => json_encode($posOrders),
                     'onlineOrders' => json_encode($onlineOrders),
                 ],
                 'paymentChartData' => [
-                    'labels' => json_encode($labels),
-                    'amounts' => json_encode($amounts),
-                    'colors' => json_encode(['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']),
+                    'labels' => json_encode($paymentLabels),
+                    'amounts' => json_encode($paymentAmounts),
                 ],
-                'recentTransactions' => $recentTransactions,
-                'recentOrders' => $recentOrders,
+                'todayTransactions' => $todayTransactions,
                 'newCustomers' => $newCustomers,
-                'mostViewedProducts' => $mostViewedProducts,
-                'mostSoldProducts' => $mostSoldProducts,
+                'topSellingChartData' => [
+                    'labels' => json_encode($topSellingLabels),
+                    'counts' => json_encode($topSellingCounts),
+                ],
+                'todaysDealProducts' => $todaysDealProducts,
                 'totalOrders' => $totalOrders,
-                'pendingOrders' => $pendingOrders,
                 'totalCustomers' => $totalCustomers,
             ];
         });

@@ -33,6 +33,12 @@
     </div>
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
+            <div class="sidebar-search-wrapper px-3 py-2 mb-2">
+                <div class="sidebar-search-inner">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="sidebarSearch" placeholder="Search menu items..." autocomplete="off">
+                </div>
+            </div>
 
             <ul class="nav nav-secondary" id="sidebar-menu">
                 <li class="nav-item {{$route == 'admin.dashboard' ? 'active' : ''}}">

@@ -14,6 +14,9 @@ class OrderService
     {
         $orders = Order::with(['customer'])
             ->where('type', $type)
+            ->when($type == 2, function ($query) {
+                $query->where('status', '!=', 6);
+            })
             ->orderBy('id', 'desc');
 
         if (!$request->filled('date_range')) {

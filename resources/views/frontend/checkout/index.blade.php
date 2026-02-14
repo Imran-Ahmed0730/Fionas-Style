@@ -158,29 +158,29 @@
                                     <li>Product <span>Total</span></li>
                                     @foreach($items as $item)
                                         <li class="fw-normal">{{ $item->name }} x {{ $item->quantity }}
-                                            <span>{{ $currency['symbol'] ?? '$' }}{{ number_format($item->price * $item->quantity, 2) }}</span>
+                                            <span>{{ $currency['symbol'] ?? '৳' }}{{ number_format($item->price * $item->quantity, 2) }}</span>
                                         </li>
                                     @endforeach
                                     <li class="fw-normal border-top pt-2">Subtotal
                                         <span
-                                            id="summary_subtotal">{{ $currency['symbol'] ?? '$' }}{{ number_format($subtotal, 2) }}</span>
+                                            id="summary_subtotal">{{ $currency['symbol'] ?? '৳' }}{{ number_format($subtotal, 2) }}</span>
                                     </li>
                                     <li class="fw-normal">Tax
                                         <span
-                                            id="summary_tax">{{ $currency['symbol'] ?? '$' }}{{ number_format($tax, 2) }}</span>
+                                            id="summary_tax">{{ $currency['symbol'] ?? '৳' }}{{ number_format($tax, 2) }}</span>
                                     </li>
                                     <li class="fw-normal">Shipping
                                         <span
-                                            id="summary_shipping">{{ $currency['symbol'] ?? '$' }}{{ number_format($shipping_cost, 2) }}</span>
+                                            id="summary_shipping">{{ $currency['symbol'] ?? '৳' }}{{ number_format($shipping_cost, 2) }}</span>
                                     </li>
                                     <li class="fw-normal" id="summary_discount_row"
                                         style="{{ ($discount ?? 0) > 0 ? '' : 'display: none;' }}">Discount
                                         <span id="summary_discount"
-                                            class="text-danger">{{ $currency['symbol'] ?? '$' }}{{ number_format($discount ?? 0, 2) }}</span>
+                                            class="text-danger">{{ $currency['symbol'] ?? '৳' }}{{ number_format($discount ?? 0, 2) }}</span>
                                     </li>
                                     <li class="total-price">Total
                                         <span
-                                            id="summary_total">{{ $currency['symbol'] ?? '$' }}{{ number_format($grand_total, 2) }}</span>
+                                            id="summary_total">{{ $currency['symbol'] ?? '৳' }}{{ number_format($grand_total, 2) }}</span>
                                     </li>
                                 </ul>
                                 <div class="payment-check">
@@ -293,7 +293,7 @@
             });
 
             function updateSummary(summary) {
-                let symbol = "{{ $currency['symbol'] ?? '$' }}";
+                let symbol = "{{ $currency['symbol'] ?? '৳' }}";
                 $('#summary_subtotal').text(symbol + parseFloat(summary.subtotal).toFixed(2));
                 $('#summary_tax').text(symbol + parseFloat(summary.tax).toFixed(2));
                 $('#summary_shipping').text(symbol + parseFloat(summary.shipping_cost).toFixed(2));

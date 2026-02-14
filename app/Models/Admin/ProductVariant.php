@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProductVariant extends Model
 {
     protected $guarded = ["id"];
+    protected $appends = ['final_price'];
 
     public function product()
     {

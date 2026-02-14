@@ -30,16 +30,47 @@ use App\Http\Controllers\Admin\AccountHeadController;
 use App\Http\Controllers\Admin\AccountLedgerController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PosController;
 use App\Http\Controllers\Admin\UserMessageController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'login'])->name('login');
     Route::middleware('admin')->group(function () {
+        // POS module
+        Route::controller(PosController::class)->prefix('pos')->name('pos.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/products', 'getProducts')->name('products');
+            Route::get('/customers', 'getCustomers')->name('customers');
+            Route::post('/customer/store', 'storeCustomer')->name('customer.store');
+            Route::post('/customer/update', 'updateCustomer')->name('customer.update');
+            Route::get('/customer/edit/{id}', 'editCustomer')->name('customer.edit');
+            Route::get('/hold-orders', 'getHoldOrders')->name('hold-orders');
+            Route::get('/hold-orders/edit/{id}', 'editHoldOrder')->name('hold-orders.edit');
+            Route::post('/hold-orders/update/{id}', 'updateHoldOrder')->name('hold-orders.update');
+            Route::delete('/hold-orders/delete/{id}', 'deleteHoldOrder')->name('hold-orders.delete');
+            Route::get('/recent-orders', 'getRecentOrders')->name('recent-orders');
+            Route::post('/place-order', 'placeOrder')->name('place-order');
+            Route::post('/hold-order', 'holdOrder')->name('hold-order');
+            Route::post('/apply-coupon', 'applyCoupon')->name('apply-coupon');
+            Route::get('/product/variants/{id}', 'getVariants')->name('product.variants');
+            // Cart routes
+            Route::post('/cart/add', 'addToCart')->name('cart.add');
+            Route::post('/cart/batch-add', 'batchAddToCart')->name('cart.batch-add');
+            Route::post('/cart/update', 'updateCartItem')->name('cart.update');
+            Route::delete('/cart/remove/{rowId}', 'removeCartItem')->name('cart.remove');
+            Route::post('/cart/clear', 'clearCart')->name('cart.clear');
+            Route::get('/cart', 'getCart')->name('cart.get');
+        });
+
+        // City Shipping Cost Route
+        Route::get('/city/{cityId}/shipping-cost', [PosController::class, 'getCityShippingCost'])->name('city.shipping-cost');
+
         Route::controller(AdminController::class)->group(function () {
             Route::get('/dashboard', 'index')->name('dashboard');
             Route::get('/profile/edit', 'profileEdit')->name('profile.edit');
             Route::post('/profile/update', 'profileUpdate')->name('profile.update');
             Route::post('/password/update', 'passwordChange')->name('password.update');
+            Route::get('/cache/clear', 'clearCache')->name('cache.clear');
         });
 
         //setting module

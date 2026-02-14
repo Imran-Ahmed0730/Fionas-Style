@@ -87,7 +87,7 @@
                                             @endif
                                         </td>
                                         <td class="p-price first-row">
-                                            {{ $currency['symbol'] ?? '$' }}{{ number_format($item->price, 2) }}</td>
+                                            {{ $currency['symbol'] ?? '৳' }}{{ number_format($item->price, 2) }}</td>
                                         <td class="qua-col first-row">
                                             <div class="quantity">
                                                 <div class="pro-qty-custom"
@@ -102,7 +102,7 @@
                                             </div>
                                         </td>
                                         <td class="total-price first-row">
-                                            {{ $currency['symbol'] ?? '$' }}<span
+                                            {{ $currency['symbol'] ?? '৳' }}<span
                                                 class="item-total">{{ number_format($item->price * $item->quantity, 2) }}</span>
                                         </td>
                                         <td class="close-td first-row si-close">
@@ -129,13 +129,13 @@
                         <div class="col-lg-4 offset-lg-4">
                             <div class="proceed-checkout">
                                 <ul>
-                                    <li class="subtotal">Subtotal <span>{{ $currency['symbol'] ?? '$' }}<span id="subtotal">{{ number_format($subtotal, 2) }}</span></span></li>
-                                    <li class="subtotal">Tax <span>{{ $currency['symbol'] ?? '$' }}<span id="tax">{{ number_format($tax, 2) }}</span></span></li>
-                                    <li class="subtotal">Shipping <span>{{ $currency['symbol'] ?? '$' }}<span id="shippingCost">{{ number_format($shipping_cost, 2) }}</span></span></li>
+                                    <li class="subtotal">Subtotal <span>{{ $currency['symbol'] ?? '৳' }}<span id="subtotal">{{ number_format($subtotal, 2) }}</span></span></li>
+                                    <li class="subtotal">Tax <span>{{ $currency['symbol'] ?? '৳' }}<span id="tax">{{ number_format($tax, 2) }}</span></span></li>
+                                    <li class="subtotal">Shipping <span>{{ $currency['symbol'] ?? '৳' }}<span id="shippingCost">{{ number_format($shipping_cost, 2) }}</span></span></li>
                                     <li class="subtotal" id="couponDiscountRow" style="{{ ($coupon_discount ?? 0) > 0 ? '' : 'display: none;' }}">
-                                        Coupon Discount <span>{{ $currency['symbol'] ?? '$' }}<span id="couponDiscount">{{ number_format($coupon_discount ?? 0, 2) }}</span></span>
+                                        Coupon Discount <span>{{ $currency['symbol'] ?? '৳' }}<span id="couponDiscount">{{ number_format($coupon_discount ?? 0, 2) }}</span></span>
                                     </li>
-                                    <li class="cart-total">Total <span>{{ $currency['symbol'] ?? '$' }}<span id="grandTotal">{{ number_format($grand_total, 2) }}</span></span></li>
+                                    <li class="cart-total">Total <span>{{ $currency['symbol'] ?? '৳' }}<span id="grandTotal">{{ number_format($grand_total, 2) }}</span></span></li>
                                 </ul>
                                 <a href="{{ route('checkout.index') }}" class="proceed-btn">PROCEED TO CHECK OUT</a>
                             </div>

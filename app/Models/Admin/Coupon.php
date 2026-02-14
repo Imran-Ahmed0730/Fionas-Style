@@ -2,11 +2,13 @@
 
 namespace App\Models\Admin;
 
+use App\Traits\HasActiveScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Coupon extends Model
 {
+    use HasActiveScope;
     protected $guarded = ["id"];
 
     protected $casts = [

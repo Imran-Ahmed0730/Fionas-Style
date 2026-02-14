@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\Admin\AdminService;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Artisan;
 
 class AdminController extends Controller
 {
@@ -43,6 +44,14 @@ class AdminController extends Controller
         else{
             return redirect()->route('customer.dashboard');
         }
+    }
+
+    public function clearCache(){
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        Artisan::call('view:clear');
+        Artisan::call('route:clear');
+        return back()->with('success', 'Cache cleared successfully');
     }
 
     public function profileEdit()

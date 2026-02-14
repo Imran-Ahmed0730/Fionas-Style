@@ -86,11 +86,12 @@
                             <li class="exchange-icon" title="comparison">
                                 <a href="{{ route('compare.index') }}" style="position: relative;">
                                     <i class="fa fa-exchange"></i>
-                                    <?php $compareService = app(\App\Services\Frontend\CompareService::class); $comparisonCount = $compareService->getComparisonCount(); ?>
+                                    <?php $compareService = app(\App\Services\Frontend\CompareService::class);
+$comparisonCount = $compareService->getComparisonCount(); ?>
                                     @if($comparisonCount > 0)
                                         <span id="comparisonCount"">{{ $comparisonCount }}</span>
                                     @else
-                                        <span id="comparisonCount">0</span>
+                                        <span id=" comparisonCount">0</span>
                                     @endif
                                 </a>
                             </li>
@@ -111,7 +112,8 @@
                                                                 alt="{{ $cartItem->name }}"></td>
                                                         <td class="si-text">
                                                             <div class="product-selected">
-                                                                <p>{{ $currency['symbol'] ?? '৳' }}{{ $cartItem->price }} x
+                                                                <p>{{ $currency['symbol'] ?? '৳' }}{{ number_format($cartItem->price, 2) }}
+                                                                    x
                                                                     {{ $cartItem->quantity }}
                                                                 </p>
                                                                 <h6>{{ $cartItem->name }}</h6>
@@ -133,16 +135,19 @@
                                     <div class="select-total">
                                         <span>total:</span>
                                         <h5>{{ $currency['symbol'] ?? '৳' }} <span
-                                                class="total_price headerSubTotal">{{Cart::getSubTotal()}}</span></h5>
+                                                class="total_price headerSubTotal">{{ number_format(Cart::getSubTotal(), 2) }}</span>
+                                        </h5>
                                     </div>
                                     <div class="select-button">
                                         <a href="{{ route('cart.index') }}" class="primary-btn view-card">VIEW CART</a>
-                                        <a href="{{ route('checkout.index') }}" class="primary-btn checkout-btn">CHECK OUT</a>
+                                        <a href="{{ route('checkout.index') }}" class="primary-btn checkout-btn">CHECK
+                                            OUT</a>
                                     </div>
                                 </div>
                             </li>
                             <li class="cart-price">{{ $currency['symbol'] ?? '৳' }} <span id="navbarTotalPrice"
-                                    class="total_price navbarTotalPrice">{{Cart::getSubTotal()}}</span></li>
+                                    class="total_price navbarTotalPrice">{{ number_format(Cart::getSubTotal(), 2) }}</span>
+                            </li>
                         </ul>
                     </div>
                 </div>

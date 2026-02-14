@@ -1,8 +1,8 @@
 <div class="product-item">
     <div class="pi-pic">
         <img src="{{ asset($product->thumbnail) }}" alt="{{ $product->name }}">
-        @if($product->final_price < $product->regular_price)
-            <div class="sale">Sale</div>
+        @if($product->is_trending)
+            <div class="sale">Trending</div>
         @endif
         <div class="icon add-to-wishlist" data-id="{{ $product->id }}" style="cursor: pointer;"><i
                 class="icon_heart_alt"></i></div>
@@ -16,7 +16,8 @@
                 </a>
             </li>
 
-            <li class="w-icon compare-icon" style="cursor: pointer;" data-id="{{ $product->id }}" title="Add to Comparison">
+            <li class="w-icon compare-icon" style="cursor: pointer;" data-id="{{ $product->id }}"
+                title="Add to Comparison">
                 <a href="javascript:void(0)" class="btn-compare-product-item" data-product-id="{{ $product->id }}">
                     <i class="ti-loop"></i>
                 </a>

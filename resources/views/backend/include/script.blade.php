@@ -45,12 +45,40 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    $(document).ready(function() {
-        $('#sidebar-search').on('keyup', function() {
+    $(document).ready(function () {
+        // Universal Search Logic (Sidebar & Mobile Header)
+        $('#sidebarSearch, .mobileSidebarSearch').on('keyup', function () {
             var searchTerm = $(this).val().toLowerCase();
-            $('#sidebar-menu li').each(function() {
+
+            // Sync values between inputs
+            $('#sidebarSearch, .mobileSidebarSearch').not(this).val($(this).val());
+
+            if (searchTerm === "") {
+                $('#sidebar-menu li').show();
+                $('#sidebar-menu .collapse').removeClass('show');
+                $('#sidebar-menu .nav-item').removeClass('active');
+                return;
+            }
+
+            $('#sidebar-menu li').each(function () {
                 var menuItem = $(this).text().toLowerCase();
+                var $li = $(this);
+
                 if (menuItem.indexOf(searchTerm) !== -1) {
+                    $li.show();
+                    if ($li.parents('.collapse').length > 0) {
+                        $li.parents('.collapse').addClass('show');
+                        $li.parents('.nav-item').addClass('active');
+                    }
+                } else {
+                    if ($li.find('li:visible').length === 0) {
+                        $li.hide();
+                    }
+                }
+            });
+
+            $('.nav-section').each(function () {
+                if ($(this).nextUntil('.nav-section').filter(':visible').length > 0) {
                     $(this).show();
                 } else {
                     $(this).hide();
@@ -59,7 +87,9 @@
         });
     });
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+    integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     toastr.options = {
         "closeButton": true,
@@ -70,16 +100,12 @@
 </script>
 
 {{-- Flash Messages Data --}}
-<div id="flash-messages"
-     data-success="{{ session('success') }}"
-     data-error="{{ session('error') }}"
-     data-info="{{ session('info') }}"
-     data-warning="{{ session('warning') }}"
-     style="display: none;">
+<div id="flash-messages" data-success="{{ session('success') }}" data-error="{{ session('error') }}"
+    data-info="{{ session('info') }}" data-warning="{{ session('warning') }}" style="display: none;">
 </div>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         const flashMessages = $('#flash-messages');
         const success = flashMessages.data('success');
         const error = flashMessages.data('error');
@@ -94,7 +120,7 @@
 </script>
 <!-- SweetAlert2 CDN -->
 <script>
-    $(document).on('click', '.btn-delete', function(e) {
+    $(document).on('click', '.btn-delete', function (e) {
         e.preventDefault();  // Prevent default action (form submission)
 
         var form = $(this).closest('div').find('form');  // Select the form using the ID

@@ -80,6 +80,14 @@ class SettingUpdateRequest extends FormRequest
                     'closed_on' => 'nullable|array',
                 ];
 
+            case 'order':
+                return [
+                    'shipping_method' => 'required|in:location_wise,product_wise,flat_rate',
+                    'shipping_cost_inside_dhaka' => 'required|integer|min:0',
+                    'shipping_cost_outside_dhaka' => 'required|integer|min:0',
+                    'flat_rate_shipping_cost' => 'required|integer|min:0',
+                ];
+
             default:
                 return [];
         }
@@ -99,6 +107,8 @@ class SettingUpdateRequest extends FormRequest
             return 'store';
         } elseif (Str::contains($url, 'site')) {
             return 'site';
+        } elseif (Str::contains($url, 'order')) {
+            return 'order';
         }
 
         return 'site'; // default

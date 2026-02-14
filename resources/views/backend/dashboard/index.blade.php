@@ -2,30 +2,51 @@
 @section('title')
     Dashboard
 @endsection
+@push('css')
+    <link rel="stylesheet" href="{{asset('frontend')}}/assets/css/owl.carousel.min.css">
+    <style>
+        .hover-shadow-lg:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+            transform: translateY(-2px);
+        }
+
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+
+        .todays-deal-carousel .owl-stage {
+            display: flex !important;
+        }
+
+        .todays-deal-carousel .owl-item {
+            display: flex !important;
+            height: auto !important;
+        }
+
+        .todays-deal-card {
+            width: 100%;
+            height: 100%;
+            margin-bottom: 5px;
+            /* Adjust for shadow on hover */
+        }
+    </style>
+@endpush
 @section('content')
     <div class="container">
         <div class="page-inner">
-            <div
-                class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
-            >
+            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
                     <h3 class="fw-bold mb-3">Dashboard</h3>
-                    <h6 class="op-7 mb-2">Free Bootstrap 5 Admin Dashboard</h6>
                 </div>
-                <div class="ms-md-auto py-2 py-md-0">
-                    <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
-                    <a href="#" class="btn btn-primary btn-round">Add Customer</a>
-                </div>
+
             </div>
-            <div class="row">
+            <div class="row mb-5">
                 <div class="col-sm-6 col-md-3">
-                    <div class="card card-stats card-round">
+                    <div class="card card-stats card-round h-100">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-icon">
-                                    <div
-                                        class="icon-big text-center icon-primary bubble-shadow-small"
-                                    >
+                                    <div class="icon-big text-center icon-primary bubble-shadow-small">
                                         <i class="fas fa-users"></i>
                                     </div>
                                 </div>
@@ -40,20 +61,18 @@
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
-                    <div class="card card-stats card-round">
+                    <div class="card card-stats card-round h-100">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-icon">
-                                    <div
-                                        class="icon-big text-center icon-info bubble-shadow-small"
-                                    >
-                                        <i class="fas fa-user-check"></i>
+                                    <div class="icon-big text-center icon-info bubble-shadow-small">
+                                        <i class="fas fa-wallet"></i>
                                     </div>
                                 </div>
                                 <div class="col col-stats ms-3 ms-sm-0">
                                     <div class="numbers">
-                                        <p class="card-category">New (7d)</p>
-                                        <h4 class="card-title">{{ ($newCustomers ?? collect())->count() }}</h4>
+                                        <p class="card-category">Latest Balance</p>
+                                        <h4 class="card-title">৳ {{ Number::abbreviate($currentBalance ?? 0) }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -61,20 +80,18 @@
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
-                    <div class="card card-stats card-round">
+                    <div class="card card-stats card-round h-100">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-icon">
-                                    <div
-                                        class="icon-big text-center icon-success bubble-shadow-small"
-                                    >
+                                    <div class="icon-big text-center icon-success bubble-shadow-small">
                                         <i class="fas fa-luggage-cart"></i>
                                     </div>
                                 </div>
                                 <div class="col col-stats ms-3 ms-sm-0">
                                     <div class="numbers">
                                         <p class="card-category">Today Sales</p>
-                                        <h4 class="card-title">$ {{ number_format($todaySales ?? 0, 2) }}</h4>
+                                        <h4 class="card-title">৳ {{ Number::abbreviate($todaySales ?? 0) }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -82,13 +99,11 @@
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3">
-                    <div class="card card-stats card-round">
+                    <div class="card card-stats card-round h-100">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-icon">
-                                    <div
-                                        class="icon-big text-center icon-secondary bubble-shadow-small"
-                                    >
+                                    <div class="icon-big text-center icon-secondary bubble-shadow-small">
                                         <i class="far fa-check-circle"></i>
                                     </div>
                                 </div>
@@ -108,24 +123,7 @@
                     <div class="card card-round">
                         <div class="card-header">
                             <div class="card-head-row">
-                                <div class="card-title">User Statistics</div>
-                                <div class="card-tools">
-                                    <a
-                                        href="#"
-                                        class="btn btn-label-success btn-round btn-sm me-2"
-                                    >
-                          <span class="btn-label">
-                            <i class="fa fa-pencil"></i>
-                          </span>
-                                        Export
-                                    </a>
-                                    <a href="#" class="btn btn-label-info btn-round btn-sm">
-                          <span class="btn-label">
-                            <i class="fa fa-print"></i>
-                          </span>
-                                        Print
-                                    </a>
-                                </div>
+                                <div class="card-title">Order Statistics</div>
                             </div>
                         </div>
                         <div class="card-body">
@@ -141,108 +139,77 @@
                         <div class="card-header">
                             <div class="card-head-row">
                                 <div class="card-title">Daily Sales</div>
-                                <div class="card-tools">
-                                    <div class="dropdown">
-                                        <button
-                                            class="btn btn-sm btn-label-light dropdown-toggle"
-                                            type="button"
-                                            id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown"
-                                            aria-haspopup="true"
-                                            aria-expanded="false"
-                                        >
-                                            Export
-                                        </button>
-                                        <div
-                                            class="dropdown-menu"
-                                            aria-labelledby="dropdownMenuButton"
-                                        >
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#"
-                                            >Something else here</a
-                                            >
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                            <div class="card-category">{{ \Carbon\Carbon::now()->startOfMonth()->format('M d') }} - {{ \Carbon\Carbon::now()->format('M d') }}</div>
+                            <div class="card-category">{{ \Carbon\Carbon::now()->startOfMonth()->format('M d') }} -
+                                {{ \Carbon\Carbon::now()->format('M d') }}</div>
                         </div>
                         <div class="card-body pb-0">
                             <div class="mb-4 mt-2">
-                                <h1>$ {{ number_format($monthSales ?? 0, 2) }}</h1>
+                                <h1>৳ {{ number_format($monthSales ?? 0, 2) }}</h1>
                             </div>
                             <div class="pull-in">
                                 <canvas id="dailySalesChart"></canvas>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
                     <div class="card card-round">
-                        <div class="card-body pb-0">
-                            <div class="h1 fw-bold float-end text-primary">+5%</div>
-                            <h2 class="mb-2">17</h2>
-                            <p class="text-muted">Users online</p>
-                            <div class="pull-in sparkline-fix">
-                                <div id="lineChart"></div>
+                        <div class="card-header border-0 pb-0">
+                            <div class="card-title">Order Payments</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container" style="min-height: 250px">
+                                <canvas id="paymentPieChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card card-round">
+                        <div class="card-header border-0 pb-0">
+                            <div class="card-title">Top 5 Selling Products</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container" style="min-height: 250px">
+                                <canvas id="topProductsChart"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="row">
                 <div class="col-md-4">
                     <div class="card card-round">
                         <div class="card-body">
                             <div class="card-head-row card-tools-still-right">
                                 <div class="card-title">New Customers</div>
-                                {{-- <div class="card-tools">
-                                    <div class="dropdown">
-                                        <button
-                                            class="btn btn-icon btn-clean me-0"
-                                            type="button"
-                                            id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown"
-                                            aria-haspopup="true"
-                                            aria-expanded="false"
-                                        >
-                                            <i class="fas fa-ellipsis-h"></i>
-                                        </button>
-                                        <div
-                                            class="dropdown-menu"
-                                            aria-labelledby="dropdownMenuButton"
-                                        >
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#"
-                                            >Something else here</a
-                                            >
-                                        </div>
-                                    </div>
-                                </div> --}}
                             </div>
                             <div class="card-list py-4">
-                                <div class="item-list">
-                                    @foreach($newCustomers ?? collect() as $cust)
-                                        <div class="item-list">
-                                            <div class="avatar">
-                                                @if($cust->image)
-                                                    <img src="{{ asset($cust->image) }}" alt="{{ $cust->name }}" class="avatar-img rounded-circle" />
-                                                @else
-                                                    <span class="avatar-title rounded-circle border border-white">{{ strtoupper(substr($cust->name,0,1)) }}</span>
-                                                @endif
-                                            </div>
-                                            <div class="info-user ms-3">
-                                                <div class="username">{{ $cust->name }}</div>
-                                                <div class="status">{{ $cust->email }}</div>
-                                            </div>
-                                            <a href="mailto:{{ $cust->email }}" class="btn btn-icon btn-link op-8 me-1">
-                                                <i class="far fa-envelope"></i>
-                                            </a>
-
+                                @forelse($newCustomers ?? collect() as $cust)
+                                    <div class="item-list">
+                                        <div class="avatar">
+                                            @if($cust->image)
+                                                <img src="{{ asset($cust->image) }}" alt="{{ $cust->name }}" class="avatar-img rounded-circle" />
+                                            @else
+                                                <span class="avatar-title rounded-circle border border-white">{{ strtoupper(substr($cust->name, 0, 1)) }}</span>
+                                            @endif
                                         </div>
-                                    @endforeach
-                                </div>
+                                        <div class="info-user ms-3">
+                                            <div class="username">{{ $cust->name }}</div>
+                                            <div class="status">{{ $cust->email }}</div>
+                                        </div>
+                                        <a href="mailto:{{ $cust->email }}" class="btn btn-icon btn-link op-8 me-1">
+                                            <i class="far fa-envelope"></i>
+                                        </a>
+                                    </div>
+                                @empty
+                                    <p class="text-center text-muted">No new customers</p>
+                                @endforelse
                             </div>
                         </div>
                     </div>
@@ -251,73 +218,97 @@
                     <div class="card card-round">
                         <div class="card-header">
                             <div class="card-head-row card-tools-still-right">
-                                <div class="card-title">Transaction History</div>
-                                <div class="card-tools">
-                                    <div class="dropdown">
-                                        <button
-                                            class="btn btn-icon btn-clean me-0"
-                                            type="button"
-                                            id="dropdownMenuButton"
-                                            data-bs-toggle="dropdown"
-                                            aria-haspopup="true"
-                                            aria-expanded="false"
-                                        >
-                                            <i class="fas fa-ellipsis-h"></i>
-                                        </button>
-                                        <div
-                                            class="dropdown-menu"
-                                            aria-labelledby="dropdownMenuButton"
-                                        >
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#"
-                                            >Something else here</a
-                                            >
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="card-title">Today's Transactions History</div>
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <!-- Projects table -->
+                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                                 <table class="table align-items-center mb-0">
-                                    <thead class="thead-light">
-                                    <tr>
-                                        <th scope="col">Payment Number</th>
-                                        <th scope="col" class="text-end">Date & Time</th>
-                                        <th scope="col" class="text-end">Amount</th>
-                                        <th scope="col" class="text-end">Status</th>
-                                    </tr>
+                                    <thead class="thead-light sticky-top bg-white">
+                                        <tr>
+                                            <th scope="col">Payment Number</th>
+                                            <th scope="col" class="text-end">Time</th>
+                                            <th scope="col" class="text-end">Amount</th>
+                                            <th scope="col" class="text-end">Status</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($recentTransactions ?? collect() as $order)
-                                        @php
-                                            $payment = $order->orderPayments->first();
-                                            $amount = $order->orderPayments->sum('amount') ?: $order->grand_total;
-                                        @endphp
-                                        <tr>
-                                            <th scope="row">
-                                                <button class="btn btn-icon btn-round btn-success btn-sm me-2">
-                                                    <i class="fa fa-check"></i>
-                                                </button>
-                                                Payment from #{{ $order->id }}
-                                            </th>
-                                            <td class="text-end">{{ optional($order->created_at)->format('M d, Y, g:ia') }}</td>
-                                            <td class="text-end">$ {{ number_format($amount, 2) }}</td>
-                                            <td class="text-end">
-                                                @if($order->payment_status == 1)
-                                                    <span class="badge badge-success">Completed</span>
-                                                @elseif($order->payment_status == 2)
-                                                    <span class="badge badge-warning">Partial</span>
-                                                @else
-                                                    <span class="badge badge-secondary">Pending</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                        @forelse($todayTransactions ?? collect() as $order)
+                                            @php
+    $amount = $order->orderPayments->sum('amount') ?: $order->grand_total;
+                                            @endphp
+                                            <tr>
+                                                <th scope="row">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="btn btn-icon btn-round btn-success btn-sm me-2">
+                                                            <i class="fa fa-check"></i>
+                                                        </span>
+                                                        <span>Payment from #{{ $order->id }}</span>
+                                                    </div>
+                                                </th>
+                                                <td class="text-end">{{ optional($order->created_at)->format('g:ia') }}</td>
+                                                <td class="text-end">৳ {{ number_format($amount, 2) }}</td>
+                                                <td class="text-end">
+                                                    @if($order->payment_status == 1)
+                                                        <span class="badge badge-success">Completed</span>
+                                                    @elseif($order->payment_status == 2)
+                                                        <span class="badge badge-warning">Partial</span>
+                                                    @else
+                                                        <span class="badge badge-secondary">Pending</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="text-center py-4">No transactions today</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-round shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                            <h4 class="card-title mb-0 fw-bold"><i class="fas fa-fire text-danger me-2"></i>Today's Deals</h4>
+                            <span class="badge badge-danger">Limited Time Offers</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="todays-deal-carousel owl-carousel owl-theme">
+                                @forelse($todaysDealProducts ?? [] as $product)
+                                    <div class="todays-deal-card p-3 border rounded-3 transition-all hover-shadow-lg text-center bg-white d-flex flex-column">
+                                        <div class="position-relative mb-3">
+                                            <img src="{{ asset($product->thumbnail) }}" class="img-fluid rounded"
+                                                style="height: 120px; object-fit: contain; width: 100%;"
+                                                alt="{{ $product->name }}">
+                                            @if($product->discount > 0)
+                                                <div class="position-absolute top-0 start-0 badge badge-success shadow-sm">
+                                                    -{{ $product->discount_type == 2 ? $product->discount . '%' : '৳' . number_format($product->discount, 2) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-2 text-truncate px-1" title="{{ $product->name }}">{{ $product->name }}</h6>
+                                            <div class="text-primary fw-bold mb-1">৳{{ number_format($product->final_price, 2) }}</div>
+                                            @if($product->discount > 0)
+                                                <div class="text-muted text-decoration-line-through small">৳{{ number_format($product->regular_price, 2) }}</div>
+                                            @endif
+                                        </div>
+                                        <div class="mt-auto pt-2">
+                                            <a href="{{ route('product.show', $product->slug) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 w-100">View</a>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="col-12 text-center py-5">
+                                        <i class="fas fa-shopping-basket fa-3x text-muted mb-3 opacity-25"></i>
+                                        <p class="text-muted">Stay tuned! Exciting deals are coming soon.</p>
+                                    </div>
+                                @endforelse
                             </div>
                         </div>
                     </div>
@@ -326,80 +317,141 @@
         </div>
     </div>
 @endsection
+
 @push('js')
     <!-- Chart JS -->
     <script src="{{asset('backend')}}/assets/js/plugin/chart.js/chart.min.js"></script>
-
-    <!-- jQuery Sparkline -->
-    <script src="{{asset('backend')}}/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
-
-    <!-- Chart Circle -->
-    <script src="{{asset('backend')}}/assets/js/plugin/chart-circle/circles.min.js"></script>
-
-    <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-    <script src="{{asset('backend')}}/assets/js/setting-demo.js"></script>
-    <script src="{{asset('backend')}}/assets/js/demo.js"></script>
+    <!-- Owl Carousel -->
+    <script src="{{asset('backend')}}/assets/js/plugin/owl-carousel/owl.carousel.min.js"></script>
     <script>
-        $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#177dff",
-            fillColor: "rgba(23, 125, 255, 0.14)",
-        });
-
-        $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#f3545d",
-            fillColor: "rgba(243, 84, 93, .14)",
-        });
-
-        $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#ffa534",
-            fillColor: "rgba(255, 165, 52, .14)",
-        });
-    </script>
-    <script>
-        // Chart.js statistics chart (orders POS vs Online)
-        (function(){
-            const ctx = document.getElementById('statisticsChart');
-            if(!ctx) return;
-            const labels = {!! $orderGraphData['dates'] ?? '[]' !!};
-            const pos = {!! $orderGraphData['posOrders'] ?? '[]' !!};
-            const online = {!! $orderGraphData['onlineOrders'] ?? '[]' !!};
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'POS Orders', data: pos, borderColor: '#36A2EB', backgroundColor: 'rgba(54,162,235,0.1)', fill: true },
-                        { label: 'Online Orders', data: online, borderColor: '#FF6384', backgroundColor: 'rgba(255,99,132,0.1)', fill: true }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+        // Hyper-safe Chart.js font configuration
+        (function() {
+            try {
+                if (typeof Chart !== 'undefined' && Chart.defaults) {
+                    var d = Chart.defaults;
+                    // Chart.js 3+
+                    if (d.font && typeof d.font === 'object') {
+                        d.font.family = "'Public Sans', sans-serif";
+                    } 
+                    // Chart.js 2.x
+                    else if (d.global) {
+                        d.global.defaultFontFamily = "'Public Sans', sans-serif";
+                    }
+                }
+            } catch (err) {
+                console.warn("Chart font setting skipped:", err);
+            }
         })();
 
-        // Daily sales mini chart (use orderGraph dates as x)
-        (function(){
-            const ctx2 = document.getElementById('dailySalesChart');
-            if(!ctx2) return;
-            const labels = {!! $orderGraphData['dates'] ?? '[]' !!};
-            const sales = {!! $orderGraphData['posOrders'] ?? '[]' !!};
-            new Chart(ctx2, {
-                type: 'bar',
-                data: { labels: labels, datasets: [{ label: 'Orders', data: sales, backgroundColor: '#4BC0C0' }] },
-                options: { responsive: true, maintainAspectRatio: false }
+        $(document).ready(function() {
+            // Initialize Owl Carousel
+            $(".todays-deal-carousel").owlCarousel({
+                loop: true,
+                margin: 20,
+                nav: true,
+                dots: false,
+                autoplay: true,
+                autoplayTimeout: 4000,
+                autoplayHoverPause: true,
+                navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
+                responsive: {
+                    0: { items: 2 },
+                    600: { items: 3 },
+                    1000: { items: 5 },
+                    1200: { items: 6 }
+                }
             });
-        })();
+
+            // Data from PHP safely
+            const graphData = {
+                dates: {!! $orderGraphData['dates'] ?? '[]' !!},
+                pos: {!! $orderGraphData['posOrders'] ?? '[]' !!},
+                online: {!! $orderGraphData['onlineOrders'] ?? '[]' !!}
+            };
+            const payData = {
+                labels: {!! $paymentChartData['labels'] ?? '[]' !!},
+                amounts: {!! $paymentChartData['amounts'] ?? '[]' !!}
+            };
+            const topData = {
+                labels: {!! $topSellingChartData['labels'] ?? '[]' !!},
+                counts: {!! $topSellingChartData['counts'] ?? '[]' !!}
+            };
+
+            // Order Statistics
+            const statsCtx = document.getElementById('statisticsChart');
+            if (statsCtx) {
+                new Chart(statsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: graphData.dates,
+                        datasets: [
+                            { label: 'POS Orders', data: graphData.pos, borderColor: '#177dff', backgroundColor: 'rgba(23, 125, 255, 0.1)', fill: true, tension: 0.4 },
+                            { label: 'Online Orders', data: graphData.online, borderColor: '#f3545d', backgroundColor: 'rgba(243, 84, 93, 0.1)', fill: true, tension: 0.4 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    }
+                });
+            }
+
+            // Daily Sales
+            const salesCtx = document.getElementById('dailySalesChart');
+            if (salesCtx) {
+                new Chart(salesCtx, {
+                    type: 'bar',
+                    data: { labels: graphData.dates, datasets: [{ label: 'Orders', data: graphData.pos, backgroundColor: 'rgba(255, 255, 255, 0.5)', borderRadius: 4 }] },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { display: false }, y: { display: false } }
+                    }
+                });
+            }
+
+            // Payment Pie
+            const payCtx = document.getElementById('paymentPieChart');
+            if (payCtx) {
+                new Chart(payCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: payData.labels,
+                        datasets: [{
+                            data: payData.amounts,
+                            backgroundColor: ['#1d7af3', '#f3545d', '#fdaf4b', '#59d05d', '#1572e8', '#af49ff'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } } }
+                    }
+                });
+            }
+
+            // Top Products
+            const topCtx = document.getElementById('topProductsChart');
+            if (topCtx) {
+                new Chart(topCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: topData.labels.map(l => l.length > 15 ? l.substring(0, 15) + '...' : l),
+                        datasets: [{ label: 'Qty Sold', data: topData.counts, backgroundColor: '#1572e8', borderRadius: 5 }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { beginAtZero: true } }
+                    }
+                });
+            }
+        });
     </script>
 @endpush

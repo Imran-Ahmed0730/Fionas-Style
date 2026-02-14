@@ -19,7 +19,7 @@ class CartService
     {
         $product = Product::active()->where('slug', $request->slug)->firstOrFail();
 
-        if($product->stock_qty < $request->quantity) {
+        if ($product->stock_qty < $request->quantity) {
             return ['error' => 'Insufficient stock for the requested quantity'];
         }
 
@@ -38,7 +38,7 @@ class CartService
             $variant = $product->variants()->where('name', $request->variant)->first();
             if ($variant) {
 
-                if($variant->stock_qty < $request->quantity) {
+                if ($variant->stock_qty < $request->quantity) {
                     return ['error' => 'Insufficient stock for the requested quantity'];
                 }
 
@@ -48,8 +48,7 @@ class CartService
             }
         }
 
-        $tax_percentage = getSetting('tax_percentage', 0);
-        $tax = ($price * $tax_percentage / 100) * $request->quantity;
+        $tax = $product->tax > 0 && $product->tax_inclusion == 2 ? ($price * (float) $product->tax / 100) * $request->quantity : 0;
         $attributes['tax'] = $tax;
 
         // Check existing cart quantity for this SKU and ensure total does not exceed stock
@@ -59,11 +58,11 @@ class CartService
 
         if (isset($variant) && $variant) {
             if ($variant->stock_qty < $totalRequested) {
-                return ['error' => 'Insufficient stock for the requested quantity. Available: '.$variant->stock_qty];
+                return ['error' => 'Insufficient stock for the requested quantity. Available: ' . $variant->stock_qty];
             }
         } else {
             if ($product->stock_qty < $totalRequested) {
-                return ['error' => 'Insufficient stock for the requested quantity. Available: '.$product->stock_qty];
+                return ['error' => 'Insufficient stock for the requested quantity. Available: ' . $product->stock_qty];
             }
         }
 
@@ -97,24 +96,23 @@ class CartService
             $variant = $product->variants()->where('name', $variantName)->first();
             if ($variant) {
                 if ($variant->stock_qty < $quantity) {
-                    return ['success' => false, 'message' => 'Insufficient stock for the requested quantity. Available: '.$variant->stock_qty];
+                    return ['success' => false, 'message' => 'Insufficient stock for the requested quantity. Available: ' . $variant->stock_qty];
                 }
             } else {
                 // Fallback to product-level stock
                 if ($product->stock_qty < $quantity) {
-                    return ['success' => false, 'message' => 'Insufficient stock for the requested quantity. Available: '.$product->stock_qty];
+                    return ['success' => false, 'message' => 'Insufficient stock for the requested quantity. Available: ' . $product->stock_qty];
                 }
             }
         } else {
             if ($product->stock_qty < $quantity) {
-                return ['success' => false, 'message' => 'Insufficient stock for the requested quantity. Available: '.$product->stock_qty];
+                return ['success' => false, 'message' => 'Insufficient stock for the requested quantity. Available: ' . $product->stock_qty];
             }
         }
 
         $shipping_cost = $product->shipping_cost ?? 0;
 
-        $tax_percentage = getSetting('tax_percentage', 0);
-        $tax = ($cartItem->price * $tax_percentage / 100) * $quantity;
+        $tax = $product->tax > 0 && $product->tax_inclusion == 2 ? ($cartItem->price * (float) $product->tax / 100) * $quantity : 0;
 
         Cart::update($sku, [
             'quantity' => [

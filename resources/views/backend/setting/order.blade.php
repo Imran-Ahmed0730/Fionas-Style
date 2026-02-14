@@ -47,15 +47,13 @@
                                                 <option value="flat_rate" {{ getSetting('shipping_method') == 'flat_rate' ? 'selected' : '' }}>Flat Rate</option>
                                             </select>
                                         </div>
+
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="free_delivery_threshold" class="form-label">Free Delivery Threshold
-                                                (0 to disable)</label>
-                                            <input type="number" name="free_delivery_threshold" id="free_delivery_threshold"
-                                                class="form-control" value="{{ getSetting('free_delivery_threshold', 0) }}">
-                                            <small class="text-muted">If subtotal exceeds this amount, shipping becomes
-                                                free.</small>
+                                            <label for="tax_percentage" class="form-label">Tax Percentage (%)</label>
+                                            <input type="number" step="0.01" name="tax_percentage" id="tax_percentage" class="form-control"
+                                                value="{{ getSetting('tax_percentage', 0) }}">
                                         </div>
                                     </div>
                                 </div>
@@ -86,16 +84,6 @@
                                             <input type="number" name="flat_rate_shipping_cost" id="flat_rate_shipping_cost"
                                                 class="form-control"
                                                 value="{{ getSetting('flat_rate_shipping_cost', 100) }}">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-3">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="tax_percentage" class="form-label">Tax Percentage (%)</label>
-                                            <input type="number" step="0.01" name="tax_percentage" id="tax_percentage"
-                                                class="form-control" value="{{ getSetting('tax_percentage', 0) }}">
                                         </div>
                                     </div>
                                 </div>

@@ -150,43 +150,43 @@
                                                                  alt="{{ $item->product_name }}"
                                                                  style="width: 50px; height: 50px; object-fit: cover; margin-right: 15px;">
                                                             <div>
-                                                                <div class="fw-bold">{{ $item->product_name }}</div>
-                                                                @if($item->variant_name)
-                                                                    <small class="text-muted">Variant: {{ $item->variant_name }}</small>
-                                                                @endif
+                                                                 <div class="fw-bold">{{ $item->product_name }}</div>
+                                                                 @if($item->variant_name)
+                                                                     <small class="text-muted">Variant: {{ $item->variant_name }}</small>
+                                                                 @endif
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="text-center">{{ $currency['symbol'] }}{{ number_format($item->price, 2) }}</td>
+                                                    <td class="text-center">{{ $currency['symbol'] ?? '৳' }}{{ number_format($item->price, 2) }}</td>
                                                     <td class="text-center">{{ $item->quantity }}</td>
-                                                    <td class="text-right fw-bold">{{ $currency['symbol'] }}{{ number_format($item->total, 2) }}</td>
+                                                    <td class="text-right fw-bold">{{ $currency['symbol'] ?? '৳' }}{{ number_format($item->total, 2) }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
                                         <tfoot>
                                             <tr>
                                                 <td colspan="3" class="text-right border-top-0">Subtotal</td>
-                                                <td class="text-right border-top-0">{{ $currency['symbol'] }}{{ number_format($order->subtotal, 2) }}</td>
+                                                <td class="text-right border-top-0">{{ $currency['symbol'] ?? '৳' }}{{ number_format($order->subtotal, 2) }}</td>
                                             </tr>
                                             @if($order->tax > 0)
                                             <tr>
                                                 <td colspan="3" class="text-right border-top-0">Tax</td>
-                                                <td class="text-right border-top-0">{{ $currency['symbol'] }}{{ number_format($order->tax, 2) }}</td>
+                                                <td class="text-right border-top-0">{{ $currency['symbol'] ?? '৳' }}{{ number_format($order->tax, 2) }}</td>
                                             </tr>
                                             @endif
                                             <tr>
                                                 <td colspan="3" class="text-right border-top-0">Shipping</td>
-                                                <td class="text-right border-top-0">{{ $currency['symbol'] }}{{ number_format($order->shipping_cost, 2) }}</td>
+                                                <td class="text-right border-top-0">{{ $currency['symbol'] ?? '৳' }}{{ number_format($order->shipping_cost, 2) }}</td>
                                             </tr>
                                             @if($order->discount > 0)
                                             <tr>
                                                 <td colspan="3" class="text-right border-top-0 text-danger">Discount</td>
-                                                <td class="text-right border-top-0 text-danger">-{{ $currency['symbol'] }}{{ number_format($order->discount, 2) }}</td>
+                                                <td class="text-right border-top-0 text-danger">-{{ $currency['symbol'] ?? '৳' }}{{ number_format($order->discount, 2) }}</td>
                                             </tr>
                                             @endif
                                             <tr class="fw-bold" style="font-size: 1.25rem;">
                                                 <td colspan="3" class="text-right border-top">Grand Total</td>
-                                                <td class="text-right border-top text-primary">{{ $currency['symbol'] }}{{ number_format($order->grand_total, 2) }}</td>
+                                                <td class="text-right border-top text-primary">{{ $currency['symbol'] ?? '৳' }}{{ number_format($order->grand_total, 0) }}</td>
                                             </tr>
                                         </tfoot>
                                     </table>

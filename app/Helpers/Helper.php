@@ -81,7 +81,7 @@ function deleteImage($imagePath)
  */
 function getSetting($key, $default = '')
 {
-    return Cache::remember('setting_' . $key, config('cache_settings.short'), function () use ($key, $default) {
+    return Cache::remember('setting_' . $key, 60, function () use ($key, $default) {
         $setting = Setting::where('key', $key)->first();
         return $setting?->value ?? $default;
     });
