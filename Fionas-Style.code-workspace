@@ -1,14 +1,17 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../../Optilius/Multi-Vendor-Ecommerce"
-		},
-		{
-			"path": "../../../../../Personal/Template/fashi-master"
-		}
-	],
-	"settings": {}
+    "folders": [
+        {
+            "path": ".",
+        },
+        {
+            "path": "../../Optilius/Multi-Vendor-Ecommerce",
+        },
+        {
+            "path": "../../../../../Personal/Template/fashi-master",
+        },
+        {
+            "path": "../../../../../Personal/Template/POS/stitch",
+        },
+    ],
+    "settings": {},
 }
